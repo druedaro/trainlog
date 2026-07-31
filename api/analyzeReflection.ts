@@ -3,7 +3,7 @@ import { GoogleGenAI } from '@google/genai';
 import { z } from 'zod';
 
 const GOOGLE_GENAI_API_KEY = process.env.GOOGLE_GENAI_API_KEY;
-const GEMINI_MODEL = process.env.GEMINI_MODEL ?? 'gemini-2.0-flash';
+const GEMINI_MODEL = process.env.GEMINI_MODEL ?? 'gemini-1.5-flash';
 
 const analysisResponseSchema = z.object({
   summary: z.string().min(1),
@@ -77,21 +77,39 @@ export default async function handler(
 
   try {
     const genai = new GoogleGenAI({ apiKey: GOOGLE_GENAI_API_KEY });
+    const modelsToTry = [GEMINI_MODEL, 'gemini-1.5-flash', 'gemini-1.5-pro'].filter(
+      (m, i, self) => self.indexOf(m) === i,
+    );
 
-    const result = await genai.models.generateContent({
-      model: GEMINI_MODEL,
-      contents: [
-        {
-          role: 'user',
-          parts: [{ text: transcript }],
-        },
-      ],
-      config: {
-        systemInstruction: SYSTEM_PROMPT,
-        temperature: 0.3,
-        responseMimeType: 'application/json',
-      },
-    });
+    let result = null;
+    let lastError = null;
+
+    for (const model of modelsToTry) {
+      try {
+        result = await genai.models.generateContent({
+          model,
+          contents: [
+            {
+              role: 'user',
+              parts: [{ text: transcript }],
+            },
+          ],
+          config: {
+            systemInstruction: SYSTEM_PROMPT,
+            temperature: 0.3,
+            responseMimeType: 'application/json',
+          },
+        });
+        if (result) break;
+      } catch (err) {
+        console.warn(`Model ${model} failed:`, err instanceof Error ? err.message : err);
+        lastError = err;
+      }
+    }
+
+    if (!result) {
+      throw lastError ?? new Error('All model attempts failed.');
+    }
 
     const responseText = result.text ?? '';
 
