@@ -1,8 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { GoogleGenAI } from '@google/genai';
+import Groq from 'groq-sdk';
 import { z } from 'zod';
 
 const GOOGLE_GENAI_API_KEY = process.env.GOOGLE_GENAI_API_KEY;
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GEMINI_MODEL = process.env.GEMINI_MODEL ?? 'gemini-1.5-flash';
 
 const analysisResponseSchema = z.object({
@@ -64,74 +66,78 @@ export default async function handler(
     return response.status(401).json({ error: 'Invalid authentication token.' });
   }
 
-  if (!GOOGLE_GENAI_API_KEY) {
-    console.error('GOOGLE_GENAI_API_KEY is not configured.');
-    return response.status(500).json({ error: 'Analysis service is not configured.' });
-  }
-
   const { transcript } = request.body as { transcript?: string };
 
   if (!transcript || transcript.trim().length === 0) {
     return response.status(400).json({ error: 'A non-empty transcript is required.' });
   }
 
-  try {
-    const genai = new GoogleGenAI({ apiKey: GOOGLE_GENAI_API_KEY });
-    const modelsToTry = [GEMINI_MODEL, 'gemini-1.5-flash', 'gemini-1.5-pro'].filter(
-      (m, i, self) => self.indexOf(m) === i,
-    );
+  let responseText: string | null = null;
 
-    let result = null;
-    let lastError = null;
-
-    for (const model of modelsToTry) {
-      try {
-        result = await genai.models.generateContent({
-          model,
-          contents: [
-            {
-              role: 'user',
-              parts: [{ text: transcript }],
-            },
-          ],
-          config: {
-            systemInstruction: SYSTEM_PROMPT,
-            temperature: 0.3,
-            responseMimeType: 'application/json',
-          },
-        });
-        if (result) break;
-      } catch (err) {
-        console.warn(`Model ${model} failed:`, err instanceof Error ? err.message : err);
-        lastError = err;
-      }
-    }
-
-    if (!result) {
-      throw lastError ?? new Error('All model attempts failed.');
-    }
-
-    const responseText = result.text ?? '';
-
-    let parsed: unknown;
-
+  // 1. Try Gemini if key is provided
+  if (GOOGLE_GENAI_API_KEY) {
     try {
-      parsed = JSON.parse(responseText);
-    } catch {
-      console.error('Gemini returned invalid JSON:', responseText.slice(0, 200));
-      return response.status(502).json({ error: 'The analysis service returned an invalid response. Please try again.' });
+      const genai = new GoogleGenAI({ apiKey: GOOGLE_GENAI_API_KEY });
+      const result = await genai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: [
+          {
+            role: 'user',
+            parts: [{ text: transcript }],
+          },
+        ],
+        config: {
+          systemInstruction: SYSTEM_PROMPT,
+          temperature: 0.3,
+          responseMimeType: 'application/json',
+        },
+      });
+
+      responseText = result.text ?? null;
+    } catch (err) {
+      console.warn('Gemini analysis failed, trying Groq fallback:', err instanceof Error ? err.message : err);
     }
-
-    const validated = analysisResponseSchema.safeParse(parsed);
-
-    if (!validated.success) {
-      console.error('Gemini response failed validation:', validated.error.issues);
-      return response.status(502).json({ error: 'The analysis did not meet expected quality standards. Please try again.' });
-    }
-
-    return response.status(200).json(validated.data);
-  } catch (error) {
-    console.error('Analysis error:', error instanceof Error ? error.message : 'Unknown error');
-    return response.status(500).json({ error: 'Analysis failed. Please try again.' });
   }
+
+  // 2. Fallback to Groq LLaMA 3.3 70B if Gemini failed or key missing
+  if (!responseText && GROQ_API_KEY) {
+    try {
+      const groq = new Groq({ apiKey: GROQ_API_KEY });
+      const chatCompletion = await groq.chat.completions.create({
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: transcript },
+        ],
+        model: 'llama-3.3-70b-versatile',
+        temperature: 0.3,
+        response_format: { type: 'json_object' },
+      });
+
+      responseText = chatCompletion.choices[0]?.message?.content ?? null;
+    } catch (err) {
+      console.error('Groq LLM analysis failed:', err instanceof Error ? err.message : err);
+    }
+  }
+
+  if (!responseText) {
+    return response.status(500).json({ error: 'Analysis services are currently unavailable. Please try again.' });
+  }
+
+  let parsed: unknown;
+
+  try {
+    parsed = JSON.parse(responseText);
+  } catch {
+    console.error('AI returned invalid JSON:', responseText.slice(0, 200));
+    return response.status(502).json({ error: 'The analysis service returned an invalid response. Please try again.' });
+  }
+
+  const validated = analysisResponseSchema.safeParse(parsed);
+
+  if (!validated.success) {
+    console.error('AI response failed validation:', validated.error.issues);
+    return response.status(502).json({ error: 'The analysis did not meet expected quality standards. Please try again.' });
+  }
+
+  return response.status(200).json(validated.data);
 }
