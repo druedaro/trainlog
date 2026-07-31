@@ -4,15 +4,14 @@ import { z } from 'zod';
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
+const validEnergies = ['very_low', 'low', 'moderate', 'high', 'very_high'] as const;
+const validMoods = ['very_negative', 'negative', 'neutral', 'positive', 'very_positive'] as const;
+
 const analysisResponseSchema = z.object({
   summary: z.string().min(1),
   themes: z.array(z.string()).min(1),
-  perceivedEnergy: z
-    .enum(['very_low', 'low', 'moderate', 'high', 'very_high'])
-    .nullable(),
-  perceivedMood: z
-    .enum(['very_negative', 'negative', 'neutral', 'positive', 'very_positive'])
-    .nullable(),
+  perceivedEnergy: z.enum(validEnergies).nullable(),
+  perceivedMood: z.enum(validMoods).nullable(),
   activities: z.array(z.string()),
   reflectionPrompt: z.string().nullable(),
 });
@@ -32,7 +31,7 @@ Rules:
 - Do NOT present interpretations as facts about the user.
 - Keep the summary concise and respectful of what the user shared.
 
-Respond ONLY with valid JSON matching this exact structure:
+Respond ONLY with a valid raw JSON object matching this exact structure:
 {
   "summary": "string",
   "themes": ["string"],
@@ -41,6 +40,44 @@ Respond ONLY with valid JSON matching this exact structure:
   "activities": ["string"],
   "reflectionPrompt": "string" | null
 }`;
+
+function sanitizeAnalysisPayload(raw: any) {
+  if (typeof raw !== 'object' || raw === null) return null;
+
+  const summary = typeof raw.summary === 'string' && raw.summary.trim() ? raw.summary.trim() : 'Reflection recorded.';
+  
+  let themes = Array.isArray(raw.themes) ? raw.themes.filter((t: any) => typeof t === 'string' && t.trim()) : [];
+  if (themes.length === 0) themes = ['general'];
+
+  let activities = Array.isArray(raw.activities) ? raw.activities.filter((a: any) => typeof a === 'string' && a.trim()) : [];
+
+  let perceivedEnergy: typeof validEnergies[number] | null = null;
+  if (typeof raw.perceivedEnergy === 'string') {
+    const normalized = raw.perceivedEnergy.toLowerCase().trim().replace(/[\s-]/g, '_');
+    if ((validEnergies as readonly string[]).includes(normalized)) {
+      perceivedEnergy = normalized as typeof validEnergies[number];
+    }
+  }
+
+  let perceivedMood: typeof validMoods[number] | null = null;
+  if (typeof raw.perceivedMood === 'string') {
+    const normalized = raw.perceivedMood.toLowerCase().trim().replace(/[\s-]/g, '_');
+    if ((validMoods as readonly string[]).includes(normalized)) {
+      perceivedMood = normalized as typeof validMoods[number];
+    }
+  }
+
+  const reflectionPrompt = typeof raw.reflectionPrompt === 'string' && raw.reflectionPrompt.trim() ? raw.reflectionPrompt.trim() : null;
+
+  return {
+    summary,
+    themes,
+    perceivedEnergy,
+    perceivedMood,
+    activities,
+    reflectionPrompt,
+  };
+}
 
 export default async function handler(
   request: VercelRequest,
@@ -87,31 +124,42 @@ export default async function handler(
       response_format: { type: 'json_object' },
     });
 
-    const responseText = chatCompletion.choices[0]?.message?.content;
+    const rawContent = chatCompletion.choices[0]?.message?.content;
 
-    if (!responseText) {
+    if (!rawContent) {
+      console.error('Groq returned empty response body.');
       return response.status(502).json({ error: 'The analysis service returned an empty response.' });
     }
 
-    let parsed: unknown;
+    // Strip markdown code fences if present
+    const cleanedContent = rawContent.replace(/```json\s*/gi, '').replace(/```\s*$/gi, '').trim();
+
+    let parsed: any;
 
     try {
-      parsed = JSON.parse(responseText);
-    } catch {
-      console.error('Groq LLaMA returned invalid JSON:', responseText.slice(0, 200));
-      return response.status(502).json({ error: 'The analysis service returned invalid format. Please try again.' });
+      parsed = JSON.parse(cleanedContent);
+    } catch (parseErr) {
+      console.error('Groq LLaMA returned unparseable JSON:', rawContent);
+      return response.status(502).json({ error: 'The analysis service returned an invalid JSON format.' });
     }
 
-    const validated = analysisResponseSchema.safeParse(parsed);
+    const sanitized = sanitizeAnalysisPayload(parsed);
+
+    if (!sanitized) {
+      console.error('Failed to sanitize Groq payload:', parsed);
+      return response.status(502).json({ error: 'The analysis response payload was invalid.' });
+    }
+
+    const validated = analysisResponseSchema.safeParse(sanitized);
 
     if (!validated.success) {
-      console.error('Groq LLaMA response failed validation:', validated.error.issues);
-      return response.status(502).json({ error: 'The analysis did not meet expected quality standards. Please try again.' });
+      console.error('Sanitized payload failed Zod schema:', validated.error.issues);
+      return response.status(502).json({ error: 'The analysis did not meet validation standards.' });
     }
 
     return response.status(200).json(validated.data);
   } catch (error) {
-    console.error('Groq LLaMA analysis error:', error instanceof Error ? error.message : 'Unknown error');
-    return response.status(500).json({ error: 'Analysis failed. Please try again.' });
+    console.error('Groq LLaMA execution error:', error instanceof Error ? error.stack || error.message : error);
+    return response.status(500).json({ error: 'Analysis execution failed. Please try again.' });
   }
 }
