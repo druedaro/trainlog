@@ -19,7 +19,7 @@ export default async function handler(
   }
 
   // Lazy-import firebase-admin to keep cold starts fast when not needed
-  const { verifyFirebaseToken } = await import('./lib/verifyToken');
+  const { verifyFirebaseToken } = await import('./lib/verifyToken.js');
   const decodedToken = await verifyFirebaseToken(authHeader.split('Bearer ')[1] ?? '');
 
   if (!decodedToken) {
@@ -79,12 +79,9 @@ export default async function handler(
       file: audioFile,
       model: 'whisper-large-v3',
       language: 'es', // Spanish — matches user's primary language
-      response_format: 'text',
     });
 
-    const transcript = typeof transcription === 'string'
-      ? transcription.trim()
-      : String(transcription).trim();
+    const transcript = (transcription.text ?? '').trim();
 
     if (transcript.length === 0) {
       return response.status(422).json({ error: 'The recording could not be transcribed. It may be too short or unclear.' });

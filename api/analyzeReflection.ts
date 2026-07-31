@@ -57,7 +57,7 @@ export default async function handler(
     return response.status(401).json({ error: 'Authentication required.' });
   }
 
-  const { verifyFirebaseToken } = await import('./lib/verifyToken');
+  const { verifyFirebaseToken } = await import('./lib/verifyToken.js');
   const decodedToken = await verifyFirebaseToken(authHeader.split('Bearer ')[1] ?? '');
 
   if (!decodedToken) {
