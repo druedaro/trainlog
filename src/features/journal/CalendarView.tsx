@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { DayPicker } from 'react-day-picker';
 import { format, isSameDay } from 'date-fns';
+import { ChevronRight } from 'lucide-react';
 import { useAuth } from '@/features/auth/useAuth';
 import { fetchEntriesByMonth } from '@/lib/firestore';
 import type { JournalEntry } from '@/types/entry';
@@ -44,57 +45,63 @@ export function CalendarView() {
   };
 
   return (
-    <div className="flex flex-col items-center py-4">
-      <DayPicker
-        mode="single"
-        month={selectedMonth}
-        onMonthChange={setSelectedMonth}
-        onDayClick={handleDayClick}
-        modifiers={{
-          hasEntry: daysWithEntries,
-        }}
-        modifiersClassNames={{
-          hasEntry: 'bg-primary/20 font-bold text-primary',
-        }}
-      />
+    <div className="flex flex-col items-center animate-fade-in">
+      {/* Calendar */}
+      <div className="w-full rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
+        <DayPicker
+          mode="single"
+          month={selectedMonth}
+          onMonthChange={setSelectedMonth}
+          onDayClick={handleDayClick}
+          modifiers={{
+            hasEntry: daysWithEntries,
+          }}
+          modifiersClassNames={{
+            hasEntry: 'day-has-entry font-bold',
+          }}
+        />
+      </div>
 
       {isLoading && (
-        <p className="mt-4 text-sm text-muted-foreground">Loading entries…</p>
+        <p className="mt-5 text-sm text-muted-foreground">Loading entries…</p>
       )}
 
       {!isLoading && entries.length === 0 && (
-        <p className="mt-4 text-sm text-muted-foreground">
+        <p className="mt-5 text-center text-sm text-muted-foreground">
           No entries this month. Record your first reflection!
         </p>
       )}
 
       {!isLoading && entries.length > 0 && (
-        <div className="mt-4 w-full max-w-sm space-y-2 px-4">
-          <h2 className="text-sm font-medium text-muted-foreground">
+        <div className="mt-5 w-full space-y-2">
+          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Recent entries
           </h2>
           {entries.slice(0, 10).map((entry) => (
             <button
               key={entry.id}
               onClick={() => navigate(`/entry/${entry.id}`)}
-              className="w-full rounded-lg border bg-card p-3 text-left transition-colors hover:bg-accent"
+              className="card-interactive flex w-full items-center gap-3 rounded-xl border border-border/40 bg-card/50 p-4 text-left backdrop-blur-sm"
             >
-              <p className="text-xs text-muted-foreground">
-                {format(entry.createdAt, 'PPp')}
-              </p>
-              <p className="mt-1 line-clamp-2 text-sm">
-                {entry.analysis.summary}
-              </p>
-              <div className="mt-2 flex flex-wrap gap-1">
-                {entry.analysis.themes.slice(0, 3).map((theme) => (
-                  <span
-                    key={theme}
-                    className="rounded-full bg-secondary px-2 py-0.5 text-xs text-secondary-foreground"
-                  >
-                    {theme}
-                  </span>
-                ))}
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-medium text-muted-foreground">
+                  {format(entry.createdAt, 'PPp')}
+                </p>
+                <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-foreground">
+                  {entry.analysis.summary}
+                </p>
+                <div className="mt-2.5 flex flex-wrap gap-1.5">
+                  {entry.analysis.themes.slice(0, 3).map((theme) => (
+                    <span
+                      key={theme}
+                      className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"
+                    >
+                      {theme}
+                    </span>
+                  ))}
+                </div>
               </div>
+              <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/50" />
             </button>
           ))}
         </div>

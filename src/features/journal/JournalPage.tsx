@@ -114,19 +114,27 @@ export function JournalPage() {
   const hasBlob = recorder.audioBlob !== null;
 
   return (
-    <div className="mx-auto min-h-screen max-w-lg">
-      {/* Header */}
-      <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <h1 className="text-lg font-semibold">Trainlog</h1>
-        <Button variant="ghost" size="icon" onClick={signOut} aria-label="Sign out">
-          <LogOut className="h-4 w-4" />
-        </Button>
+    <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
+      {/* Glass header */}
+      <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5">
+        <div className="flex items-center justify-between">
+          <h1 className="text-lg font-bold text-gradient">Trainlog</h1>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={signOut}
+            aria-label="Sign out"
+            className="h-9 w-9 rounded-xl text-muted-foreground hover:text-foreground"
+          >
+            <LogOut className="h-4 w-4" />
+          </Button>
+        </div>
       </header>
 
-      <main className="px-4 py-6">
+      <main className="flex-1 px-5 py-6">
         {/* Error display */}
         {(errorMessage || recorder.errorMessage) && (
-          <div className="mb-4 rounded-lg border border-destructive/50 bg-destructive/10 p-3">
+          <div className="mb-5 animate-scale-in rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3">
             <p className="text-sm text-destructive">
               {errorMessage ?? recorder.errorMessage}
             </p>
@@ -135,8 +143,8 @@ export function JournalPage() {
 
         {/* Flow: Idle - Show record button + calendar */}
         {flowStep === 'idle' && !hasBlob && (
-          <div className="space-y-8">
-            <div className="flex justify-center pt-8">
+          <div className="space-y-8 animate-fade-in">
+            <div className="flex justify-center pt-6">
               <RecordButton
                 isRecording={recorder.status === 'recording'}
                 durationMs={recorder.durationMs}
@@ -150,7 +158,7 @@ export function JournalPage() {
 
         {/* Flow: Recording in progress */}
         {recorder.status === 'recording' && (
-          <div className="flex justify-center pt-16">
+          <div className="flex justify-center pt-12 animate-fade-in">
             <RecordButton
               isRecording
               durationMs={recorder.durationMs}
@@ -162,13 +170,25 @@ export function JournalPage() {
 
         {/* Flow: Recording done, ready to transcribe */}
         {flowStep === 'idle' && hasBlob && (
-          <div className="flex flex-col items-center gap-4 pt-8">
-            <p className="text-sm text-muted-foreground">Recording complete!</p>
-            <div className="flex gap-2">
-              <Button onClick={handleTranscribe} className="gap-2">
+          <div className="flex flex-col items-center gap-5 pt-10 animate-slide-up">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-primary">
+                <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <p className="text-sm font-medium text-foreground">Recording complete!</p>
+            <div className="flex w-full max-w-xs gap-3">
+              <Button
+                onClick={handleTranscribe}
+                className="flex-1 rounded-xl bg-primary py-5 font-semibold text-primary-foreground"
+              >
                 Transcribe
               </Button>
-              <Button variant="outline" onClick={resetFlow}>
+              <Button
+                variant="outline"
+                onClick={resetFlow}
+                className="rounded-xl border-border/50 py-5"
+              >
                 Discard
               </Button>
             </div>
@@ -177,47 +197,51 @@ export function JournalPage() {
 
         {/* Flow: Transcribing */}
         {flowStep === 'transcribing' && (
-          <div className="flex flex-col items-center gap-4 pt-16">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <div className="flex flex-col items-center gap-5 pt-16 animate-fade-in">
+            <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-primary/30 border-t-primary" />
             <p className="text-sm text-muted-foreground">Transcribing your recording…</p>
           </div>
         )}
 
         {/* Flow: Editing transcript */}
         {flowStep === 'editing' && (
-          <TranscriptEditor
-            transcript={transcript}
-            onConfirm={handleConfirmTranscript}
-            onDiscard={resetFlow}
-            isSubmitting={false}
-          />
+          <div className="animate-slide-up">
+            <TranscriptEditor
+              transcript={transcript}
+              onConfirm={handleConfirmTranscript}
+              onDiscard={resetFlow}
+              isSubmitting={false}
+            />
+          </div>
         )}
 
         {/* Flow: Analyzing */}
         {flowStep === 'analyzing' && (
-          <div className="flex flex-col items-center gap-4 pt-16">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <div className="flex flex-col items-center gap-5 pt-16 animate-fade-in">
+            <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-primary/30 border-t-primary" />
             <p className="text-sm text-muted-foreground">Analyzing your reflection…</p>
           </div>
         )}
 
         {/* Flow: Reviewing analysis */}
         {flowStep === 'reviewing' && analysis && (
-          <AnalysisView
-            analysis={analysis}
-            onConfirm={handleConfirmAnalysis}
-            onRetry={() => {
-              setAnalysis(null);
-              setFlowStep('editing');
-            }}
-            isSaving={false}
-          />
+          <div className="animate-slide-up">
+            <AnalysisView
+              analysis={analysis}
+              onConfirm={handleConfirmAnalysis}
+              onRetry={() => {
+                setAnalysis(null);
+                setFlowStep('editing');
+              }}
+              isSaving={false}
+            />
+          </div>
         )}
 
         {/* Flow: Saving */}
         {flowStep === 'saving' && (
-          <div className="flex flex-col items-center gap-4 pt-16">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <div className="flex flex-col items-center gap-5 pt-16 animate-fade-in">
+            <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-primary/30 border-t-primary" />
             <p className="text-sm text-muted-foreground">Saving your entry…</p>
           </div>
         )}

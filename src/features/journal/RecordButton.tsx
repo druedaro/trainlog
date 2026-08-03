@@ -1,5 +1,4 @@
 import { Mic, Square } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 interface RecordButtonProps {
   isRecording: boolean;
@@ -26,38 +25,43 @@ export function RecordButton({
 }: RecordButtonProps) {
   if (isRecording) {
     return (
-      <div className="flex flex-col items-center gap-4">
-        <div className="relative">
-          <div className="absolute inset-0 animate-ping rounded-full bg-destructive/20" />
-          <Button
+      <div className="flex flex-col items-center gap-5 animate-fade-in">
+        <div className="relative flex items-center justify-center">
+          {/* Concentric pulse rings */}
+          <div className="absolute h-24 w-24 rounded-full border border-destructive/30 animate-recording-ring-1" />
+          <div className="absolute h-24 w-24 rounded-full border border-destructive/20 animate-recording-ring-2" />
+          <div className="absolute h-24 w-24 rounded-full border border-destructive/10 animate-recording-ring-3" />
+
+          {/* Stop button */}
+          <button
             onClick={onStop}
-            size="icon"
-            variant="destructive"
-            className="relative h-20 w-20 rounded-full shadow-lg"
+            className="relative z-10 flex h-24 w-24 items-center justify-center rounded-full bg-destructive glow-destructive transition-transform active:scale-95"
             aria-label="Stop recording"
           >
-            <Square className="h-8 w-8 fill-current" />
-          </Button>
+            <Square className="h-8 w-8 fill-destructive-foreground text-destructive-foreground" />
+          </button>
         </div>
-        <p className="tabular-nums text-lg font-medium text-destructive">
-          {formatDuration(durationMs)}
-        </p>
-        <p className="text-sm text-muted-foreground">Recording… Tap to stop</p>
+
+        <div className="text-center">
+          <p className="tabular-nums text-2xl font-bold text-destructive">
+            {formatDuration(durationMs)}
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">Recording… Tap to stop</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <Button
+    <div className="flex flex-col items-center gap-5 animate-fade-in">
+      <button
         onClick={onStart}
-        size="icon"
         disabled={disabled}
-        className="h-20 w-20 rounded-full shadow-lg transition-transform hover:scale-105 active:scale-95"
+        className="relative flex h-24 w-24 items-center justify-center rounded-full bg-primary glow-primary transition-all hover:brightness-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
         aria-label="Start recording"
       >
-        <Mic className="h-8 w-8" />
-      </Button>
+        <Mic className="h-9 w-9 text-primary-foreground" />
+      </button>
       <p className="text-sm text-muted-foreground">Tap to start recording</p>
     </div>
   );

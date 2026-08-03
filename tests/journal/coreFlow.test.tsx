@@ -238,8 +238,8 @@ describe('AnalysisView', () => {
       />,
     );
 
-    expect(screen.getByText('High')).toBeInTheDocument();
-    expect(screen.getByText('Positive')).toBeInTheDocument();
+    expect(screen.getByText(/High/)).toBeInTheDocument();
+    expect(screen.getByText(/Positive/)).toBeInTheDocument();
   });
 
   it('displays the reflection prompt', () => {

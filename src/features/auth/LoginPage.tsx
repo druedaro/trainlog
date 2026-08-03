@@ -1,7 +1,6 @@
 import { Navigate } from 'react-router';
 import { useAuth } from '@/features/auth/useAuth';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export function LoginPage() {
   const { user, isLoading, signInWithGoogle } = useAuth();
@@ -19,34 +18,46 @@ export function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-background to-muted px-4">
-      <div className="mb-8 text-center">
-        <h1 className="text-4xl font-bold tracking-tight text-foreground">
-          Trainlog
-        </h1>
-        <p className="mt-2 text-lg text-muted-foreground">
-          Your personal sports reflection journal
-        </p>
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-6">
+      {/* Ambient glow */}
+      <div className="pointer-events-none absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2">
+        <div className="h-[300px] w-[300px] rounded-full bg-primary/10 blur-[100px]" />
       </div>
 
-      <Card className="w-full max-w-sm">
-        <CardHeader className="text-center">
-          <CardTitle className="text-xl">Welcome</CardTitle>
-          <CardDescription>
+      <div className="relative z-10 flex flex-col items-center animate-slide-up">
+        {/* Logo area */}
+        <div className="mb-2 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Z" fill="none" stroke="hsl(172, 66%, 50%)" strokeWidth="1.5"/>
+            <path d="M12 8v8M8 12l4-4 4 4" stroke="hsl(172, 66%, 50%)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+
+        <h1 className="text-4xl font-extrabold tracking-tight text-gradient">
+          Trainlog
+        </h1>
+        <p className="mt-2 text-base text-muted-foreground">
+          Your personal sports reflection journal
+        </p>
+
+        {/* Sign-in card */}
+        <div className="mt-10 w-full max-w-sm rounded-2xl border border-border/50 bg-card/60 p-6 shadow-lg backdrop-blur-xl">
+          <h2 className="mb-1 text-center text-lg font-semibold text-foreground">
+            Welcome
+          </h2>
+          <p className="mb-6 text-center text-sm text-muted-foreground">
             Sign in to start recording your training reflections
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+          </p>
           <Button
             onClick={signInWithGoogle}
-            className="w-full gap-2"
+            className="w-full gap-3 rounded-xl bg-foreground py-6 text-sm font-semibold text-background transition-all hover:bg-foreground/90 active:scale-[0.98]"
             size="lg"
           >
             <GoogleIcon />
             Continue with Google
           </Button>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
