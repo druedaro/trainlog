@@ -11,6 +11,7 @@ import {
 } from '@/lib/firestore';
 import { generateContextualResponse } from '@/lib/api';
 import type { JournalEntry } from '@/types/entry';
+import ReactMarkdown from 'react-markdown';
 
 const ENERGY_CONFIG: Record<string, { label: string; color: string; emoji: string }> = {
   very_low: { label: 'Very low', color: 'text-red-400', emoji: '🔋' },
@@ -163,9 +164,21 @@ export function EntryDetail() {
                 Trainlog AI
               </h3>
             </div>
-            <p className="text-sm font-medium leading-relaxed text-foreground">
-              {contextualResponse}
-            </p>
+            <div className="text-sm font-medium leading-relaxed text-foreground">
+              <ReactMarkdown
+                components={{
+                  p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
+                  ul: ({ node, ...props }) => (
+                    <ul className="mb-2 list-disc pl-5 last:mb-0 space-y-1" {...props} />
+                  ),
+                  strong: ({ node, ...props }) => (
+                    <strong className="font-bold text-primary" {...props} />
+                  ),
+                }}
+              >
+                {contextualResponse}
+              </ReactMarkdown>
+            </div>
           </div>
         )}
 
