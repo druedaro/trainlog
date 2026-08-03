@@ -37,6 +37,7 @@ export interface JournalEntry {
   userId: string;
   transcript: string;
   analysis: EntryAnalysis;
+  contextualResponse?: string | null;
   createdAt: Date;
   updatedAt: Date;
 }

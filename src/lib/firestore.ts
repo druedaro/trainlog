@@ -4,9 +4,11 @@ import {
   addDoc,
   getDoc,
   getDocs,
+  updateDoc,
   query,
   where,
   orderBy,
+  limit,
   Timestamp,
   type DocumentData,
 } from 'firebase/firestore';
@@ -90,7 +92,37 @@ function mapDocumentToEntry(
     userId: data.userId as string,
     transcript: data.transcript as string,
     analysis: data.analysis as EntryAnalysis,
+    contextualResponse: data.contextualResponse as string | null | undefined,
     createdAt: (data.createdAt as Timestamp).toDate(),
     updatedAt: (data.updatedAt as Timestamp).toDate(),
   };
+}
+
+export async function updateEntryContextualResponse(
+  entryId: string,
+  response: string | null,
+): Promise<void> {
+  const docRef = doc(db, ENTRIES_COLLECTION, entryId);
+  await updateDoc(docRef, {
+    contextualResponse: response,
+    updatedAt: Timestamp.now(),
+  });
+}
+
+export async function fetchRecentEntries(
+  userId: string,
+  limitCount: number = 5,
+): Promise<JournalEntry[]> {
+  const entriesQuery = query(
+    collection(db, ENTRIES_COLLECTION),
+    where('userId', '==', userId),
+    orderBy('createdAt', 'desc'),
+    limit(limitCount),
+  );
+
+  const snapshot = await getDocs(entriesQuery);
+
+  return snapshot.docs.map((docSnap) =>
+    mapDocumentToEntry(docSnap.id, docSnap.data()),
+  );
 }

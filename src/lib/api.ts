@@ -82,4 +82,30 @@ export async function analyzeReflection(
   return response.json();
 }
 
+export async function generateContextualResponse(
+  currentEntry: unknown,
+  recentEntries: unknown[],
+): Promise<{ response: string | null }> {
+  const headers = await getAuthHeaders();
+
+  const response = await fetch(`${API_BASE_URL}/generateContextualResponse`, {
+    method: 'POST',
+    headers: {
+      ...headers,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ currentEntry, recentEntries }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => 'Unknown error');
+    throw new ApiError(
+      `Contextual response failed: ${errorText}`,
+      response.status,
+    );
+  }
+
+  return response.json();
+}
+
 export { ApiError };
