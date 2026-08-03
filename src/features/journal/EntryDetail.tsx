@@ -174,6 +174,9 @@ export function EntryDetail() {
                   strong: ({ node, ...props }) => (
                     <strong className="font-bold text-primary" {...props} />
                   ),
+                  img: ({ node, ...props }) => (
+                    <img className="mt-3 w-full max-w-sm rounded-xl border border-primary/20 shadow-sm" loading="lazy" {...props} />
+                  ),
                 }}
               >
                 {contextualResponse}
