@@ -112,7 +112,7 @@ export default async function handler(
             }
           }
         } catch (e) {
-          console.error(\`Failed to fetch GIF for \${exercise}\`, e);
+          console.error(`Failed to fetch GIF for ${exercise}`, e);
         }
         return null;
       });
