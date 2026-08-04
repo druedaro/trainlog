@@ -14,7 +14,6 @@ export function CalendarView() {
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [recentEntries, setRecentEntries] = useState<JournalEntry[]>([]);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch month entries for calendar dots
@@ -52,31 +51,16 @@ export function CalendarView() {
       // If only one entry, go directly to it
       navigate(`/entry/${entriesForDay[0].id}`);
     } else if (entriesForDay.length > 1) {
-      // If multiple entries, select the day to show them below
-      setSelectedDate(day);
-    } else {
-      setSelectedDate(undefined);
+      // Navigate to the day view
+      navigate(`/day/${format(day, 'yyyy-MM-dd')}`);
     }
   };
-
-  const displayedEntries = selectedDate
-    ? entries.filter((e) => isSameDay(e.createdAt, selectedDate))
-    : recentEntries;
-
-  const sectionTitle = selectedDate
-    ? `Entries on ${format(selectedDate, 'MMM d, yyyy')}`
-    : 'Recent entries';
 
   return (
     <div className="flex flex-col items-center animate-fade-in">
       {/* Calendar */}
       <div className="flex w-full justify-center rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
         <DayPicker
-          mode="single"
-          selected={selectedDate}
-          onSelect={(date) => {
-            if (!date) setSelectedDate(undefined);
-          }}
           month={selectedMonth}
           onMonthChange={setSelectedMonth}
           onDayClick={handleDayClick}
@@ -93,28 +77,20 @@ export function CalendarView() {
         <p className="mt-5 text-sm text-muted-foreground">Loading entries…</p>
       )}
 
-      {!isLoading && !selectedDate && recentEntries.length === 0 && (
+      {!isLoading && recentEntries.length === 0 && (
         <p className="mt-5 text-center text-sm text-muted-foreground">
           No entries found. Record your first reflection!
         </p>
       )}
 
-      {(!isLoading || displayedEntries.length > 0) && displayedEntries.length > 0 && (
+      {(!isLoading || recentEntries.length > 0) && recentEntries.length > 0 && (
         <div className="mt-5 w-full space-y-2">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              {sectionTitle}
+              Recent entries
             </h2>
-            {selectedDate && (
-              <button
-                onClick={() => setSelectedDate(undefined)}
-                className="text-xs font-medium text-primary hover:underline"
-              >
-                Clear selection
-              </button>
-            )}
           </div>
-          {displayedEntries.map((entry) => (
+          {recentEntries.map((entry) => (
             <button
               key={entry.id}
               onClick={() => navigate(`/entry/${entry.id}`)}
