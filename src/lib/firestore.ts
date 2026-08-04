@@ -143,7 +143,50 @@ export async function fetchDiscoverArticles(
 
   return docSnap.data() as DiscoverDocument;
 }
+// --- Insights ---
 
+export async function fetchEntriesByDays(
+  userId: string,
+  days: number,
+): Promise<JournalEntry[]> {
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days);
+  startDate.setHours(0, 0, 0, 0);
+
+  const entriesQuery = query(
+    collection(db, ENTRIES_COLLECTION),
+    where('userId', '==', userId),
+    where('createdAt', '>=', Timestamp.fromDate(startDate)),
+    orderBy('createdAt', 'desc'),
+  );
+
+  const snapshot = await getDocs(entriesQuery);
+
+  return snapshot.docs.map((docSnap) =>
+    mapDocumentToEntry(docSnap.id, docSnap.data()),
+  );
+}
+
+export async function fetchInsights(
+  userId: string,
+): Promise<any | null> {
+  const docRef = doc(db, 'users', userId, 'insights', 'latest');
+  const docSnap = await getDoc(docRef);
+
+  if (!docSnap.exists()) {
+    return null;
+  }
+
+  return docSnap.data();
+}
+
+export async function saveInsights(
+  userId: string,
+  data: any,
+): Promise<void> {
+  const docRef = doc(db, 'users', userId, 'insights', 'latest');
+  await setDoc(docRef, data);
+}
 export async function saveDiscoverArticles(
   userId: string,
   data: DiscoverDocument,

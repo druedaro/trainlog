@@ -133,4 +133,29 @@ export async function generateDiscover(
   return response.json();
 }
 
+export async function generateInsights(
+  entries: unknown[],
+): Promise<unknown> {
+  const headers = await getAuthHeaders();
+
+  const response = await fetch(`${API_BASE_URL}/generateInsights`, {
+    method: 'POST',
+    headers: {
+      ...headers,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ entries }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => 'Unknown error');
+    throw new ApiError(
+      `Insights generation failed: ${errorText}`,
+      response.status,
+    );
+  }
+
+  return response.json();
+}
+
 export { ApiError };
