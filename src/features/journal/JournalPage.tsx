@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router';
-import { LogOut } from 'lucide-react';
+import { User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
 import { useVoiceRecorder } from '@/features/journal/useVoiceRecorder';
@@ -15,7 +15,7 @@ import { entryAnalysisSchema, type EntryAnalysis } from '@/types/entry';
 type FlowStep = 'idle' | 'transcribing' | 'editing' | 'analyzing' | 'reviewing' | 'saving';
 
 export function JournalPage() {
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const recorder = useVoiceRecorder();
 
@@ -122,11 +122,11 @@ export function JournalPage() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={signOut}
-            aria-label="Sign out"
+            onClick={() => navigate('/profile')}
+            aria-label="Profile"
             className="h-9 w-9 rounded-xl text-muted-foreground hover:text-foreground"
           >
-            <LogOut className="h-4 w-4" />
+            <User className="h-4 w-4" />
           </Button>
         </div>
       </header>

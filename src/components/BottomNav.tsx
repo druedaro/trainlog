@@ -12,7 +12,7 @@ export function BottomNav() {
   const navigate = useNavigate();
 
   // Don't show on entry detail pages or login
-  const hiddenPaths = ['/login'];
+  const hiddenPaths = ['/login', '/profile'];
   const isEntryDetail = location.pathname.startsWith('/entry/');
   if (hiddenPaths.includes(location.pathname) || isEntryDetail) {
     return null;

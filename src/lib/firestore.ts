@@ -11,6 +11,8 @@ import {
   orderBy,
   limit,
   Timestamp,
+  deleteDoc,
+  getCountFromServer,
   type DocumentData,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -111,6 +113,11 @@ export async function updateEntryContextualResponse(
   });
 }
 
+export async function deleteEntry(entryId: string): Promise<void> {
+  const docRef = doc(db, ENTRIES_COLLECTION, entryId);
+  await deleteDoc(docRef);
+}
+
 export async function fetchRecentEntries(
   userId: string,
   limitCount: number = 5,
@@ -127,6 +134,13 @@ export async function fetchRecentEntries(
   return snapshot.docs.map((docSnap) =>
     mapDocumentToEntry(docSnap.id, docSnap.data()),
   );
+}
+
+export async function countUserEntries(userId: string): Promise<number> {
+  const coll = collection(db, ENTRIES_COLLECTION);
+  const q = query(coll, where('userId', '==', userId));
+  const snapshot = await getCountFromServer(q);
+  return snapshot.data().count;
 }
 
 // --- Discover ---

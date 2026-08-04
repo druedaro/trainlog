@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { format } from 'date-fns';
-import { ArrowLeft, Zap, Smile, Sparkles } from 'lucide-react';
+import { ArrowLeft, Zap, Smile, Sparkles, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
 import {
   fetchEntryById,
   fetchRecentEntries,
   updateEntryContextualResponse,
+  deleteEntry,
 } from '@/lib/firestore';
 import { generateContextualResponse } from '@/lib/api';
 import type { JournalEntry } from '@/types/entry';
@@ -37,6 +38,7 @@ export function EntryDetail() {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isGeneratingResponse, setIsGeneratingResponse] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (!id || !user) return;
@@ -96,7 +98,24 @@ export function EntryDetail() {
     };
   }, [id, user]);
 
-  if (isLoading) {
+  const handleDelete = async () => {
+    if (!id || !user) return;
+    
+    const confirmDelete = window.confirm("Are you sure you want to delete this entry? This cannot be undone.");
+    if (!confirmDelete) return;
+
+    setIsDeleting(true);
+    try {
+      await deleteEntry(id);
+      navigate('/');
+    } catch (e) {
+      console.error('Failed to delete entry:', e);
+      setErrorMessage('Failed to delete entry.');
+      setIsDeleting(false);
+    }
+  };
+
+  if (isLoading || isDeleting) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-primary/30 border-t-primary" />
@@ -129,14 +148,27 @@ export function EntryDetail() {
       {/* Header with gradient */}
       <div className="relative overflow-hidden border-b border-border/40 px-5 pb-6 pt-5">
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
-        <Button
-          variant="ghost"
-          onClick={() => navigate('/')}
-          className="relative mb-4 gap-2 rounded-xl px-3 text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back
-        </Button>
+        <div className="relative mb-4 flex items-center justify-between">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/')}
+            className="gap-2 rounded-xl px-3 text-muted-foreground hover:text-foreground"
+            disabled={isDeleting}
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleDelete}
+            disabled={isDeleting}
+            className="h-9 w-9 rounded-xl text-destructive hover:bg-destructive/10 hover:text-destructive"
+            aria-label="Delete entry"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
         <div className="relative">
           <p className="text-sm font-medium text-muted-foreground">
             {format(entry.createdAt, 'PPPP')}
