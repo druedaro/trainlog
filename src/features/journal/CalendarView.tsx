@@ -90,8 +90,8 @@ export function CalendarView() {
                 <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-foreground">
                   {entry.analysis.summary}
                 </p>
-                <div className="mt-2.5 flex flex-wrap gap-1.5">
-                  {entry.analysis.themes.slice(0, 3).map((theme) => (
+                <div className="flex flex-wrap gap-1">
+                  {(entry.analysis.themes || []).slice(0, 3).map((theme) => (
                     <span
                       key={theme}
                       className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"

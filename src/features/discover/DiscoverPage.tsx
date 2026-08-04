@@ -81,7 +81,7 @@ export function DiscoverPage() {
         const simplifiedEntries = recentEntries.map((e) => ({
           transcript: e.transcript,
           summary: e.analysis.summary,
-          themes: e.analysis.themes,
+          themes: e.analysis.themes || [],
           activities: e.analysis.activities,
           energy: e.analysis.perceivedEnergy,
           mood: e.analysis.perceivedMood,

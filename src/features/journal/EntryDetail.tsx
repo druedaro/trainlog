@@ -223,15 +223,15 @@ export function EntryDetail() {
         </div>
 
         {/* Themes & Activities */}
-        {(analysis.themes.length > 0 || analysis.activities.length > 0) && (
+        {((analysis.themes?.length ?? 0) > 0 || (analysis.activities?.length ?? 0) > 0) && (
           <div className="rounded-2xl border border-border/40 bg-card/50 p-5 backdrop-blur-sm">
-            {analysis.themes.length > 0 && (
+            {(analysis.themes?.length ?? 0) > 0 && (
               <div className="mb-4">
                 <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Themes
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {analysis.themes.map((theme) => (
+                  {analysis.themes?.map((theme) => (
                     <span
                       key={theme}
                       className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary"
@@ -243,13 +243,13 @@ export function EntryDetail() {
               </div>
             )}
 
-            {analysis.activities.length > 0 && (
+            {(analysis.activities?.length ?? 0) > 0 && (
               <div>
                 <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Activities
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {analysis.activities.map((activity) => (
+                  {analysis.activities?.map((activity) => (
                     <span
                       key={activity}
                       className="rounded-full border border-border/50 bg-secondary/50 px-3 py-1.5 text-xs font-medium text-secondary-foreground"

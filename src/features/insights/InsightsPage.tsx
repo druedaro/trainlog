@@ -81,7 +81,7 @@ export function InsightsPage() {
       const simplifiedEntries = entries.map((e) => ({
         transcript: e.transcript,
         summary: e.analysis.summary,
-        themes: e.analysis.themes,
+        themes: e.analysis.themes || [],
         energy: e.analysis.perceivedEnergy,
         mood: e.analysis.perceivedMood,
         date: e.createdAt.toISOString(),
@@ -109,7 +109,7 @@ export function InsightsPage() {
 
     entries.forEach((entry) => {
       // Themes
-      entry.analysis.themes.forEach((theme) => {
+      entry.analysis.themes?.forEach((theme) => {
         const lower = theme.toLowerCase();
         themeCounts[lower] = (themeCounts[lower] || 0) + 1;
       });
