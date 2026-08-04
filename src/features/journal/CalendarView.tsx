@@ -4,7 +4,7 @@ import { DayPicker } from 'react-day-picker';
 import { format, isSameDay } from 'date-fns';
 import { ChevronRight } from 'lucide-react';
 import { useAuth } from '@/features/auth/useAuth';
-import { fetchEntriesByMonth } from '@/lib/firestore';
+import { fetchEntriesByMonth, fetchRecentEntries } from '@/lib/firestore';
 import type { JournalEntry } from '@/types/entry';
 import 'react-day-picker/style.css';
 
@@ -13,16 +13,17 @@ export function CalendarView() {
   const navigate = useNavigate();
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [entries, setEntries] = useState<JournalEntry[]>([]);
+  const [recentEntries, setRecentEntries] = useState<JournalEntry[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [isLoading, setIsLoading] = useState(true);
 
+  // Fetch month entries for calendar dots
   useEffect(() => {
     if (!user) return;
-
     const year = selectedMonth.getFullYear();
     const month = selectedMonth.getMonth() + 1;
 
     setIsLoading(true);
-
     fetchEntriesByMonth(user.uid, year, month)
       .then(setEntries)
       .catch((error) => {
@@ -32,6 +33,14 @@ export function CalendarView() {
       .finally(() => setIsLoading(false));
   }, [user, selectedMonth]);
 
+  // Fetch global recent entries
+  useEffect(() => {
+    if (!user) return;
+    fetchRecentEntries(user.uid, 10)
+      .then(setRecentEntries)
+      .catch(console.error);
+  }, [user]);
+
   const daysWithEntries = entries.map((entry) => entry.createdAt);
 
   const handleDayClick = (day: Date) => {
@@ -40,9 +49,23 @@ export function CalendarView() {
     );
 
     if (entriesForDay.length === 1 && entriesForDay[0]) {
+      // If only one entry, go directly to it
       navigate(`/entry/${entriesForDay[0].id}`);
+    } else if (entriesForDay.length > 1) {
+      // If multiple entries, select the day to show them below
+      setSelectedDate(day);
+    } else {
+      setSelectedDate(undefined);
     }
   };
+
+  const displayedEntries = selectedDate
+    ? entries.filter((e) => isSameDay(e.createdAt, selectedDate))
+    : recentEntries;
+
+  const sectionTitle = selectedDate
+    ? `Entries on ${format(selectedDate, 'MMM d, yyyy')}`
+    : 'Recent entries';
 
   return (
     <div className="flex flex-col items-center animate-fade-in">
@@ -50,6 +73,10 @@ export function CalendarView() {
       <div className="flex w-full justify-center rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
         <DayPicker
           mode="single"
+          selected={selectedDate}
+          onSelect={(date) => {
+            if (!date) setSelectedDate(undefined);
+          }}
           month={selectedMonth}
           onMonthChange={setSelectedMonth}
           onDayClick={handleDayClick}
@@ -66,18 +93,28 @@ export function CalendarView() {
         <p className="mt-5 text-sm text-muted-foreground">Loading entries…</p>
       )}
 
-      {!isLoading && entries.length === 0 && (
+      {!isLoading && !selectedDate && recentEntries.length === 0 && (
         <p className="mt-5 text-center text-sm text-muted-foreground">
-          No entries this month. Record your first reflection!
+          No entries found. Record your first reflection!
         </p>
       )}
 
-      {!isLoading && entries.length > 0 && (
+      {(!isLoading || displayedEntries.length > 0) && displayedEntries.length > 0 && (
         <div className="mt-5 w-full space-y-2">
-          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Recent entries
-          </h2>
-          {entries.slice(0, 10).map((entry) => (
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              {sectionTitle}
+            </h2>
+            {selectedDate && (
+              <button
+                onClick={() => setSelectedDate(undefined)}
+                className="text-xs font-medium text-primary hover:underline"
+              >
+                Clear selection
+              </button>
+            )}
+          </div>
+          {displayedEntries.map((entry) => (
             <button
               key={entry.id}
               onClick={() => navigate(`/entry/${entry.id}`)}
@@ -90,7 +127,7 @@ export function CalendarView() {
                 <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-foreground">
                   {entry.analysis.summary}
                 </p>
-                <div className="flex flex-wrap gap-1">
+                <div className="flex flex-wrap gap-1 mt-2.5">
                   {(entry.analysis.themes || []).slice(0, 3).map((theme) => (
                     <span
                       key={theme}
