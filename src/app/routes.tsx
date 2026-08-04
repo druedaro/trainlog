@@ -3,6 +3,7 @@ import { AuthGuard } from '@/features/auth/AuthGuard';
 import { LoginPage } from '@/features/auth/LoginPage';
 import { JournalPage } from '@/features/journal/JournalPage';
 import { EntryDetail } from '@/features/journal/EntryDetail';
+import { DayEntriesPage } from '@/features/journal/DayEntriesPage';
 import { DiscoverPage } from '@/features/discover/DiscoverPage';
 import { InsightsPage } from '@/features/insights/InsightsPage';
 import { ProfilePage } from '@/features/profile/ProfilePage';
@@ -38,6 +39,10 @@ export const router = createBrowserRouter([
           {
             path: '/entry/:id',
             Component: EntryDetail,
+          },
+          {
+            path: '/day/:date',
+            Component: DayEntriesPage,
           },
         ],
       },

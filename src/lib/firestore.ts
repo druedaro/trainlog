@@ -87,6 +87,33 @@ export async function fetchEntriesByMonth(
   );
 }
 
+export async function fetchEntriesByDay(
+  userId: string,
+  dateStr: string,
+): Promise<JournalEntry[]> {
+  const parts = dateStr.split('-').map(Number);
+  const year = parts[0] ?? 0;
+  const month = parts[1] ?? 1;
+  const day = parts[2] ?? 1;
+  
+  const startOfDay = new Date(year, month - 1, day, 0, 0, 0, 0);
+  const endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999);
+
+  const entriesQuery = query(
+    collection(db, ENTRIES_COLLECTION),
+    where('userId', '==', userId),
+    where('createdAt', '>=', Timestamp.fromDate(startOfDay)),
+    where('createdAt', '<=', Timestamp.fromDate(endOfDay)),
+    orderBy('createdAt', 'desc'),
+  );
+
+  const snapshot = await getDocs(entriesQuery);
+
+  return snapshot.docs.map((docSnap) =>
+    mapDocumentToEntry(docSnap.id, docSnap.data()),
+  );
+}
+
 function mapDocumentToEntry(
   id: string,
   data: DocumentData,
