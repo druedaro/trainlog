@@ -71,7 +71,7 @@ export function DiscoverPage() {
       }
 
       try {
-        const recentEntries = await fetchRecentEntries(user.uid, 15);
+        const recentEntries = await fetchRecentEntries(user.uid, 3);
 
         if (recentEntries.length === 0) {
           setError('You need at least one journal entry to generate recommendations.');
