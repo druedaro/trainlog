@@ -1,10 +1,11 @@
 import { useLocation, useNavigate } from 'react-router';
-import { BookOpen, Compass, Activity } from 'lucide-react';
+import { BookOpen, Compass, Activity, User } from 'lucide-react';
 
 const NAV_ITEMS = [
   { path: '/', label: 'Journal', icon: BookOpen },
   { path: '/insights', label: 'Insights', icon: Activity },
   { path: '/discover', label: 'Discover', icon: Compass },
+  { path: '/profile', label: 'Profile', icon: User },
 ];
 
 export function BottomNav() {
@@ -12,7 +13,7 @@ export function BottomNav() {
   const navigate = useNavigate();
 
   // Don't show on entry detail pages or login
-  const hiddenPaths = ['/login', '/profile'];
+  const hiddenPaths = ['/login'];
   const isEntryDetail = location.pathname.startsWith('/entry/');
   if (hiddenPaths.includes(location.pathname) || isEntryDetail) {
     return null;

@@ -101,9 +101,6 @@ export function EntryDetail() {
   const handleDelete = async () => {
     if (!id || !user) return;
     
-    const confirmDelete = window.confirm("Are you sure you want to delete this entry? This cannot be undone.");
-    if (!confirmDelete) return;
-
     setIsDeleting(true);
     try {
       await deleteEntry(id);

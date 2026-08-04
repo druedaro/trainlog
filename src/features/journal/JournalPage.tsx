@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router';
-import { User } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
 import { useVoiceRecorder } from '@/features/journal/useVoiceRecorder';
@@ -117,17 +117,8 @@ export function JournalPage() {
     <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
       {/* Glass header */}
       <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-center h-9">
           <h1 className="text-lg font-bold text-gradient">Trainlog</h1>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate('/profile')}
-            aria-label="Profile"
-            className="h-9 w-9 rounded-xl text-muted-foreground hover:text-foreground"
-          >
-            <User className="h-4 w-4" />
-          </Button>
         </div>
       </header>
 

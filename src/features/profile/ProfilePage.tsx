@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { ArrowLeft, LogOut, User, Activity, Flame } from 'lucide-react';
+import { LogOut, User, Activity, Flame } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
 import { countUserEntries } from '@/lib/firestore';
@@ -27,17 +27,8 @@ export function ProfilePage() {
     <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
       {/* Header */}
       <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5">
-        <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate(-1)}
-            aria-label="Back"
-            className="h-9 w-9 rounded-xl text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 className="text-lg font-bold text-foreground">Profile</h1>
+        <div className="flex items-center justify-center h-9">
+          <h1 className="text-lg font-bold text-gradient">Profile</h1>
         </div>
       </header>
 
