@@ -6,7 +6,6 @@ import type { DiscoverArticle } from '@/types/discover';
 const CATEGORY_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   recovery: { label: 'Recovery', color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
   training: { label: 'Training', color: 'text-blue-400', bg: 'bg-blue-400/10' },
-  nutrition: { label: 'Nutrition', color: 'text-amber-400', bg: 'bg-amber-400/10' },
   mindset: { label: 'Mindset', color: 'text-purple-400', bg: 'bg-purple-400/10' },
 };
 

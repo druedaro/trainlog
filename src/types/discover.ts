@@ -1,6 +1,6 @@
 // --- Discover types ---
 
-export type DiscoverCategory = 'recovery' | 'training' | 'nutrition' | 'mindset';
+export type DiscoverCategory = 'recovery' | 'training' | 'mindset';
 
 export interface DiscoverArticle {
   id: string;

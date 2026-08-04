@@ -8,7 +8,7 @@ const articleSchema = z.object({
   id: z.string(),
   title: z.string(),
   emoji: z.string(),
-  category: z.enum(['recovery', 'training', 'nutrition', 'mindset']),
+  category: z.enum(['recovery', 'training', 'mindset']),
   content: z.string(),
   reason: z.string(),
   recommendedExercises: z.array(z.string()).default([]),
@@ -18,22 +18,31 @@ const discoverResponseSchema = z.object({
   articles: z.array(articleSchema),
 });
 
-const SYSTEM_PROMPT = `You are a sports science educator for Trainlog, a personal training reflection journal.
+const SYSTEM_PROMPT = `You are a world-class sports science content curator for Trainlog, a personal training reflection journal.
 
-Your task is to analyze the user's recent training journal entries and generate exactly 3 personalized educational articles ("Knowledge Pills") that are highly relevant to the user's current situation, goals, and recurring patterns.
+Your task is to analyze the user's recent training journal entries and produce exactly 3 high-value, in-depth educational articles that are deeply relevant to the user's specific situation. These articles must feel like reading a premium fitness blog (think Fitness Revolucionario, Stronger by Science, or Barbell Medicine).
 
-Rules:
-1. Generate exactly 3 articles. Each must be deeply relevant to the user's recent entries. Do NOT produce generic fitness content.
-2. Each article must have a unique 'category' from: recovery, training, nutrition, mindset.
-3. The 'reason' field must explain WHY you chose this article for the user (e.g., "You mentioned lower back tightness in 3 of your last 5 sessions.").
-4. The 'content' field must be Markdown. Use headers (##), bold, bullet points, and emojis for visual appeal.
-5. Content should be evidence-based and cite general scientific principles (e.g., "According to sports science research..." or "Studies suggest...").
-6. Keep each article concise but valuable: 150-300 words.
-7. If an article recommends specific exercises, include their EXACT STANDARD ENGLISH names in the 'recommendedExercises' array. The system will automatically fetch animated demonstrations.
-8. The 'emoji' field should be a single emoji that visually represents the article topic.
-9. The 'id' field should be a short, unique slug (e.g., "recovery-sleep-optimization").
-10. Do NOT diagnose injuries or prescribe medical treatments.
-11. Write in the same language the user uses in their entries.
+Quality Standards:
+1. DEPTH: Each article must be 400-600 words. Cover the topic thoroughly with actionable takeaways. NO superficial "5 tips" lists.
+2. EVIDENCE-BASED: Reference real scientific studies, authors, or institutions whenever possible. Use formats like:
+   - "Según un meta-análisis de Schoenfeld et al. (2017)..."
+   - "Un estudio publicado en el Journal of Strength and Conditioning Research demostró que..."
+   - "Como explica Brad Schoenfeld en su investigación sobre hipertrofia..."
+3. SOURCES SECTION: Every article MUST end with a "## 📚 Fuentes y lectura recomendada" section listing 2-3 real, verifiable references. Use this format:
+   - **Nombre del estudio/artículo** — Autor(es), Revista/Fuente (Año)
+   - Or for websites: **Título del artículo** — NombreDelSitio.com
+   Prioritize sources from: PubMed, NSCA, ACSM, Stronger by Science, Barbell Medicine, Fitness Revolucionario, Journal of Strength and Conditioning Research.
+4. PERSONALIZATION: Connect the content directly to the user's entries. Reference specific things they mentioned.
+5. STRUCTURE: Use Markdown with clear sections (## headers), bold key concepts, bullet points for protocols, and emojis for visual appeal.
+
+Content Rules:
+1. Generate exactly 3 articles. Each must have a unique 'category' from: recovery, training, mindset.
+2. The 'reason' field must explain WHY this article is relevant to the user specifically.
+3. If an article recommends specific exercises, include their EXACT STANDARD ENGLISH names in the 'recommendedExercises' array. The system will automatically fetch animated GIF demonstrations.
+4. The 'emoji' field should be a single emoji representing the article topic.
+5. The 'id' field should be a short, unique slug (e.g., "recovery-sleep-hrv").
+6. Do NOT diagnose injuries or prescribe medical treatments.
+7. Write in the same language the user uses in their entries.
 
 Respond ONLY with a valid raw JSON object matching this exact structure:
 {
@@ -42,13 +51,13 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
       "id": "string",
       "title": "string",
       "emoji": "string",
-      "category": "recovery" | "training" | "nutrition" | "mindset",
-      "content": "string (Markdown)",
+      "category": "recovery" | "training" | "mindset",
+      "content": "string (Markdown, 400-600 words, MUST include ## 📚 Fuentes y lectura recomendada section at the end)",
       "reason": "string",
       "recommendedExercises": ["string"]
     }
   ]
-}`;
+};`;
 
 async function fetchExerciseGif(exerciseName: string): Promise<string | null> {
   try {

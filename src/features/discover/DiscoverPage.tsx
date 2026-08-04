@@ -16,7 +16,6 @@ const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
   recovery: { label: 'Recovery', color: 'text-emerald-400' },
   training: { label: 'Training', color: 'text-blue-400' },
-  nutrition: { label: 'Nutrition', color: 'text-amber-400' },
   mindset: { label: 'Mindset', color: 'text-purple-400' },
 };
 
