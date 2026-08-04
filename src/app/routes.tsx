@@ -3,6 +3,8 @@ import { AuthGuard } from '@/features/auth/AuthGuard';
 import { LoginPage } from '@/features/auth/LoginPage';
 import { JournalPage } from '@/features/journal/JournalPage';
 import { EntryDetail } from '@/features/journal/EntryDetail';
+import { DiscoverPage } from '@/features/discover/DiscoverPage';
+import { AppLayout } from '@/app/AppLayout';
 
 export const router = createBrowserRouter([
   {
@@ -13,12 +15,21 @@ export const router = createBrowserRouter([
     Component: AuthGuard,
     children: [
       {
-        path: '/',
-        Component: JournalPage,
-      },
-      {
-        path: '/entry/:id',
-        Component: EntryDetail,
+        Component: AppLayout,
+        children: [
+          {
+            path: '/',
+            Component: JournalPage,
+          },
+          {
+            path: '/discover',
+            Component: DiscoverPage,
+          },
+          {
+            path: '/entry/:id',
+            Component: EntryDetail,
+          },
+        ],
       },
     ],
   },

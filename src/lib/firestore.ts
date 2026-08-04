@@ -4,6 +4,7 @@ import {
   addDoc,
   getDoc,
   getDocs,
+  setDoc,
   updateDoc,
   query,
   where,
@@ -14,6 +15,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { JournalEntry, EntryAnalysis } from '@/types/entry';
+import type { DiscoverDocument } from '@/types/discover';
 
 const ENTRIES_COLLECTION = 'entries';
 
@@ -125,4 +127,27 @@ export async function fetchRecentEntries(
   return snapshot.docs.map((docSnap) =>
     mapDocumentToEntry(docSnap.id, docSnap.data()),
   );
+}
+
+// --- Discover ---
+
+export async function fetchDiscoverArticles(
+  userId: string,
+): Promise<DiscoverDocument | null> {
+  const docRef = doc(db, 'users', userId, 'discover', 'latest');
+  const docSnap = await getDoc(docRef);
+
+  if (!docSnap.exists()) {
+    return null;
+  }
+
+  return docSnap.data() as DiscoverDocument;
+}
+
+export async function saveDiscoverArticles(
+  userId: string,
+  data: DiscoverDocument,
+): Promise<void> {
+  const docRef = doc(db, 'users', userId, 'discover', 'latest');
+  await setDoc(docRef, data);
 }
