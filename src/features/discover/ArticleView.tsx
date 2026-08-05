@@ -54,9 +54,16 @@ export function ArticleView({ article, isSaved = false, onToggleSave, onBack }: 
             {article.emoji}
           </div>
           <div className="min-w-0 flex-1">
-            <span className={`text-[10px] font-bold uppercase tracking-widest ${catConfig.color}`}>
-              {catConfig.label}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className={`text-[10px] font-bold uppercase tracking-widest ${catConfig.color}`}>
+                {catConfig.label}
+              </span>
+              {article.isRead && (
+                <span className="ml-auto text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full text-muted-foreground/60 bg-muted/10">
+                  ✓ Leído
+                </span>
+              )}
+            </div>
             <h1 className="mt-1 text-lg font-bold leading-tight text-foreground">
               {article.title}
             </h1>

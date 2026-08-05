@@ -8,6 +8,7 @@ export interface DiscoverArticle {
   category: DiscoverCategory;
   content: string;  // Markdown (may include ExerciseDB GIFs)
   reason: string;   // e.g. "Based on your recent fatigue reports"
+  isRead?: boolean;
 }
 
 export interface DiscoverDocument {

@@ -10,12 +10,21 @@ import {
   fetchSavedArticles,
   saveArticle,
   removeSavedArticle,
+  markArticleAsRead,
 } from '@/lib/firestore';
 import { generateDiscover } from '@/lib/api';
 import { ArticleView } from '@/features/discover/ArticleView';
 import type { DiscoverArticle, DiscoverDocument } from '@/types/discover';
 
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+
+const CATEGORY_ORDER = ['training', 'recovery', 'mindset', 'nutrition'];
+
+function sortArticles(articles: DiscoverArticle[]) {
+  return [...articles].sort((a, b) => {
+    return CATEGORY_ORDER.indexOf(a.category) - CATEGORY_ORDER.indexOf(b.category);
+  });
+}
 
 const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
   recovery: { label: 'Recuperación', color: 'text-emerald-400' },
@@ -55,7 +64,7 @@ export function DiscoverPage() {
       const cached = await fetchDiscoverArticles(user.uid);
 
       if (cached && cached.articles.length > 0) {
-        setArticles(cached.articles);
+        setArticles(sortArticles(cached.articles));
         setUpdatedAt(cached.updatedAt);
 
         // Auto-update if older than 3 days
@@ -132,7 +141,7 @@ export function DiscoverPage() {
 
         await saveDiscoverArticles(user.uid, discoverDoc);
 
-        setArticles(discoverDoc.articles);
+        setArticles(sortArticles(discoverDoc.articles));
         setUpdatedAt(discoverDoc.updatedAt);
       } catch (e) {
         console.error('Failed to generate Discover articles:', e);
@@ -172,6 +181,16 @@ export function DiscoverPage() {
     },
     [user, savedArticles],
   );
+
+  const handleArticleClick = async (article: DiscoverArticle) => {
+    setSelectedArticle(article);
+    
+    if (!article.isRead && activeTab === 'explore' && user) {
+      // Optimistic local update
+      setArticles(prev => prev.map(a => a.id === article.id ? { ...a, isRead: true } : a));
+      await markArticleAsRead(user.uid, article.id).catch(console.error);
+    }
+  };
 
   if (selectedArticle) {
     const isSaved = savedArticles.some((a) => a.id === selectedArticle.id);
@@ -310,7 +329,7 @@ export function DiscoverPage() {
               return (
                 <button
                   key={article.id}
-                  onClick={() => setSelectedArticle(article)}
+                  onClick={() => handleArticleClick(article)}
                   className="group w-full rounded-2xl border border-border/40 bg-card/50 p-5 text-left backdrop-blur-sm transition-all hover:border-primary/30 hover:bg-primary/5 active:scale-[0.98]"
                 >
                   <div className="flex items-start gap-4">
@@ -322,6 +341,15 @@ export function DiscoverPage() {
                         <span className={`text-[10px] font-bold uppercase tracking-widest ${catConfig.color}`}>
                           {catConfig.label}
                         </span>
+                        {activeTab === 'explore' && (
+                          <span className={`ml-auto text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full ${
+                            article.isRead 
+                              ? 'text-muted-foreground/60' 
+                              : 'bg-primary/20 text-primary animate-pulse'
+                          }`}>
+                            {article.isRead ? '✓ Leído' : 'Nuevo'}
+                          </span>
+                        )}
                       </div>
                       <h3 className="mt-1 text-sm font-semibold text-foreground line-clamp-2">
                         {article.title}

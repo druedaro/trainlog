@@ -184,6 +184,25 @@ export async function fetchDiscoverArticles(
   return docSnap.data() as DiscoverDocument;
 }
 
+export async function markArticleAsRead(
+  userId: string,
+  articleId: string,
+): Promise<void> {
+  const docRef = doc(db, 'users', userId, 'discover', 'latest');
+  const docSnap = await getDoc(docRef);
+
+  if (!docSnap.exists()) {
+    return;
+  }
+
+  const data = docSnap.data() as DiscoverDocument;
+  const updatedArticles = data.articles.map(article => 
+    article.id === articleId ? { ...article, isRead: true } : article
+  );
+
+  await updateDoc(docRef, { articles: updatedArticles });
+}
+
 export async function fetchEntriesByDays(
   userId: string,
   days: number,
