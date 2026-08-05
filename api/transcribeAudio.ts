@@ -79,6 +79,7 @@ export default async function handler(
       file: audioFile,
       model: 'whisper-large-v3',
       language: 'es', // Spanish — matches user's primary language
+      prompt: 'El usuario está grabando un diario de entrenamiento en español. Habla sobre deporte, gimnasio, pesas, ejercicios, repeticiones, series, nutrición, calorías, peso corporal, descanso, sueño y recuperación física.',
     });
 
     const transcript = (transcription.text ?? '').trim();

@@ -36,9 +36,9 @@ Quality Standards:
 5. STRUCTURE: Use Markdown with clear sections (## headers), bold key concepts, bullet points for protocols, and emojis for visual appeal.
 
 Content Rules:
-1. Generate exactly 3 articles. Each must have a unique 'category' from: recovery, training, mindset, nutrition.
+1. Generate exactly 4 articles, one for each category: recovery, training, mindset, nutrition.
 2. The 'reason' field must explain WHY this article is relevant to the user specifically.
-3. If an article recommends specific exercises, include their EXACT STANDARD ENGLISH names in the 'recommendedExercises' array. The system will automatically fetch animated GIF demonstrations.
+3. If an article recommends specific physical exercises (and ONLY if relevant to physical training or mobility), include their EXACT STANDARD ENGLISH names in the 'recommendedExercises' array. DO NOT recommend exercises for nutrition or mindset articles unless directly relevant. Leave the array empty otherwise.
 4. The 'emoji' field should be a single emoji representing the article topic.
 5. The 'id' field should be a short, unique slug (e.g., "recovery-sleep-hrv").
 6. Do NOT diagnose injuries or prescribe medical treatments.
