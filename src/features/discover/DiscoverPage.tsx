@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useLocation } from 'react-router';
 import { RefreshCw, Sparkles, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
@@ -21,6 +22,7 @@ const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
 
 export function DiscoverPage() {
   const { user } = useAuth();
+  const location = useLocation();
 
   const [articles, setArticles] = useState<DiscoverArticle[]>([]);
   const [updatedAt, setUpdatedAt] = useState<number | null>(null);
@@ -28,6 +30,13 @@ export function DiscoverPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState<DiscoverArticle | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Reset selected article if we get a navReset signal from BottomNav
+  useEffect(() => {
+    if (location.state?.navReset) {
+      setSelectedArticle(null);
+    }
+  }, [location.state?.navReset]);
 
   const loadArticles = useCallback(async () => {
     if (!user) return;

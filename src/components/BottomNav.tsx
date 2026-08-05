@@ -18,6 +18,12 @@ export function BottomNav() {
     return null;
   }
 
+  const handleNavClick = (path: string) => {
+    // Always navigate with a fresh state timestamp so the target page
+    // can detect "user tapped the tab" and reset its internal state.
+    navigate(path, { state: { navReset: Date.now() } });
+  };
+
   return (
     <nav className="glass fixed bottom-0 left-0 right-0 z-30 border-t border-border/40">
       <div className="mx-auto flex max-w-lg">
@@ -30,7 +36,7 @@ export function BottomNav() {
           return (
             <button
               key={path}
-              onClick={() => navigate(path)}
+              onClick={() => handleNavClick(path)}
               className={`flex flex-1 flex-col items-center gap-1 py-3 transition-colors ${
                 isActive
                   ? 'text-primary'
