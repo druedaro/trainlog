@@ -99,6 +99,7 @@ export function DiscoverPage() {
   }, [loadArticles]);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     if (activeTab === 'saved') {
       loadSavedArticles();
     }
