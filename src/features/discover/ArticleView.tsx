@@ -26,29 +26,30 @@ export function ArticleView({ article, isSaved = false, onToggleSave, onBack }: 
 
   return (
     <div className="mx-auto min-h-screen max-w-lg bg-background">
-      <div className="relative overflow-hidden border-b border-border/40 px-5 pb-6 pt-5">
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
-        <div className="flex items-center justify-between mb-4">
+      <header className="glass sticky top-0 z-20 flex items-center justify-between border-b border-border/40 px-5 py-3">
+        <Button
+          variant="ghost"
+          onClick={onBack}
+          className="relative gap-2 rounded-xl px-3 text-white hover:text-white/80 hover:bg-white/10"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Volver
+        </Button>
+        {onToggleSave && (
           <Button
             variant="ghost"
-            onClick={onBack}
-            className="relative gap-2 rounded-xl px-3 text-white hover:text-white/80 hover:bg-white/10"
+            size="icon"
+            onClick={onToggleSave}
+            className={`relative rounded-xl ${isSaved ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+            aria-label={isSaved ? "Quitar de guardados" : "Guardar artículo"}
           >
-            <ArrowLeft className="h-4 w-4" />
-            Volver
+            <Bookmark className={`h-5 w-5 ${isSaved ? 'fill-current' : ''}`} />
           </Button>
-          {onToggleSave && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onToggleSave}
-              className={`relative rounded-xl ${isSaved ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
-              aria-label={isSaved ? "Quitar de guardados" : "Guardar artículo"}
-            >
-              <Bookmark className={`h-5 w-5 ${isSaved ? 'fill-current' : ''}`} />
-            </Button>
-          )}
-        </div>
+        )}
+      </header>
+
+      <div className="relative overflow-hidden border-b border-border/40 px-5 pb-6 pt-5">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
         <div className="relative flex items-start gap-4">
           <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-2xl">
             {article.emoji}

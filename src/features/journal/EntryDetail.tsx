@@ -142,29 +142,30 @@ export function EntryDetail() {
 
   return (
     <div className="mx-auto min-h-screen max-w-lg bg-background">
+      <header className="glass sticky top-0 z-20 flex items-center justify-between border-b border-border/40 px-5 py-3 bg-background/80 backdrop-blur-md">
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/')}
+          className="relative gap-2 rounded-xl px-3 text-white hover:text-white/80 hover:bg-white/10"
+          disabled={isDeleting}
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Volver
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleDelete}
+          disabled={isDeleting}
+          className="h-9 w-9 rounded-xl text-destructive hover:bg-destructive/10 hover:text-destructive"
+          aria-label="Delete entry"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </header>
+
       <div className="relative overflow-hidden border-b border-border/40 px-5 pb-6 pt-5">
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
-        <div className="relative mb-4 flex items-center justify-between">
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/')}
-            className="relative gap-2 rounded-xl px-3 text-white hover:text-white/80 hover:bg-white/10"
-            disabled={isDeleting}
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Volver
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleDelete}
-            disabled={isDeleting}
-            className="h-9 w-9 rounded-xl text-destructive hover:bg-destructive/10 hover:text-destructive"
-            aria-label="Delete entry"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
         <div className="relative">
           <p className="text-sm font-medium text-muted-foreground">
             {format(entry.createdAt, 'PPPP')}
