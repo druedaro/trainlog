@@ -56,7 +56,7 @@ export function DayEntriesPage() {
         </div>
       </header>
 
-      <main className="flex-1 px-5 py-6 animate-slide-up">
+      <main className="flex-1 px-5 pb-24 pt-6 animate-slide-up">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-12">
             <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-primary/30 border-t-primary" />

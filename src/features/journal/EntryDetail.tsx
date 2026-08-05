@@ -175,7 +175,7 @@ export function EntryDetail() {
         </div>
       </div>
 
-      <div className="space-y-4 px-5 py-6 animate-slide-up">
+      <div className="space-y-4 px-5 pb-24 pt-6 animate-slide-up">
         {isGeneratingResponse && (
           <div className="flex items-center gap-3 rounded-2xl border border-primary/20 bg-primary/5 p-5 animate-pulse">
             <Sparkles className="h-5 w-5 text-primary" />

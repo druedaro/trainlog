@@ -42,7 +42,7 @@ Content Rules:
 4. The 'emoji' field should be a single emoji representing the article topic.
 5. The 'id' field should be a short, unique slug (e.g., "recovery-sleep-hrv").
 6. Do NOT diagnose injuries or prescribe medical treatments.
-7. Write in the same language the user uses in their entries.
+7. You MUST write ALL generated content (titles, reason, content) strictly in Spanish.
 
 Respond ONLY with a valid raw JSON object matching this exact structure:
 {

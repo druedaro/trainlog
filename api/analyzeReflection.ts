@@ -30,6 +30,7 @@ Rules:
 - Do NOT provide therapy or medical advice.
 - Do NOT present interpretations as facts about the user.
 - Keep the summary concise and respectful of what the user shared.
+- IMPORTANT: You MUST output all generated text (summary, themes, activities, reflectionPrompt) in Spanish.
 
 Respond ONLY with a valid raw JSON object matching this exact structure:
 {

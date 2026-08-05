@@ -12,8 +12,8 @@ export function BottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Don't show on entry detail, day entries, or login
-  const hiddenPrefixes = ['/login', '/entry/', '/day/'];
+  // Don't show on login
+  const hiddenPrefixes = ['/login'];
   if (hiddenPrefixes.some((p) => location.pathname.startsWith(p))) {
     return null;
   }
