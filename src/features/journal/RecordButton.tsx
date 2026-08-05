@@ -27,12 +27,10 @@ export function RecordButton({
     return (
       <div className="flex flex-col items-center gap-5 animate-fade-in">
         <div className="relative flex items-center justify-center">
-          {/* Concentric pulse rings */}
           <div className="absolute h-24 w-24 rounded-full border border-destructive/30 animate-recording-ring-1" />
           <div className="absolute h-24 w-24 rounded-full border border-destructive/20 animate-recording-ring-2" />
           <div className="absolute h-24 w-24 rounded-full border border-destructive/10 animate-recording-ring-3" />
 
-          {/* Stop button */}
           <button
             onClick={onStop}
             className="relative z-10 flex h-24 w-24 items-center justify-center rounded-full bg-destructive glow-destructive transition-transform active:scale-95"

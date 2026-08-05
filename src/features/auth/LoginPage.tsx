@@ -19,13 +19,11 @@ export function LoginPage() {
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-6">
-      {/* Ambient glow */}
       <div className="pointer-events-none absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2">
         <div className="h-[300px] w-[300px] rounded-full bg-primary/10 blur-[100px]" />
       </div>
 
       <div className="relative z-10 flex flex-col items-center animate-slide-up">
-        {/* Logo area */}
         <div className="mb-2 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Z" fill="none" stroke="hsl(172, 66%, 50%)" strokeWidth="1.5"/>
@@ -40,7 +38,6 @@ export function LoginPage() {
           Tu diario personal de reflexión deportiva
         </p>
 
-        {/* Sign-in card */}
         <div className="mt-10 w-full max-w-sm rounded-2xl border border-border/50 bg-card/60 p-6 shadow-lg backdrop-blur-xl">
           <h2 className="mb-1 text-center text-lg font-semibold text-foreground">
             Bienvenido

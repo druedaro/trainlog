@@ -38,7 +38,6 @@ export function AnalysisView({
     <div className="space-y-4">
       <h2 className="text-lg font-semibold text-foreground">Análisis de tu reflexión</h2>
 
-      {/* Summary */}
       <div className="rounded-2xl border border-border/40 bg-card/50 p-5 backdrop-blur-sm">
         <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           Resumen
@@ -46,7 +45,6 @@ export function AnalysisView({
         <p className="text-sm leading-relaxed text-foreground">{analysis.summary}</p>
       </div>
 
-      {/* Themes & Activities */}
       {((analysis.themes?.length ?? 0) > 0 || (analysis.activities?.length ?? 0) > 0) && (
         <div className="rounded-2xl border border-border/40 bg-card/50 p-5 backdrop-blur-sm space-y-4">
           {(analysis.themes?.length ?? 0) > 0 && (
@@ -87,7 +85,6 @@ export function AnalysisView({
         </div>
       )}
 
-      {/* Energy & Mood */}
       {(energyInfo || moodInfo) && (
         <div className="grid grid-cols-2 gap-3">
           {energyInfo && (
@@ -119,7 +116,6 @@ export function AnalysisView({
         </div>
       )}
 
-      {/* Reflection prompt */}
       {analysis.reflectionPrompt && (
         <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
           <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary/70">
@@ -131,7 +127,6 @@ export function AnalysisView({
         </div>
       )}
 
-      {/* Actions */}
       <div className="flex gap-3 pt-1">
         <Button
           onClick={onConfirm}

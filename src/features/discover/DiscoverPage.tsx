@@ -7,6 +7,9 @@ import {
   fetchDiscoverArticles,
   fetchRecentEntries,
   saveDiscoverArticles,
+  fetchSavedArticles,
+  saveArticle,
+  removeSavedArticle,
 } from '@/lib/firestore';
 import { generateDiscover } from '@/lib/api';
 import { ArticleView } from '@/features/discover/ArticleView';
@@ -18,6 +21,7 @@ const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
   recovery: { label: 'Recuperación', color: 'text-emerald-400' },
   training: { label: 'Entrenamiento', color: 'text-blue-400' },
   mindset: { label: 'Mentalidad', color: 'text-purple-400' },
+  nutrition: { label: 'Nutrición', color: 'text-orange-400' },
 };
 
 export function DiscoverPage() {
@@ -25,8 +29,11 @@ export function DiscoverPage() {
   const location = useLocation();
 
   const [articles, setArticles] = useState<DiscoverArticle[]>([]);
+  const [savedArticles, setSavedArticles] = useState<DiscoverArticle[]>([]);
+  const [activeTab, setActiveTab] = useState<'explore' | 'saved'>('explore');
   const [updatedAt, setUpdatedAt] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingSaved, setIsLoadingSaved] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState<DiscoverArticle | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -65,9 +72,28 @@ export function DiscoverPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
+  const loadSavedArticles = useCallback(async () => {
+    if (!user) return;
+    setIsLoadingSaved(true);
+    try {
+      const saved = await fetchSavedArticles(user.uid);
+      setSavedArticles(saved);
+    } catch (e) {
+      console.error('Failed to load saved articles:', e);
+    } finally {
+      setIsLoadingSaved(false);
+    }
+  }, [user]);
+
   useEffect(() => {
     loadArticles();
   }, [loadArticles]);
+
+  useEffect(() => {
+    if (activeTab === 'saved') {
+      loadSavedArticles();
+    }
+  }, [activeTab, loadSavedArticles]);
 
   const handleGenerate = useCallback(
     async (silent = false) => {
@@ -120,11 +146,40 @@ export function DiscoverPage() {
     [user],
   );
 
-  // If user selects an article, show full view
+  const handleToggleSave = useCallback(
+    async (article: DiscoverArticle) => {
+      if (!user) return;
+      const isSaved = savedArticles.some((a) => a.id === article.id);
+
+      // Optimistic update
+      if (isSaved) {
+        setSavedArticles((prev) => prev.filter((a) => a.id !== article.id));
+        try {
+          await removeSavedArticle(user.uid, article.id);
+        } catch (e) {
+          console.error('Failed to remove saved article:', e);
+          setSavedArticles((prev) => [...prev, article]); // rollback
+        }
+      } else {
+        setSavedArticles((prev) => [...prev, article]);
+        try {
+          await saveArticle(user.uid, article);
+        } catch (e) {
+          console.error('Failed to save article:', e);
+          setSavedArticles((prev) => prev.filter((a) => a.id !== article.id)); // rollback
+        }
+      }
+    },
+    [user, savedArticles],
+  );
+
   if (selectedArticle) {
+    const isSaved = savedArticles.some((a) => a.id === selectedArticle.id);
     return (
       <ArticleView
         article={selectedArticle}
+        isSaved={isSaved}
+        onToggleSave={() => handleToggleSave(selectedArticle)}
         onBack={() => setSelectedArticle(null)}
       />
     );
@@ -132,40 +187,65 @@ export function DiscoverPage() {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
-      {/* Header */}
-      <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5">
-        <div className="flex items-center justify-between">
+      <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 pt-3.5 pb-2">
+        <div className="flex items-center justify-between mb-3">
           <h1 className="text-lg font-bold text-gradient">Discover</h1>
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => handleGenerate(false)}
-            disabled={isGenerating}
-            aria-label="Generate new recommendations"
+            onClick={() => {
+              if (activeTab === 'explore') {
+                handleGenerate(false);
+              } else {
+                loadSavedArticles();
+              }
+            }}
+            disabled={isGenerating || isLoadingSaved}
+            aria-label="Refresh"
             className="h-9 w-9 rounded-xl text-muted-foreground hover:text-foreground"
           >
-            <RefreshCw className={`h-4 w-4 ${isGenerating ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`h-4 w-4 ${(isGenerating || isLoadingSaved) ? 'animate-spin' : ''}`} />
           </Button>
+        </div>
+
+        <div className="flex gap-2">
+          <button
+            onClick={() => setActiveTab('explore')}
+            className={`flex-1 rounded-lg py-2 text-xs font-semibold transition-colors ${
+              activeTab === 'explore'
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-primary/5 text-primary/70 hover:bg-primary/10'
+            }`}
+          >
+            Explorar
+          </button>
+          <button
+            onClick={() => setActiveTab('saved')}
+            className={`flex-1 rounded-lg py-2 text-xs font-semibold transition-colors ${
+              activeTab === 'saved'
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-primary/5 text-primary/70 hover:bg-primary/10'
+            }`}
+          >
+            Guardados
+          </button>
         </div>
       </header>
 
       <main className="flex-1 px-5 py-6">
-        {/* Error */}
         {error && (
           <div className="mb-5 animate-scale-in rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3">
             <p className="text-sm text-destructive">{error}</p>
           </div>
         )}
 
-        {/* Loading state */}
-        {isLoading && (
+        {((activeTab === 'explore' && isLoading) || (activeTab === 'saved' && isLoadingSaved)) && (
           <div className="flex flex-col items-center gap-5 pt-16 animate-fade-in">
             <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-primary/30 border-t-primary" />
-            <p className="text-sm text-muted-foreground">Cargando recomendaciones…</p>
+            <p className="text-sm text-muted-foreground">Cargando…</p>
           </div>
         )}
 
-        {/* Generating state */}
         {isGenerating && (
           <div className="flex flex-col items-center gap-5 pt-16 animate-fade-in">
             <div className="relative">
@@ -177,8 +257,7 @@ export function DiscoverPage() {
           </div>
         )}
 
-        {/* Empty state */}
-        {!isLoading && !isGenerating && articles.length === 0 && (
+        {activeTab === 'explore' && !isLoading && !isGenerating && articles.length === 0 && (
           <div className="flex flex-col items-center gap-6 pt-12 animate-fade-in">
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
               <Sparkles className="h-8 w-8 text-primary" />
@@ -199,17 +278,30 @@ export function DiscoverPage() {
           </div>
         )}
 
-        {/* Articles list */}
-        {!isLoading && !isGenerating && articles.length > 0 && (
+        {activeTab === 'saved' && !isLoadingSaved && savedArticles.length === 0 && (
+          <div className="flex flex-col items-center gap-6 pt-12 animate-fade-in text-center">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+              <span className="text-3xl">🔖</span>
+            </div>
+            <div>
+              <h2 className="text-base font-semibold text-foreground">Aún no has guardado nada</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Toca el icono de guardar en cualquier artículo para tenerlo a mano aquí.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {((activeTab === 'explore' && !isLoading && !isGenerating && articles.length > 0) ||
+          (activeTab === 'saved' && !isLoadingSaved && savedArticles.length > 0)) && (
           <div className="space-y-4 animate-slide-up">
-            {/* Last updated */}
-            {updatedAt && (
+            {activeTab === 'explore' && updatedAt && (
               <p className="text-xs text-muted-foreground/60">
                 Última actualización: {new Date(updatedAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
               </p>
             )}
 
-            {articles.map((article) => {
+            {(activeTab === 'explore' ? articles : savedArticles).map((article) => {
               const catConfig = CATEGORY_CONFIG[article.category] ?? {
                 label: article.category,
                 color: 'text-muted-foreground',

@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// --- Entry types ---
 
 export const entryAnalysisSchema = z.object({
   summary: z

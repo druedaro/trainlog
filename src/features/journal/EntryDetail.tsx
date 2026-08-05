@@ -142,7 +142,6 @@ export function EntryDetail() {
 
   return (
     <div className="mx-auto min-h-screen max-w-lg bg-background">
-      {/* Header with gradient */}
       <div className="relative overflow-hidden border-b border-border/40 px-5 pb-6 pt-5">
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
         <div className="relative mb-4 flex items-center justify-between">
@@ -177,7 +176,6 @@ export function EntryDetail() {
       </div>
 
       <div className="space-y-4 px-5 py-6 animate-slide-up">
-        {/* Contextual Response */}
         {isGeneratingResponse && (
           <div className="flex items-center gap-3 rounded-2xl border border-primary/20 bg-primary/5 p-5 animate-pulse">
             <Sparkles className="h-5 w-5 text-primary" />
@@ -214,7 +212,6 @@ export function EntryDetail() {
           </div>
         )}
 
-        {/* Summary */}
         <div className="rounded-2xl border border-border/40 bg-card/50 p-5 backdrop-blur-sm">
           <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Resumen
@@ -222,7 +219,6 @@ export function EntryDetail() {
           <p className="text-sm leading-relaxed text-foreground">{analysis.summary}</p>
         </div>
 
-        {/* Themes & Activities */}
         {((analysis.themes?.length ?? 0) > 0 || (analysis.activities?.length ?? 0) > 0) && (
           <div className="rounded-2xl border border-border/40 bg-card/50 p-5 backdrop-blur-sm">
             {(analysis.themes?.length ?? 0) > 0 && (
@@ -263,7 +259,6 @@ export function EntryDetail() {
           </div>
         )}
 
-        {/* Energy & Mood */}
         {(energyInfo || moodInfo) && (
           <div className="grid grid-cols-2 gap-3">
             {energyInfo && (
@@ -295,7 +290,6 @@ export function EntryDetail() {
           </div>
         )}
 
-        {/* Reflection prompt */}
         {analysis.reflectionPrompt && (
           <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
             <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary/70">
@@ -307,7 +301,6 @@ export function EntryDetail() {
           </div>
         )}
 
-        {/* Original transcript */}
         <div className="rounded-2xl border border-border/40 bg-card/50 p-5 backdrop-blur-sm">
           <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Transcripción original

@@ -25,7 +25,6 @@ export function ProfilePage() {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
-      {/* Header */}
       <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5">
         <div className="flex items-center justify-center h-9">
           <h1 className="text-lg font-bold text-gradient">Perfil</h1>
@@ -33,7 +32,6 @@ export function ProfilePage() {
       </header>
 
       <main className="flex-1 px-5 py-8 space-y-8 animate-slide-up">
-        {/* User Info */}
         <section className="flex flex-col items-center justify-center text-center">
           <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 border border-primary/20 shadow-inner">
             <User className="h-10 w-10 text-primary" />
@@ -42,7 +40,6 @@ export function ProfilePage() {
           <p className="mt-1 text-sm text-muted-foreground">{user?.email}</p>
         </section>
 
-        {/* Stats */}
         <section className="grid grid-cols-2 gap-4">
           <div className="rounded-2xl border border-border/40 bg-card/50 p-5 text-center backdrop-blur-sm">
             <Activity className="mx-auto mb-2 h-6 w-6 text-emerald-400" />
@@ -64,7 +61,6 @@ export function ProfilePage() {
           </div>
         </section>
 
-        {/* Actions */}
         <section className="pt-6 border-t border-border/40 space-y-4">
           <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-2">Cuenta</h3>
           <Button

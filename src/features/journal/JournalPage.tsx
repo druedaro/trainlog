@@ -115,7 +115,6 @@ export function JournalPage() {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
-      {/* Glass header */}
       <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5">
         <div className="flex items-center justify-center h-9">
           <h1 className="text-lg font-bold text-gradient">Trainlog</h1>
@@ -123,7 +122,6 @@ export function JournalPage() {
       </header>
 
       <main className="flex-1 px-5 py-6">
-        {/* Error display */}
         {(errorMessage || recorder.errorMessage) && (
           <div className="mb-5 animate-scale-in rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3">
             <p className="text-sm text-destructive">
@@ -132,7 +130,6 @@ export function JournalPage() {
           </div>
         )}
 
-        {/* Flow: Idle - Show record button + calendar */}
         {flowStep === 'idle' && !hasBlob && (
           <div className="space-y-8 animate-fade-in">
             <div className="flex justify-center pt-6">
@@ -147,7 +144,6 @@ export function JournalPage() {
           </div>
         )}
 
-        {/* Flow: Recording in progress */}
         {recorder.status === 'recording' && (
           <div className="flex justify-center pt-12 animate-fade-in">
             <RecordButton
@@ -159,7 +155,6 @@ export function JournalPage() {
           </div>
         )}
 
-        {/* Flow: Recording done, ready to transcribe */}
         {flowStep === 'idle' && hasBlob && (
           <div className="flex flex-col items-center gap-5 pt-10 animate-slide-up">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
@@ -186,7 +181,6 @@ export function JournalPage() {
           </div>
         )}
 
-        {/* Flow: Transcribing */}
         {flowStep === 'transcribing' && (
           <div className="flex flex-col items-center gap-5 pt-16 animate-fade-in">
             <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-primary/30 border-t-primary" />
@@ -194,7 +188,6 @@ export function JournalPage() {
           </div>
         )}
 
-        {/* Flow: Editing transcript */}
         {flowStep === 'editing' && (
           <div className="animate-slide-up">
             <TranscriptEditor
@@ -206,7 +199,6 @@ export function JournalPage() {
           </div>
         )}
 
-        {/* Flow: Analyzing */}
         {flowStep === 'analyzing' && (
           <div className="flex flex-col items-center gap-5 pt-16 animate-fade-in">
             <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-primary/30 border-t-primary" />
@@ -214,7 +206,6 @@ export function JournalPage() {
           </div>
         )}
 
-        {/* Flow: Reviewing analysis */}
         {flowStep === 'reviewing' && analysis && (
           <div className="animate-slide-up">
             <AnalysisView
@@ -229,7 +220,6 @@ export function JournalPage() {
           </div>
         )}
 
-        {/* Flow: Saving */}
         {flowStep === 'saving' && (
           <div className="flex flex-col items-center gap-5 pt-16 animate-fade-in">
             <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-primary/30 border-t-primary" />

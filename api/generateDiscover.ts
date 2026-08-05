@@ -8,7 +8,7 @@ const articleSchema = z.object({
   id: z.string(),
   title: z.string(),
   emoji: z.string(),
-  category: z.enum(['recovery', 'training', 'mindset']),
+  category: z.enum(['recovery', 'training', 'mindset', 'nutrition']),
   content: z.string(),
   reason: z.string(),
   recommendedExercises: z.array(z.string()).default([]),
@@ -36,7 +36,7 @@ Quality Standards:
 5. STRUCTURE: Use Markdown with clear sections (## headers), bold key concepts, bullet points for protocols, and emojis for visual appeal.
 
 Content Rules:
-1. Generate exactly 3 articles. Each must have a unique 'category' from: recovery, training, mindset.
+1. Generate exactly 3 articles. Each must have a unique 'category' from: recovery, training, mindset, nutrition.
 2. The 'reason' field must explain WHY this article is relevant to the user specifically.
 3. If an article recommends specific exercises, include their EXACT STANDARD ENGLISH names in the 'recommendedExercises' array. The system will automatically fetch animated GIF demonstrations.
 4. The 'emoji' field should be a single emoji representing the article topic.
@@ -51,7 +51,7 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
       "id": "string",
       "title": "string",
       "emoji": "string",
-      "category": "recovery" | "training" | "mindset",
+      "category": "recovery" | "training" | "mindset" | "nutrition",
       "content": "string (Markdown, 400-600 words, MUST include ## 📚 Fuentes y lectura recomendada section at the end)",
       "reason": "string",
       "recommendedExercises": ["string"]

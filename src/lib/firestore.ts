@@ -17,7 +17,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { JournalEntry, EntryAnalysis } from '@/types/entry';
-import type { DiscoverDocument } from '@/types/discover';
+import type { DiscoverDocument, DiscoverArticle } from '@/types/discover';
 
 const ENTRIES_COLLECTION = 'entries';
 
@@ -170,7 +170,6 @@ export async function countUserEntries(userId: string): Promise<number> {
   return snapshot.data().count;
 }
 
-// --- Discover ---
 
 export async function fetchDiscoverArticles(
   userId: string,
@@ -184,7 +183,6 @@ export async function fetchDiscoverArticles(
 
   return docSnap.data() as DiscoverDocument;
 }
-// --- Insights ---
 
 export async function fetchEntriesByDays(
   userId: string,
@@ -234,4 +232,29 @@ export async function saveDiscoverArticles(
 ): Promise<void> {
   const docRef = doc(db, 'users', userId, 'discover', 'latest');
   await setDoc(docRef, data);
+}
+
+
+export async function saveArticle(
+  userId: string,
+  article: DiscoverArticle,
+): Promise<void> {
+  const docRef = doc(db, 'users', userId, 'savedArticles', article.id);
+  await setDoc(docRef, article);
+}
+
+export async function removeSavedArticle(
+  userId: string,
+  articleId: string,
+): Promise<void> {
+  const docRef = doc(db, 'users', userId, 'savedArticles', articleId);
+  await deleteDoc(docRef);
+}
+
+export async function fetchSavedArticles(
+  userId: string,
+): Promise<DiscoverArticle[]> {
+  const q = query(collection(db, 'users', userId, 'savedArticles'));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((docSnap) => docSnap.data() as DiscoverArticle);
 }

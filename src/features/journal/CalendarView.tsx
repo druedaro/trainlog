@@ -57,7 +57,6 @@ export function CalendarView() {
 
   return (
     <div className="flex flex-col items-center animate-fade-in">
-      {/* Calendar */}
       <div className="flex w-full justify-center rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
         <DayPicker
           locale={es}

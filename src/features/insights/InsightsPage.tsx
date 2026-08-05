@@ -13,7 +13,6 @@ import type { InsightsDocument } from '@/types/insights';
 
 
 
-// Helpers to map string values to numbers for simple bar charts
 const ENERGY_VALUES: Record<string, number> = {
   very_low: 1,
   low: 2,
@@ -99,7 +98,6 @@ export function InsightsPage() {
     }
   }, [user, entries]);
 
-  // Data processing for charts
   const stats = useMemo(() => {
     const themeCounts: Record<string, number> = {};
     let totalEnergy = 0;
@@ -108,19 +106,16 @@ export function InsightsPage() {
     let moodCount = 0;
 
     entries.forEach((entry) => {
-      // Themes
       entry.analysis.themes?.forEach((theme) => {
         const lower = theme.toLowerCase();
         themeCounts[lower] = (themeCounts[lower] || 0) + 1;
       });
 
-      // Energy
       if (entry.analysis.perceivedEnergy && ENERGY_VALUES[entry.analysis.perceivedEnergy]) {
         totalEnergy += ENERGY_VALUES[entry.analysis.perceivedEnergy]!;
         energyCount++;
       }
 
-      // Mood
       if (entry.analysis.perceivedMood && MOOD_VALUES[entry.analysis.perceivedMood]) {
         totalMood += MOOD_VALUES[entry.analysis.perceivedMood]!;
         moodCount++;
@@ -141,7 +136,6 @@ export function InsightsPage() {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
-      {/* Header */}
       <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5">
         <h1 className="text-lg font-bold text-gradient">Resumen semanal</h1>
       </header>
@@ -173,14 +167,12 @@ export function InsightsPage() {
           </div>
         ) : (
           <>
-            {/* Raw Stats Section */}
             <section className="space-y-5">
               <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
                 Los números (últimos 7 días)
               </h2>
               
               <div className="grid grid-cols-2 gap-4">
-                {/* Energy Chart */}
                 <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
                   <span className="text-xs font-semibold text-muted-foreground">Energía media</span>
                   <div className="mt-3 flex h-24 items-end gap-1.5">
@@ -198,7 +190,6 @@ export function InsightsPage() {
                   </div>
                 </div>
 
-                {/* Mood Chart */}
                 <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
                   <span className="text-xs font-semibold text-muted-foreground">Ánimo medio</span>
                   <div className="mt-3 flex h-24 items-end gap-1.5">
@@ -217,7 +208,6 @@ export function InsightsPage() {
                 </div>
               </div>
 
-              {/* Themes Cloud */}
               {stats.topThemes.length > 0 && (
                 <div className="rounded-2xl border border-border/40 bg-card/50 p-5 backdrop-blur-sm">
                   <span className="text-xs font-semibold text-muted-foreground">Temas principales</span>
@@ -238,7 +228,6 @@ export function InsightsPage() {
               )}
             </section>
 
-            {/* AI Synthesis Section */}
             <section className="space-y-4 pt-4 border-t border-border/30">
               <div className="flex items-center justify-between">
                 <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
