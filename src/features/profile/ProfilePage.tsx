@@ -17,7 +17,8 @@ export function ProfilePage() {
   
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState('');
-  const [editGender, setEditGender] = useState<Gender>('otro');
+  const [editGender, setEditGender] = useState<Gender>('prefiero no decirlo');
+  const [editBirthDate, setEditBirthDate] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -132,6 +133,7 @@ export function ProfilePage() {
         uid: user.uid,
         name: editName.trim() || 'Atleta',
         gender: editGender,
+        birthDate: editBirthDate || undefined,
         createdAt: profile?.createdAt || Date.now()
       });
       await refreshProfile();
@@ -176,8 +178,17 @@ export function ProfilePage() {
             >
               <option value="masculino">Masculino</option>
               <option value="femenino">Femenino</option>
-              <option value="otro">Otro</option>
+              <option value="prefiero no decirlo">Prefiero no decirlo</option>
             </select>
+          </div>
+          <div>
+            <label className="text-sm font-semibold text-muted-foreground">Fecha de Nacimiento</label>
+            <input 
+              type="date" 
+              value={editBirthDate}
+              onChange={e => setEditBirthDate(e.target.value)}
+              className="mt-1 block w-full rounded-xl border border-border/40 bg-card/50 p-3 text-foreground"
+            />
           </div>
           <div className="pt-4 flex gap-3">
             <Button 
@@ -206,7 +217,8 @@ export function ProfilePage() {
         <h1 className="text-lg font-bold text-gradient">Perfil</h1>
         <button onClick={() => {
           setEditName(profile?.name || '');
-          setEditGender(profile?.gender || 'otro');
+          setEditGender(profile?.gender || 'prefiero no decirlo');
+          setEditBirthDate(profile?.birthDate || '');
           setIsEditing(true);
         }} className="text-primary p-2">
           <Edit2 className="h-5 w-5" />

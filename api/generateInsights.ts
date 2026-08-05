@@ -55,9 +55,15 @@ export default async function handler(
     return response.status(400).json({ error: 'At least one entry is required.' });
   }
 
-  const userContext = userProfile 
-    ? `\nUser Profile:\n- Name: ${userProfile.name}\n- Gender: ${userProfile.gender}\nAddress the user by their name.`
-    : '';
+  let userContext = '';
+  if (userProfile) {
+    userContext = `\nUser Profile:\n- Name: ${userProfile.name}\n- Gender: ${userProfile.gender}`;
+    if (userProfile.birthDate) {
+      const age = Math.floor((Date.now() - new Date(userProfile.birthDate).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+      userContext += `\n- Age: ${age}`;
+    }
+    userContext += `\nAddress the user by their name.`;
+  }
 
   const dynamicSystemPrompt = SYSTEM_PROMPT + userContext;
 
