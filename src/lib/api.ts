@@ -85,6 +85,7 @@ export async function analyzeReflection(
 export async function generateContextualResponse(
   currentEntry: unknown,
   recentEntries: unknown[],
+  userProfile?: { name: string; gender: string } | null,
 ): Promise<{ response: string | null }> {
   const headers = await getAuthHeaders();
 
@@ -94,7 +95,7 @@ export async function generateContextualResponse(
       ...headers,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ currentEntry, recentEntries }),
+    body: JSON.stringify({ currentEntry, recentEntries, userProfile }),
   });
 
   if (!response.ok) {
@@ -110,6 +111,7 @@ export async function generateContextualResponse(
 
 export async function generateDiscover(
   entries: unknown[],
+  userProfile?: { name: string; gender: string } | null,
 ): Promise<{ articles: unknown[]; updatedAt: number }> {
   const headers = await getAuthHeaders();
 
@@ -119,7 +121,7 @@ export async function generateDiscover(
       ...headers,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ entries }),
+    body: JSON.stringify({ entries, userProfile }),
   });
 
   if (!response.ok) {
@@ -135,6 +137,7 @@ export async function generateDiscover(
 
 export async function generateInsights(
   entries: unknown[],
+  userProfile?: { name: string; gender: string } | null,
 ): Promise<unknown> {
   const headers = await getAuthHeaders();
 
@@ -144,7 +147,7 @@ export async function generateInsights(
       ...headers,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ entries }),
+    body: JSON.stringify({ entries, userProfile }),
   });
 
   if (!response.ok) {

@@ -30,7 +30,7 @@ const MOOD_VALUES: Record<string, number> = {
 };
 
 export function InsightsPage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
 
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [insightsDoc, setInsightsDoc] = useState<InsightsDocument | null>(null);
@@ -86,7 +86,7 @@ export function InsightsPage() {
         date: e.createdAt.toISOString(),
       }));
 
-      const result = (await generateInsights(simplifiedEntries)) as InsightsDocument;
+      const result = (await generateInsights(simplifiedEntries, profile)) as InsightsDocument;
       
       await saveInsights(user.uid, result);
       setInsightsDoc(result);
@@ -96,7 +96,7 @@ export function InsightsPage() {
     } finally {
       setIsGenerating(false);
     }
-  }, [user, entries]);
+  }, [user, profile, entries]);
 
   const stats = useMemo(() => {
     const themeCounts: Record<string, number> = {};

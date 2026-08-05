@@ -32,7 +32,7 @@ const MOOD_CONFIG: Record<string, { label: string; color: string; emoji: string 
 
 export function EntryDetail() {
   const { id } = useParams<{ id: string }>();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const navigate = useNavigate();
   const [entry, setEntry] = useState<JournalEntry | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -64,7 +64,7 @@ export function EntryDetail() {
             // Fetch last 5 entries to give context (excluding the current one if it's the newest, though fetchRecentEntries will include it)
             const recentEntries = await fetchRecentEntries(user!.uid, 5);
             
-            const aiResult = await generateContextualResponse(result, recentEntries);
+            const aiResult = await generateContextualResponse(result, recentEntries, profile);
             
             // Null means no meaningful pattern found (Minimum Intervention Principle)
             const responseText = aiResult.response ?? null;

@@ -18,6 +18,7 @@ import {
 import { db } from '@/lib/firebase';
 import type { JournalEntry, EntryAnalysis } from '@/types/entry';
 import type { DiscoverDocument, DiscoverArticle } from '@/types/discover';
+import type { UserProfile } from '@/types/user';
 
 const ENTRIES_COLLECTION = 'entries';
 
@@ -276,4 +277,18 @@ export async function fetchSavedArticles(
   const q = query(collection(db, 'users', userId, 'savedArticles'));
   const snapshot = await getDocs(q);
   return snapshot.docs.map((docSnap) => docSnap.data() as DiscoverArticle);
+}
+
+export async function fetchUserProfile(userId: string): Promise<UserProfile | null> {
+  const docRef = doc(db, 'users', userId);
+  const docSnap = await getDoc(docRef);
+  if (!docSnap.exists()) {
+    return null;
+  }
+  return docSnap.data() as UserProfile;
+}
+
+export async function saveUserProfile(userId: string, profile: Partial<UserProfile>): Promise<void> {
+  const docRef = doc(db, 'users', userId);
+  await setDoc(docRef, profile, { merge: true });
 }

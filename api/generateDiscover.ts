@@ -102,11 +102,17 @@ export default async function handler(
     return response.status(500).json({ error: 'Analysis service is not configured.' });
   }
 
-  const { entries } = request.body as any;
+  const { entries, userProfile } = request.body as any;
 
   if (!entries || !Array.isArray(entries) || entries.length === 0) {
     return response.status(400).json({ error: 'At least one entry is required.' });
   }
+
+  const userContext = userProfile 
+    ? `\nUser Profile:\n- Name: ${userProfile.name}\n- Gender: ${userProfile.gender}\nAddress the user by their name in the articles.`
+    : '';
+
+  const dynamicSystemPrompt = SYSTEM_PROMPT + userContext;
 
   try {
     const groq = new Groq({ apiKey: GROQ_API_KEY });
@@ -115,7 +121,7 @@ export default async function handler(
 
     const chatCompletion = await groq.chat.completions.create({
       messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'system', content: dynamicSystemPrompt },
         { role: 'user', content: payload },
       ],
       model: 'llama-3.3-70b-versatile',

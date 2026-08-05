@@ -34,7 +34,7 @@ const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
 };
 
 export function DiscoverPage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const location = useLocation();
 
   const [articles, setArticles] = useState<DiscoverArticle[]>([]);
@@ -62,7 +62,6 @@ export function DiscoverPage() {
 
     try {
       const cached = await fetchDiscoverArticles(user.uid);
-
       if (cached && cached.articles.length > 0) {
         setArticles(sortArticles(cached.articles));
         setUpdatedAt(cached.updatedAt);
@@ -74,11 +73,11 @@ export function DiscoverPage() {
         }
       }
     } catch (e) {
-      console.error('Failed to load Discover articles:', e);
+      console.error('Failed to load discover articles:', e);
+      setError('Error al cargar los artículos.');
     } finally {
       setIsLoading(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const loadSavedArticles = useCallback(async () => {
@@ -133,7 +132,7 @@ export function DiscoverPage() {
           date: e.createdAt.toISOString(),
         }));
 
-        const result = await generateDiscover(simplifiedEntries);
+        const result = await generateDiscover(simplifiedEntries, profile);
 
         const discoverDoc: DiscoverDocument = {
           articles: result.articles as DiscoverArticle[],

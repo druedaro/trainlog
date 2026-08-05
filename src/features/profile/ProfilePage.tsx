@@ -1,68 +1,287 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
-import { LogOut, User, Activity, Flame } from 'lucide-react';
+import { LogOut, User, Activity, Flame, Download, Edit2, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
-import { countUserEntries } from '@/lib/firestore';
+import { countUserEntries, fetchRecentEntries, saveUserProfile } from '@/lib/firestore';
+import type { JournalEntry } from '@/types/entry';
+import type { Gender } from '@/types/user';
 
 export function ProfilePage() {
-  const { user, signOut } = useAuth();
+  const { user, profile, signOut, refreshProfile } = useAuth();
   const navigate = useNavigate();
+  
   const [entryCount, setEntryCount] = useState<number | null>(null);
+  const [recentEntries, setRecentEntries] = useState<JournalEntry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  const [isEditing, setIsEditing] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editGender, setEditGender] = useState<Gender>('otro');
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (user) {
-      countUserEntries(user.uid)
-        .then((count) => setEntryCount(count))
-        .catch((e) => console.error('Failed to load entry count', e));
+      setIsLoading(true);
+      Promise.all([
+        countUserEntries(user.uid),
+        fetchRecentEntries(user.uid, 100)
+      ])
+        .then(([count, entries]) => {
+          setEntryCount(count);
+          setRecentEntries(entries);
+        })
+        .catch((e) => console.error('Failed to load profile data', e))
+        .finally(() => setIsLoading(false));
     }
   }, [user]);
+
+  // Derived Stats
+  const stats = useMemo(() => {
+    if (recentEntries.length === 0) return null;
+
+    // 1. Streak
+    let streak = 0;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const dates = recentEntries.map(e => {
+      const d = new Date(e.createdAt);
+      d.setHours(0, 0, 0, 0);
+      return d.getTime();
+    });
+
+    const uniqueDates = [...new Set(dates)].sort((a, b) => b - a);
+    
+    let currentDate = today.getTime();
+    if (uniqueDates[0] === currentDate) {
+      streak = 1;
+      currentDate -= 86400000;
+      for (let i = 1; i < uniqueDates.length; i++) {
+        if (uniqueDates[i] === currentDate) {
+          streak++;
+          currentDate -= 86400000;
+        } else {
+          break;
+        }
+      }
+    } else if (uniqueDates[0] === currentDate - 86400000) {
+      // Completed yesterday, streak is still alive
+      streak = 1;
+      currentDate -= 172800000;
+      for (let i = 1; i < uniqueDates.length; i++) {
+        if (uniqueDates[i] === currentDate) {
+          streak++;
+          currentDate -= 86400000;
+        } else {
+          break;
+        }
+      }
+    }
+
+    // 2. Top Activity
+    const activityCounts: Record<string, number> = {};
+    recentEntries.forEach(entry => {
+      entry.analysis.activities?.forEach(act => {
+        const lower = act.toLowerCase();
+        activityCounts[lower] = (activityCounts[lower] || 0) + 1;
+      });
+    });
+    
+    let topActivity = 'Ninguna';
+    let maxCount = 0;
+    Object.entries(activityCounts).forEach(([act, count]) => {
+      if (count > maxCount) {
+        maxCount = count;
+        topActivity = act;
+      }
+    });
+
+    // 3. Last Entry Date
+    const lastEntryDate = recentEntries[0]?.createdAt;
+    const daysAgo = lastEntryDate 
+      ? Math.floor((today.getTime() - lastEntryDate.getTime()) / 86400000)
+      : -1;
+
+    return { streak, topActivity, daysAgo };
+  }, [recentEntries]);
 
   const handleLogout = async () => {
     await signOut();
     navigate('/login');
   };
 
+  const handleExport = () => {
+    if (recentEntries.length === 0) return;
+    const dataStr = JSON.stringify(recentEntries, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `trainlog_export_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleSaveProfile = async () => {
+    if (!user) return;
+    setIsSaving(true);
+    try {
+      await saveUserProfile(user.uid, {
+        uid: user.uid,
+        name: editName.trim() || 'Atleta',
+        gender: editGender,
+        createdAt: profile?.createdAt || Date.now()
+      });
+      await refreshProfile();
+      setIsEditing(false);
+    } catch (e) {
+      console.error('Failed to save profile', e);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const greeting = (() => {
+    const hour = new Date().getHours();
+    if (hour < 12) return '¡Buenos días';
+    if (hour < 20) return '¡Buenas tardes';
+    return '¡Buenas noches';
+  })();
+
+  const displayName = profile?.name || 'Atleta';
+
+  if (isEditing) {
+    return (
+      <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background p-6">
+        <h1 className="text-2xl font-bold mb-6 text-foreground">Editar Perfil</h1>
+        <div className="space-y-4">
+          <div>
+            <label className="text-sm font-semibold text-muted-foreground">Nombre</label>
+            <input 
+              type="text" 
+              value={editName}
+              onChange={e => setEditName(e.target.value)}
+              className="mt-1 block w-full rounded-xl border border-border/40 bg-card/50 p-3 text-foreground"
+              placeholder="Ej. David"
+            />
+          </div>
+          <div>
+            <label className="text-sm font-semibold text-muted-foreground">Sexo</label>
+            <select 
+              value={editGender}
+              onChange={e => setEditGender(e.target.value as Gender)}
+              className="mt-1 block w-full rounded-xl border border-border/40 bg-card/50 p-3 text-foreground"
+            >
+              <option value="masculino">Masculino</option>
+              <option value="femenino">Femenino</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+          <div className="pt-4 flex gap-3">
+            <Button 
+              variant="outline" 
+              onClick={() => setIsEditing(false)}
+              className="flex-1 rounded-xl"
+            >
+              Cancelar
+            </Button>
+            <Button 
+              onClick={handleSaveProfile}
+              disabled={isSaving}
+              className="flex-1 rounded-xl bg-primary text-primary-foreground"
+            >
+              {isSaving ? 'Guardando...' : 'Guardar'}
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
-      <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5">
-        <div className="flex items-center justify-center h-9">
-          <h1 className="text-lg font-bold text-gradient">Perfil</h1>
-        </div>
+      <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5 flex justify-between items-center">
+        <h1 className="text-lg font-bold text-gradient">Perfil</h1>
+        <button onClick={() => {
+          setEditName(profile?.name || '');
+          setEditGender(profile?.gender || 'otro');
+          setIsEditing(true);
+        }} className="text-primary p-2">
+          <Edit2 className="h-5 w-5" />
+        </button>
       </header>
 
-      <main className="flex-1 px-5 py-8 space-y-8 animate-slide-up">
+      <main className="flex-1 px-5 py-8 space-y-8 animate-slide-up pb-24">
         <section className="flex flex-col items-center justify-center text-center">
           <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 border border-primary/20 shadow-inner">
             <User className="h-10 w-10 text-primary" />
           </div>
-          <h2 className="text-xl font-bold text-foreground">Atleta</h2>
+          <h2 className="text-xl font-bold text-foreground">{greeting}, {displayName}!</h2>
           <p className="mt-1 text-sm text-muted-foreground">{user?.email}</p>
         </section>
 
-        <section className="grid grid-cols-2 gap-4">
-          <div className="rounded-2xl border border-border/40 bg-card/50 p-5 text-center backdrop-blur-sm">
-            <Activity className="mx-auto mb-2 h-6 w-6 text-emerald-400" />
-            <p className="text-3xl font-bold text-foreground">
-              {entryCount !== null ? entryCount : '-'}
-            </p>
-            <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Entradas totales
-            </p>
+        {isLoading ? (
+          <div className="flex justify-center py-10">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
           </div>
-          <div className="rounded-2xl border border-border/40 bg-card/50 p-5 text-center backdrop-blur-sm">
-            <Flame className="mx-auto mb-2 h-6 w-6 text-amber-400" />
-            <p className="text-3xl font-bold text-foreground">
-              {entryCount !== null ? (entryCount > 0 ? 'Activo' : 'Nuevo') : '-'}
-            </p>
-            <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Estado
-            </p>
-          </div>
-        </section>
+        ) : (
+          <section className="grid grid-cols-2 gap-4">
+            <div className="rounded-2xl border border-border/40 bg-card/50 p-5 text-center backdrop-blur-sm">
+              <Activity className="mx-auto mb-2 h-6 w-6 text-emerald-400" />
+              <p className="text-3xl font-bold text-foreground">
+                {entryCount !== null ? entryCount : '-'}
+              </p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Entradas
+              </p>
+            </div>
+            
+            <div className="rounded-2xl border border-border/40 bg-card/50 p-5 text-center backdrop-blur-sm">
+              <Flame className="mx-auto mb-2 h-6 w-6 text-amber-400" />
+              <p className="text-3xl font-bold text-foreground">
+                {stats ? stats.streak : '-'}
+              </p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Días seguidos
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-border/40 bg-card/50 p-5 text-center backdrop-blur-sm">
+              <span className="mx-auto mb-2 block text-2xl">🏃‍♂️</span>
+              <p className="text-xl font-bold text-foreground capitalize truncate px-1">
+                {stats ? stats.topActivity : '-'}
+              </p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Favorita
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-border/40 bg-card/50 p-5 text-center backdrop-blur-sm">
+              <Calendar className="mx-auto mb-2 h-6 w-6 text-blue-400" />
+              <p className="text-xl font-bold text-foreground">
+                {stats ? (stats.daysAgo === 0 ? 'Hoy' : stats.daysAgo === 1 ? 'Ayer' : `Hace ${stats.daysAgo} d.`) : '-'}
+              </p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Última vez
+              </p>
+            </div>
+          </section>
+        )}
 
         <section className="pt-6 border-t border-border/40 space-y-4">
           <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-2">Cuenta</h3>
+          <Button
+            variant="ghost"
+            onClick={handleExport}
+            disabled={recentEntries.length === 0}
+            className="w-full justify-start gap-3 rounded-xl bg-primary/5 text-foreground hover:bg-primary/10 px-4 py-6"
+          >
+            <Download className="h-5 w-5" />
+            <span className="text-base font-semibold">Exportar mis datos (JSON)</span>
+          </Button>
+          
           <Button
             variant="ghost"
             onClick={handleLogout}
