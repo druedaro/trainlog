@@ -77,9 +77,18 @@ export function CalendarView() {
       )}
 
       {!isLoading && recentEntries.length === 0 && (
-        <p className="mt-5 text-center text-sm text-muted-foreground">
-          No hay entradas. ¡Graba tu primera reflexión!
-        </p>
+        <div className="mt-6 flex flex-col items-center justify-center animate-fade-in space-y-4 px-4 pb-8">
+          <svg className="h-10 w-10 text-primary animate-bounce rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+          </svg>
+          <div className="text-center rounded-2xl border border-primary/20 bg-primary/10 p-5 backdrop-blur-sm relative shadow-[0_0_15px_rgba(255,255,255,0.05)]">
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2 text-3xl">👋</div>
+            <h2 className="mt-2 text-base font-bold text-foreground">¡Hola! Bienvenido a Trainlog</h2>
+            <p className="mt-1.5 text-sm leading-relaxed text-foreground/80">
+              Toca el botón del micrófono arriba para registrar tu primer entrenamiento.
+            </p>
+          </div>
+        </div>
       )}
 
       {!isLoading && recentEntries.length > 0 && (

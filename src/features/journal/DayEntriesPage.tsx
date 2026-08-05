@@ -41,7 +41,7 @@ export function DayEntriesPage() {
             size="icon"
             onClick={() => navigate(-1)}
             aria-label="Volver"
-            className="h-9 w-9 rounded-xl text-muted-foreground hover:text-foreground"
+            className="h-9 w-9 rounded-xl text-white hover:text-white/80 hover:bg-white/10"
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
