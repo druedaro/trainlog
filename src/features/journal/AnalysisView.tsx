@@ -10,19 +10,19 @@ interface AnalysisViewProps {
 }
 
 const ENERGY_CONFIG: Record<string, { label: string; color: string; emoji: string }> = {
-  very_low: { label: 'Very low', color: 'text-red-400', emoji: '🔋' },
-  low: { label: 'Low', color: 'text-orange-400', emoji: '🔋' },
-  moderate: { label: 'Moderate', color: 'text-yellow-400', emoji: '⚡' },
-  high: { label: 'High', color: 'text-emerald-400', emoji: '⚡' },
-  very_high: { label: 'Very high', color: 'text-green-400', emoji: '🔥' },
+  very_low: { label: 'Muy baja', color: 'text-red-400', emoji: '🔋' },
+  low: { label: 'Baja', color: 'text-orange-400', emoji: '🔋' },
+  moderate: { label: 'Moderada', color: 'text-yellow-400', emoji: '⚡' },
+  high: { label: 'Alta', color: 'text-emerald-400', emoji: '⚡' },
+  very_high: { label: 'Muy alta', color: 'text-green-400', emoji: '🔥' },
 };
 
 const MOOD_CONFIG: Record<string, { label: string; color: string; emoji: string }> = {
-  very_negative: { label: 'Very negative', color: 'text-red-400', emoji: '😞' },
-  negative: { label: 'Negative', color: 'text-orange-400', emoji: '😕' },
-  neutral: { label: 'Neutral', color: 'text-yellow-400', emoji: '😐' },
-  positive: { label: 'Positive', color: 'text-emerald-400', emoji: '😊' },
-  very_positive: { label: 'Very positive', color: 'text-green-400', emoji: '😄' },
+  very_negative: { label: 'Muy negativo', color: 'text-red-400', emoji: '😞' },
+  negative: { label: 'Negativo', color: 'text-orange-400', emoji: '😕' },
+  neutral: { label: 'Neutro', color: 'text-yellow-400', emoji: '😐' },
+  positive: { label: 'Positivo', color: 'text-emerald-400', emoji: '😊' },
+  very_positive: { label: 'Muy positivo', color: 'text-green-400', emoji: '😄' },
 };
 
 export function AnalysisView({
@@ -36,12 +36,12 @@ export function AnalysisView({
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold text-foreground">Your reflection analysis</h2>
+      <h2 className="text-lg font-semibold text-foreground">Análisis de tu reflexión</h2>
 
       {/* Summary */}
       <div className="rounded-2xl border border-border/40 bg-card/50 p-5 backdrop-blur-sm">
         <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Summary
+          Resumen
         </h3>
         <p className="text-sm leading-relaxed text-foreground">{analysis.summary}</p>
       </div>
@@ -52,7 +52,7 @@ export function AnalysisView({
           {(analysis.themes?.length ?? 0) > 0 && (
             <div>
               <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Themes
+                Temas
               </h3>
               <div className="flex flex-wrap gap-2">
                 {analysis.themes?.map((theme) => (
@@ -70,7 +70,7 @@ export function AnalysisView({
           {(analysis.activities?.length ?? 0) > 0 && (
             <div>
               <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Activities
+                Actividades
               </h3>
               <div className="flex flex-wrap gap-2">
                 {analysis.activities?.map((activity) => (
@@ -95,7 +95,7 @@ export function AnalysisView({
               <div className="mb-2 flex items-center gap-2">
                 <Zap className={`h-4 w-4 ${energyInfo.color}`} />
                 <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Energy
+                  Energía
                 </h3>
               </div>
               <p className={`text-sm font-semibold ${energyInfo.color}`}>
@@ -108,7 +108,7 @@ export function AnalysisView({
               <div className="mb-2 flex items-center gap-2">
                 <Smile className={`h-4 w-4 ${moodInfo.color}`} />
                 <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Mood
+                  Estado de ánimo
                 </h3>
               </div>
               <p className={`text-sm font-semibold ${moodInfo.color}`}>
@@ -123,7 +123,7 @@ export function AnalysisView({
       {analysis.reflectionPrompt && (
         <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
           <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary/70">
-            Something to reflect on
+            Para reflexionar
           </h3>
           <p className="text-sm italic leading-relaxed text-foreground/80">
             {analysis.reflectionPrompt}
@@ -139,7 +139,7 @@ export function AnalysisView({
           className="flex-1 gap-2 rounded-xl bg-primary py-5 font-semibold text-primary-foreground"
         >
           <Check className="h-4 w-4" />
-          {isSaving ? 'Saving…' : 'Confirm & Save'}
+          {isSaving ? 'Guardando…' : 'Confirmar y guardar'}
         </Button>
         <Button
           variant="outline"

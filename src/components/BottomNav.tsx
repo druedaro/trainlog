@@ -5,17 +5,16 @@ const NAV_ITEMS = [
   { path: '/', label: 'Journal', icon: BookOpen },
   { path: '/insights', label: 'Insights', icon: Activity },
   { path: '/discover', label: 'Discover', icon: Compass },
-  { path: '/profile', label: 'Profile', icon: User },
+  { path: '/profile', label: 'Perfil', icon: User },
 ];
 
 export function BottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Don't show on entry detail pages or login
-  const hiddenPaths = ['/login'];
-  const isEntryDetail = location.pathname.startsWith('/entry/');
-  if (hiddenPaths.includes(location.pathname) || isEntryDetail) {
+  // Don't show on entry detail, day entries, or login
+  const hiddenPrefixes = ['/login', '/entry/', '/day/'];
+  if (hiddenPrefixes.some((p) => location.pathname.startsWith(p))) {
     return null;
   }
 
@@ -23,7 +22,10 @@ export function BottomNav() {
     <nav className="glass fixed bottom-0 left-0 right-0 z-30 border-t border-border/40">
       <div className="mx-auto flex max-w-lg">
         {NAV_ITEMS.map(({ path, label, icon: Icon }) => {
-          const isActive = location.pathname === path;
+          const isActive =
+            path === '/'
+              ? location.pathname === '/'
+              : location.pathname.startsWith(path);
 
           return (
             <button

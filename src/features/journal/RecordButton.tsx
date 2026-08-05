@@ -46,7 +46,7 @@ export function RecordButton({
           <p className="tabular-nums text-2xl font-bold text-destructive">
             {formatDuration(durationMs)}
           </p>
-          <p className="mt-1 text-sm text-muted-foreground">Recording… Tap to stop</p>
+          <p className="mt-1 text-sm text-muted-foreground">Grabando… Toca para parar</p>
         </div>
       </div>
     );
@@ -62,7 +62,7 @@ export function RecordButton({
       >
         <Mic className="h-9 w-9 text-primary-foreground" />
       </button>
-      <p className="text-sm text-muted-foreground">Tap to start recording</p>
+      <p className="text-sm text-muted-foreground">Toca para grabar</p>
     </div>
   );
 }

@@ -51,7 +51,7 @@ export function JournalPage() {
       const message =
         error instanceof ApiError
           ? error.message
-          : 'Transcription failed. Please try again.';
+          : 'Error en la transcripción. Inténtalo de nuevo.';
       setErrorMessage(message);
       setFlowStep('idle');
     }
@@ -69,7 +69,7 @@ export function JournalPage() {
 
         if (!validated.success) {
           setErrorMessage(
-            'The analysis did not meet quality standards. Please try again.',
+            'El análisis no cumplió los estándares de calidad. Inténtalo de nuevo.',
           );
           setFlowStep('editing');
           return;
@@ -81,7 +81,7 @@ export function JournalPage() {
         const message =
           error instanceof ApiError
             ? error.message
-            : 'Analysis failed. Please try again.';
+            : 'Error en el análisis. Inténtalo de nuevo.';
         setErrorMessage(message);
         setFlowStep('editing');
       }
@@ -105,7 +105,7 @@ export function JournalPage() {
       resetFlow();
       navigate(`/entry/${entryId}`);
     } catch {
-      setErrorMessage('Failed to save the entry. Please try again.');
+      setErrorMessage('Error al guardar la entrada. Inténtalo de nuevo.');
       setFlowStep('reviewing');
     }
   }, [analysis, user, transcript, resetFlow, navigate]);
@@ -167,20 +167,20 @@ export function JournalPage() {
                 <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <p className="text-sm font-medium text-foreground">Recording complete!</p>
+            <p className="text-sm font-medium text-foreground">¡Grabación completada!</p>
             <div className="flex w-full max-w-xs gap-3">
               <Button
                 onClick={handleTranscribe}
                 className="flex-1 rounded-xl bg-primary py-5 font-semibold text-primary-foreground"
               >
-                Transcribe
+                Transcribir
               </Button>
               <Button
                 variant="outline"
                 onClick={resetFlow}
                 className="rounded-xl border-border/50 py-5"
               >
-                Discard
+                Descartar
               </Button>
             </div>
           </div>
@@ -190,7 +190,7 @@ export function JournalPage() {
         {flowStep === 'transcribing' && (
           <div className="flex flex-col items-center gap-5 pt-16 animate-fade-in">
             <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-primary/30 border-t-primary" />
-            <p className="text-sm text-muted-foreground">Transcribing your recording…</p>
+            <p className="text-sm text-muted-foreground">Transcribiendo tu grabación…</p>
           </div>
         )}
 
@@ -210,7 +210,7 @@ export function JournalPage() {
         {flowStep === 'analyzing' && (
           <div className="flex flex-col items-center gap-5 pt-16 animate-fade-in">
             <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-primary/30 border-t-primary" />
-            <p className="text-sm text-muted-foreground">Analyzing your reflection…</p>
+            <p className="text-sm text-muted-foreground">Analizando tu reflexión…</p>
           </div>
         )}
 
@@ -233,7 +233,7 @@ export function JournalPage() {
         {flowStep === 'saving' && (
           <div className="flex flex-col items-center gap-5 pt-16 animate-fade-in">
             <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-primary/30 border-t-primary" />
-            <p className="text-sm text-muted-foreground">Saving your entry…</p>
+            <p className="text-sm text-muted-foreground">Guardando tu entrada…</p>
           </div>
         )}
       </main>

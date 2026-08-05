@@ -56,7 +56,7 @@ export function InsightsPage() {
       }
     } catch (e) {
       console.error('Failed to load Insights data:', e);
-      setError('Could not load your insights. Please try again.');
+      setError('No se pudieron cargar los insights. Inténtalo de nuevo.');
     } finally {
       setIsLoading(false);
     }
@@ -73,7 +73,7 @@ export function InsightsPage() {
 
     try {
       if (entries.length === 0) {
-        setError('Not enough data to generate a weekly synthesis.');
+        setError('No hay suficientes datos para generar una síntesis semanal.');
         setIsGenerating(false);
         return;
       }
@@ -93,7 +93,7 @@ export function InsightsPage() {
       setInsightsDoc(result);
     } catch (e) {
       console.error('Failed to generate synthesis:', e);
-      setError('Failed to generate AI synthesis.');
+      setError('Error al generar la síntesis de IA.');
     } finally {
       setIsGenerating(false);
     }
@@ -143,7 +143,7 @@ export function InsightsPage() {
     <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
       {/* Header */}
       <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5">
-        <h1 className="text-lg font-bold text-gradient">Weekly Insights</h1>
+        <h1 className="text-lg font-bold text-gradient">Resumen semanal</h1>
       </header>
 
       <main className="flex-1 px-5 py-6 space-y-8 animate-slide-up pb-24">
@@ -157,7 +157,7 @@ export function InsightsPage() {
         {isLoading ? (
           <div className="flex flex-col items-center gap-5 pt-16">
             <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-primary/30 border-t-primary" />
-            <p className="text-sm text-muted-foreground">Calculating patterns...</p>
+            <p className="text-sm text-muted-foreground">Calculando patrones...</p>
           </div>
         ) : entries.length === 0 ? (
           <div className="flex flex-col items-center gap-4 pt-12 text-center">
@@ -165,9 +165,9 @@ export function InsightsPage() {
               <Activity className="h-8 w-8" />
             </div>
             <div>
-              <h2 className="text-base font-semibold text-foreground">No data this week</h2>
+              <h2 className="text-base font-semibold text-foreground">Sin datos esta semana</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Record some journal entries to see your patterns.
+                Graba algunas entradas para ver tus patrones.
               </p>
             </div>
           </div>
@@ -176,13 +176,13 @@ export function InsightsPage() {
             {/* Raw Stats Section */}
             <section className="space-y-5">
               <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-                The Numbers (Last 7 Days)
+                Los números (últimos 7 días)
               </h2>
               
               <div className="grid grid-cols-2 gap-4">
                 {/* Energy Chart */}
                 <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
-                  <span className="text-xs font-semibold text-muted-foreground">Avg. Energy</span>
+                  <span className="text-xs font-semibold text-muted-foreground">Energía media</span>
                   <div className="mt-3 flex h-24 items-end gap-1.5">
                     {[1, 2, 3, 4, 5].map((val) => (
                       <div
@@ -200,7 +200,7 @@ export function InsightsPage() {
 
                 {/* Mood Chart */}
                 <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
-                  <span className="text-xs font-semibold text-muted-foreground">Avg. Mood</span>
+                  <span className="text-xs font-semibold text-muted-foreground">Ánimo medio</span>
                   <div className="mt-3 flex h-24 items-end gap-1.5">
                     {[1, 2, 3, 4, 5].map((val) => (
                       <div
@@ -220,7 +220,7 @@ export function InsightsPage() {
               {/* Themes Cloud */}
               {stats.topThemes.length > 0 && (
                 <div className="rounded-2xl border border-border/40 bg-card/50 p-5 backdrop-blur-sm">
-                  <span className="text-xs font-semibold text-muted-foreground">Top Themes</span>
+                  <span className="text-xs font-semibold text-muted-foreground">Temas principales</span>
                   <div className="mt-4 flex flex-wrap gap-2">
                     {stats.topThemes.map(([theme, count]) => (
                       <div
@@ -242,7 +242,7 @@ export function InsightsPage() {
             <section className="space-y-4 pt-4 border-t border-border/30">
               <div className="flex items-center justify-between">
                 <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-                  AI Synthesis
+                  Síntesis IA
                 </h2>
                 {insightsDoc && (
                   <Button
@@ -252,7 +252,7 @@ export function InsightsPage() {
                     disabled={isGenerating}
                     className="h-8 rounded-lg px-2 text-xs text-muted-foreground hover:text-foreground"
                   >
-                    Refresh
+                    Actualizar
                   </Button>
                 )}
               </div>
@@ -261,13 +261,13 @@ export function InsightsPage() {
                 <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6 text-center">
                   <Sparkles className="mx-auto mb-3 h-6 w-6 text-primary" />
                   <p className="mb-4 text-sm text-foreground/80">
-                    Generate an AI analysis of how your training sessions connect this week.
+                    Genera un análisis de IA sobre cómo se conectan tus entrenamientos esta semana.
                   </p>
                   <Button
                     onClick={handleGenerateSynthesis}
                     className="rounded-xl font-semibold w-full"
                   >
-                    Analyze Week
+                    Analizar semana
                   </Button>
                 </div>
               )}
@@ -275,7 +275,7 @@ export function InsightsPage() {
               {isGenerating && (
                 <div className="rounded-2xl border border-border/40 bg-card/50 p-6 text-center">
                   <div className="mx-auto mb-4 h-6 w-6 animate-spin rounded-full border-[2px] border-primary/30 border-t-primary" />
-                  <p className="text-sm text-muted-foreground">Connecting the dots...</p>
+                  <p className="text-sm text-muted-foreground">Conectando los puntos...</p>
                 </div>
               )}
 
@@ -288,7 +288,7 @@ export function InsightsPage() {
                   </div>
 
                   <div className="rounded-2xl border border-border/40 bg-card/50 p-5 backdrop-blur-sm">
-                    <h3 className="mb-4 text-xs font-semibold text-muted-foreground">Key Takeaways</h3>
+                    <h3 className="mb-4 text-xs font-semibold text-muted-foreground">Puntos clave</h3>
                     <ul className="space-y-3">
                       {insightsDoc.synthesis.highlights.map((highlight, i) => (
                         <li key={i} className="flex items-start gap-3">

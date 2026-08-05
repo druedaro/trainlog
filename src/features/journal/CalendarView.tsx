@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { DayPicker } from 'react-day-picker';
 import { format, isSameDay } from 'date-fns';
+import { es } from 'date-fns/locale';
 import { ChevronRight } from 'lucide-react';
 import { useAuth } from '@/features/auth/useAuth';
 import { fetchEntriesByMonth, fetchRecentEntries } from '@/lib/firestore';
@@ -32,10 +33,10 @@ export function CalendarView() {
       .finally(() => setIsLoading(false));
   }, [user, selectedMonth]);
 
-  // Fetch global recent entries
+  // Fetch global recent entries (max 4)
   useEffect(() => {
     if (!user) return;
-    fetchRecentEntries(user.uid, 10)
+    fetchRecentEntries(user.uid, 4)
       .then(setRecentEntries)
       .catch(console.error);
   }, [user]);
@@ -48,10 +49,8 @@ export function CalendarView() {
     );
 
     if (entriesForDay.length === 1 && entriesForDay[0]) {
-      // If only one entry, go directly to it
       navigate(`/entry/${entriesForDay[0].id}`);
     } else if (entriesForDay.length > 1) {
-      // Navigate to the day view
       navigate(`/day/${format(day, 'yyyy-MM-dd')}`);
     }
   };
@@ -61,6 +60,7 @@ export function CalendarView() {
       {/* Calendar */}
       <div className="flex w-full justify-center rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
         <DayPicker
+          locale={es}
           month={selectedMonth}
           onMonthChange={setSelectedMonth}
           onDayClick={handleDayClick}
@@ -74,22 +74,20 @@ export function CalendarView() {
       </div>
 
       {isLoading && (
-        <p className="mt-5 text-sm text-muted-foreground">Loading entries…</p>
+        <p className="mt-5 text-sm text-muted-foreground">Cargando entradas…</p>
       )}
 
       {!isLoading && recentEntries.length === 0 && (
         <p className="mt-5 text-center text-sm text-muted-foreground">
-          No entries found. Record your first reflection!
+          No hay entradas. ¡Graba tu primera reflexión!
         </p>
       )}
 
-      {(!isLoading || recentEntries.length > 0) && recentEntries.length > 0 && (
+      {!isLoading && recentEntries.length > 0 && (
         <div className="mt-5 w-full space-y-2">
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Recent entries
-            </h2>
-          </div>
+          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Entradas recientes
+          </h2>
           {recentEntries.map((entry) => (
             <button
               key={entry.id}
@@ -98,7 +96,7 @@ export function CalendarView() {
             >
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-medium text-muted-foreground">
-                  {format(entry.createdAt, 'PPp')}
+                  {format(entry.createdAt, "d 'de' MMMM, HH:mm", { locale: es })}
                 </p>
                 <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-foreground">
                   {entry.analysis.summary}

@@ -14,9 +14,9 @@ import type { DiscoverArticle, DiscoverDocument } from '@/types/discover';
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 
 const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
-  recovery: { label: 'Recovery', color: 'text-emerald-400' },
-  training: { label: 'Training', color: 'text-blue-400' },
-  mindset: { label: 'Mindset', color: 'text-purple-400' },
+  recovery: { label: 'Recuperación', color: 'text-emerald-400' },
+  training: { label: 'Entrenamiento', color: 'text-blue-400' },
+  mindset: { label: 'Mentalidad', color: 'text-purple-400' },
 };
 
 export function DiscoverPage() {
@@ -73,7 +73,7 @@ export function DiscoverPage() {
         const recentEntries = await fetchRecentEntries(user.uid, 3);
 
         if (recentEntries.length === 0) {
-          setError('You need at least one journal entry to generate recommendations.');
+          setError('Necesitas al menos una entrada para generar recomendaciones.');
           setIsGenerating(false);
           return;
         }
@@ -102,7 +102,7 @@ export function DiscoverPage() {
       } catch (e) {
         console.error('Failed to generate Discover articles:', e);
         if (!silent) {
-          setError('Failed to generate recommendations. Please try again.');
+          setError('Error al generar recomendaciones. Inténtalo de nuevo.');
         }
       } finally {
         setIsGenerating(false);
@@ -152,7 +152,7 @@ export function DiscoverPage() {
         {isLoading && (
           <div className="flex flex-col items-center gap-5 pt-16 animate-fade-in">
             <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-primary/30 border-t-primary" />
-            <p className="text-sm text-muted-foreground">Loading recommendations…</p>
+            <p className="text-sm text-muted-foreground">Cargando recomendaciones…</p>
           </div>
         )}
 
@@ -163,8 +163,8 @@ export function DiscoverPage() {
               <div className="h-16 w-16 animate-spin rounded-full border-[3px] border-primary/30 border-t-primary" />
               <Sparkles className="absolute left-1/2 top-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2 text-primary" />
             </div>
-            <p className="text-sm text-muted-foreground">Analyzing your training history…</p>
-            <p className="text-xs text-muted-foreground/60">This may take a few seconds</p>
+            <p className="text-sm text-muted-foreground">Analizando tu historial de entrenamiento…</p>
+            <p className="text-xs text-muted-foreground/60">Esto puede tardar unos segundos</p>
           </div>
         )}
 
@@ -175,9 +175,9 @@ export function DiscoverPage() {
               <Sparkles className="h-8 w-8 text-primary" />
             </div>
             <div className="text-center">
-              <h2 className="text-base font-semibold text-foreground">No recommendations yet</h2>
+              <h2 className="text-base font-semibold text-foreground">Aún no hay recomendaciones</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Generate personalized articles based on your training history.
+                Genera artículos personalizados según tu historial de entrenamiento.
               </p>
             </div>
             <Button
@@ -185,7 +185,7 @@ export function DiscoverPage() {
               className="rounded-xl bg-primary px-6 py-5 font-semibold text-primary-foreground"
             >
               <Sparkles className="mr-2 h-4 w-4" />
-              Generate Recommendations
+              Generar recomendaciones
             </Button>
           </div>
         )}
@@ -196,7 +196,7 @@ export function DiscoverPage() {
             {/* Last updated */}
             {updatedAt && (
               <p className="text-xs text-muted-foreground/60">
-                Last updated {new Date(updatedAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
+                Última actualización: {new Date(updatedAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
               </p>
             )}
 

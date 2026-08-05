@@ -88,7 +88,7 @@ describe('RecordButton', () => {
     );
 
     expect(screen.getByLabelText('Start recording')).toBeInTheDocument();
-    expect(screen.getByText('Tap to start recording')).toBeInTheDocument();
+    expect(screen.getByText('Toca para grabar')).toBeInTheDocument();
   });
 
   it('renders recording state with duration', () => {
@@ -151,7 +151,7 @@ describe('TranscriptEditor', () => {
     );
 
     const textarea = screen.getByPlaceholderText(
-      'Your transcript will appear here...',
+      'Tu transcripción aparecerá aquí...',
     );
     expect(textarea).toHaveValue('Great session today');
   });
@@ -167,7 +167,7 @@ describe('TranscriptEditor', () => {
       />,
     );
 
-    fireEvent.click(screen.getByText('Confirm & Analyze'));
+    fireEvent.click(screen.getByText('Confirmar y analizar'));
 
     await waitFor(() => {
       expect(onConfirm).toHaveBeenCalledWith('Great session today');
@@ -185,7 +185,7 @@ describe('TranscriptEditor', () => {
       />,
     );
 
-    fireEvent.click(screen.getByText('Discard'));
+    fireEvent.click(screen.getByText('Descartar'));
     expect(onDiscard).toHaveBeenCalledOnce();
   });
 });
@@ -238,8 +238,8 @@ describe('AnalysisView', () => {
       />,
     );
 
-    expect(screen.getByText(/High/)).toBeInTheDocument();
-    expect(screen.getByText(/Positive/)).toBeInTheDocument();
+    expect(screen.getByText(/Alta/)).toBeInTheDocument();
+    expect(screen.getByText(/Positivo/)).toBeInTheDocument();
   });
 
   it('displays the reflection prompt', () => {
@@ -269,7 +269,7 @@ describe('AnalysisView', () => {
       />,
     );
 
-    fireEvent.click(screen.getByText('Confirm & Save'));
+    fireEvent.click(screen.getByText('Confirmar y guardar'));
     expect(onConfirm).toHaveBeenCalledOnce();
   });
 
@@ -282,7 +282,7 @@ describe('AnalysisView', () => {
       />,
     );
 
-    expect(screen.queryByText('Energy')).not.toBeInTheDocument();
+    expect(screen.queryByText('Energía')).not.toBeInTheDocument();
   });
 
   it('hides reflection prompt when null', () => {
@@ -295,7 +295,7 @@ describe('AnalysisView', () => {
     );
 
     expect(
-      screen.queryByText('Something to reflect on'),
+      screen.queryByText('Para reflexionar'),
     ).not.toBeInTheDocument();
   });
 });

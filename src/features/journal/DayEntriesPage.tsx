@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { format } from 'date-fns';
-import { ArrowLeft, ChevronRight } from 'lucide-react';
+import { es } from 'date-fns/locale';
+import { ArrowLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
 import { fetchEntriesByDay } from '@/lib/firestore';
 import type { JournalEntry } from '@/types/entry';
+
+const PAGE_SIZE = 4;
 
 export function DayEntriesPage() {
   const { date } = useParams<{ date: string }>();
@@ -13,6 +16,7 @@ export function DayEntriesPage() {
   const navigate = useNavigate();
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   useEffect(() => {
     if (!date || !user) return;
@@ -25,6 +29,8 @@ export function DayEntriesPage() {
   }, [date, user]);
 
   const displayDate = date ? new Date(`${date}T12:00:00`) : new Date();
+  const visibleEntries = entries.slice(0, visibleCount);
+  const hasMore = visibleCount < entries.length;
 
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
@@ -34,17 +40,17 @@ export function DayEntriesPage() {
             variant="ghost"
             size="icon"
             onClick={() => navigate(-1)}
-            aria-label="Back"
+            aria-label="Volver"
             className="h-9 w-9 rounded-xl text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div className="flex flex-col">
             <h1 className="text-sm font-bold text-foreground">
-              {format(displayDate, 'MMMM d, yyyy')}
+              {format(displayDate, "d 'de' MMMM, yyyy", { locale: es })}
             </h1>
             <p className="text-xs text-muted-foreground">
-              {entries.length} {entries.length === 1 ? 'entry' : 'entries'}
+              {entries.length} {entries.length === 1 ? 'entrada' : 'entradas'}
             </p>
           </div>
         </div>
@@ -57,11 +63,11 @@ export function DayEntriesPage() {
           </div>
         ) : entries.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <p className="text-sm text-muted-foreground">No entries found for this day.</p>
+            <p className="text-sm text-muted-foreground">No hay entradas para este día.</p>
           </div>
         ) : (
           <div className="space-y-3">
-            {entries.map((entry) => (
+            {visibleEntries.map((entry) => (
               <button
                 key={entry.id}
                 onClick={() => navigate(`/entry/${entry.id}`)}
@@ -69,7 +75,7 @@ export function DayEntriesPage() {
               >
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-medium text-muted-foreground">
-                    {format(entry.createdAt, 'h:mm a')}
+                    {format(entry.createdAt, 'HH:mm', { locale: es })}
                   </p>
                   <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-foreground">
                     {entry.analysis.summary}
@@ -88,6 +94,16 @@ export function DayEntriesPage() {
                 <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/50" />
               </button>
             ))}
+
+            {hasMore && (
+              <button
+                onClick={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-border/40 bg-card/50 py-3 text-sm font-medium text-primary backdrop-blur-sm transition-colors hover:bg-primary/5"
+              >
+                Ver más
+                <ChevronDown className="h-4 w-4" />
+              </button>
+            )}
           </div>
         )}
       </main>

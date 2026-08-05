@@ -37,16 +37,16 @@ export function LoginPage() {
           Trainlog
         </h1>
         <p className="mt-2 text-base text-muted-foreground">
-          Your personal sports reflection journal
+          Tu diario personal de reflexión deportiva
         </p>
 
         {/* Sign-in card */}
         <div className="mt-10 w-full max-w-sm rounded-2xl border border-border/50 bg-card/60 p-6 shadow-lg backdrop-blur-xl">
           <h2 className="mb-1 text-center text-lg font-semibold text-foreground">
-            Welcome
+            Bienvenido
           </h2>
           <p className="mb-6 text-center text-sm text-muted-foreground">
-            Sign in to start recording your training reflections
+            Inicia sesión para empezar a registrar tus reflexiones
           </p>
           <Button
             onClick={signInWithGoogle}
@@ -54,7 +54,7 @@ export function LoginPage() {
             size="lg"
           >
             <GoogleIcon />
-            Continue with Google
+            Continuar con Google
           </Button>
         </div>
       </div>

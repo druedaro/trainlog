@@ -37,18 +37,18 @@ export function TranscriptEditor({
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
           <Pencil className="h-4 w-4 text-primary" />
         </div>
-        <h2 className="text-lg font-semibold text-foreground">Review your transcript</h2>
+        <h2 className="text-lg font-semibold text-foreground">Revisa tu transcripción</h2>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <textarea
           {...register('transcript', {
-            required: 'Transcript cannot be empty.',
+            required: 'La transcripción no puede estar vacía.',
             validate: (value) =>
-              value.trim().length > 0 || 'Transcript cannot be empty.',
+              value.trim().length > 0 || 'La transcripción no puede estar vacía.',
           })}
           className="min-h-[180px] w-full resize-y rounded-xl border border-border/50 bg-background/50 px-4 py-3 text-sm leading-relaxed text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
-          placeholder="Your transcript will appear here..."
+          placeholder="Tu transcripción aparecerá aquí..."
           disabled={isSubmitting}
         />
         {formState.errors.transcript && (
@@ -57,7 +57,7 @@ export function TranscriptEditor({
           </p>
         )}
         <p className="mt-2 text-xs text-muted-foreground">
-          Edit the text if needed, then confirm to analyze your reflection.
+          Edita el texto si es necesario y confirma para analizar tu reflexión.
         </p>
 
         <div className="mt-5 flex gap-3">
@@ -67,7 +67,7 @@ export function TranscriptEditor({
             className="flex-1 gap-2 rounded-xl bg-primary py-5 font-semibold text-primary-foreground"
           >
             <Check className="h-4 w-4" />
-            {isSubmitting ? 'Analyzing…' : 'Confirm & Analyze'}
+            {isSubmitting ? 'Analizando…' : 'Confirmar y analizar'}
           </Button>
           <Button
             type="button"
@@ -76,7 +76,7 @@ export function TranscriptEditor({
             disabled={isSubmitting}
             className="rounded-xl border-border/50 py-5"
           >
-            Discard
+            Descartar
           </Button>
         </div>
       </form>

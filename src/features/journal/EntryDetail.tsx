@@ -15,19 +15,19 @@ import type { JournalEntry } from '@/types/entry';
 import ReactMarkdown from 'react-markdown';
 
 const ENERGY_CONFIG: Record<string, { label: string; color: string; emoji: string }> = {
-  very_low: { label: 'Very low', color: 'text-red-400', emoji: '🔋' },
-  low: { label: 'Low', color: 'text-orange-400', emoji: '🔋' },
-  moderate: { label: 'Moderate', color: 'text-yellow-400', emoji: '⚡' },
-  high: { label: 'High', color: 'text-emerald-400', emoji: '⚡' },
-  very_high: { label: 'Very high', color: 'text-green-400', emoji: '🔥' },
+  very_low: { label: 'Muy baja', color: 'text-red-400', emoji: '🔋' },
+  low: { label: 'Baja', color: 'text-orange-400', emoji: '🔋' },
+  moderate: { label: 'Moderada', color: 'text-yellow-400', emoji: '⚡' },
+  high: { label: 'Alta', color: 'text-emerald-400', emoji: '⚡' },
+  very_high: { label: 'Muy alta', color: 'text-green-400', emoji: '🔥' },
 };
 
 const MOOD_CONFIG: Record<string, { label: string; color: string; emoji: string }> = {
-  very_negative: { label: 'Very negative', color: 'text-red-400', emoji: '😞' },
-  negative: { label: 'Negative', color: 'text-orange-400', emoji: '😕' },
-  neutral: { label: 'Neutral', color: 'text-yellow-400', emoji: '😐' },
-  positive: { label: 'Positive', color: 'text-emerald-400', emoji: '😊' },
-  very_positive: { label: 'Very positive', color: 'text-green-400', emoji: '😄' },
+  very_negative: { label: 'Muy negativo', color: 'text-red-400', emoji: '😞' },
+  negative: { label: 'Negativo', color: 'text-orange-400', emoji: '😕' },
+  neutral: { label: 'Neutro', color: 'text-yellow-400', emoji: '😐' },
+  positive: { label: 'Positivo', color: 'text-emerald-400', emoji: '😊' },
+  very_positive: { label: 'Muy positivo', color: 'text-green-400', emoji: '😄' },
 };
 
 export function EntryDetail() {
@@ -50,7 +50,7 @@ export function EntryDetail() {
       try {
         const result = await fetchEntryById(id!, user!.uid);
         if (!result) {
-          if (isMounted) setErrorMessage('Entry not found.');
+          if (isMounted) setErrorMessage('Entrada no encontrada.');
           return;
         }
 
@@ -85,7 +85,7 @@ export function EntryDetail() {
           }
         }
       } catch {
-        if (isMounted) setErrorMessage('Failed to load the entry. Please try again.');
+        if (isMounted) setErrorMessage('Error al cargar la entrada. Inténtalo de nuevo.');
       } finally {
         if (isMounted) setIsLoading(false);
       }
@@ -107,7 +107,7 @@ export function EntryDetail() {
       navigate('/');
     } catch (e) {
       console.error('Failed to delete entry:', e);
-      setErrorMessage('Failed to delete entry.');
+      setErrorMessage('Error al eliminar la entrada.');
       setIsDeleting(false);
     }
   };
@@ -123,14 +123,14 @@ export function EntryDetail() {
   if (errorMessage || !entry) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-background px-6">
-        <p className="text-muted-foreground">{errorMessage ?? 'Entry not found.'}</p>
+        <p className="text-muted-foreground">{errorMessage ?? 'Entrada no encontrada.'}</p>
         <Button
           variant="outline"
           onClick={() => navigate('/')}
           className="gap-2 rounded-xl border-border/50"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to journal
+          Volver
         </Button>
       </div>
     );
@@ -153,7 +153,7 @@ export function EntryDetail() {
             disabled={isDeleting}
           >
             <ArrowLeft className="h-4 w-4" />
-            Back
+            Volver
           </Button>
           <Button
             variant="ghost"
@@ -181,7 +181,7 @@ export function EntryDetail() {
         {isGeneratingResponse && (
           <div className="flex items-center gap-3 rounded-2xl border border-primary/20 bg-primary/5 p-5 animate-pulse">
             <Sparkles className="h-5 w-5 text-primary" />
-            <p className="text-sm text-primary/80">Reflecting on your recent sessions...</p>
+            <p className="text-sm text-primary/80">Reflexionando sobre tus sesiones recientes...</p>
           </div>
         )}
 
@@ -217,7 +217,7 @@ export function EntryDetail() {
         {/* Summary */}
         <div className="rounded-2xl border border-border/40 bg-card/50 p-5 backdrop-blur-sm">
           <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Summary
+            Resumen
           </h3>
           <p className="text-sm leading-relaxed text-foreground">{analysis.summary}</p>
         </div>
@@ -228,7 +228,7 @@ export function EntryDetail() {
             {(analysis.themes?.length ?? 0) > 0 && (
               <div className="mb-4">
                 <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Themes
+                  Temas
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {analysis.themes?.map((theme) => (
@@ -246,7 +246,7 @@ export function EntryDetail() {
             {(analysis.activities?.length ?? 0) > 0 && (
               <div>
                 <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Activities
+                  Actividades
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {analysis.activities?.map((activity) => (
@@ -271,7 +271,7 @@ export function EntryDetail() {
                 <div className="mb-2 flex items-center gap-2">
                   <Zap className={`h-4 w-4 ${energyInfo.color}`} />
                   <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Energy
+                    Energía
                   </h3>
                 </div>
                 <p className={`text-sm font-semibold ${energyInfo.color}`}>
@@ -284,7 +284,7 @@ export function EntryDetail() {
                 <div className="mb-2 flex items-center gap-2">
                   <Smile className={`h-4 w-4 ${moodInfo.color}`} />
                   <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Mood
+                    Estado de ánimo
                   </h3>
                 </div>
                 <p className={`text-sm font-semibold ${moodInfo.color}`}>
@@ -299,7 +299,7 @@ export function EntryDetail() {
         {analysis.reflectionPrompt && (
           <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
             <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary/70">
-              Something to reflect on
+              Para reflexionar
             </h3>
             <p className="text-sm italic leading-relaxed text-foreground/80">
               {analysis.reflectionPrompt}
@@ -310,7 +310,7 @@ export function EntryDetail() {
         {/* Original transcript */}
         <div className="rounded-2xl border border-border/40 bg-card/50 p-5 backdrop-blur-sm">
           <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Original transcript
+            Transcripción original
           </h3>
           <p className="text-sm leading-relaxed text-muted-foreground">
             {entry.transcript}
