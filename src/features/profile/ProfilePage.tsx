@@ -215,12 +215,16 @@ export function ProfilePage() {
     <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
       <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5 flex justify-between items-center">
         <h1 className="text-lg font-bold text-gradient">Perfil</h1>
-        <button onClick={() => {
-          setEditName(profile?.name || '');
-          setEditGender(profile?.gender || 'prefiero no decirlo');
-          setEditBirthDate(profile?.birthDate || '');
-          setIsEditing(true);
-        }} className="text-primary p-2">
+        <button 
+          aria-label="Edit Profile"
+          onClick={() => {
+            setEditName(profile?.name || '');
+            setEditGender(profile?.gender || 'prefiero no decirlo');
+            setEditBirthDate(profile?.birthDate || '');
+            setIsEditing(true);
+          }} 
+          className="text-primary p-2"
+        >
           <Edit2 className="h-5 w-5" />
         </button>
       </header>

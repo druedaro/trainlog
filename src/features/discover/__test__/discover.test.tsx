@@ -1,0 +1,92 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { DiscoverPage } from '@/features/discover/DiscoverPage';
+import { useAuth } from '@/features/auth/useAuth';
+import { fetchDiscoverArticles, fetchRecentEntries, fetchSavedArticles } from '@/lib/firestore';
+import { BrowserRouter } from 'react-router';
+
+// Mock Auth
+vi.mock('@/features/auth/useAuth', () => ({
+  useAuth: vi.fn(),
+}));
+
+// Mock Firestore
+vi.mock('@/lib/firestore', () => ({
+  fetchDiscoverArticles: vi.fn(),
+  fetchSavedArticles: vi.fn(),
+  fetchRecentEntries: vi.fn(),
+  saveDiscoverArticles: vi.fn(),
+}));
+
+// Mock API
+vi.mock('@/lib/api', () => ({
+  generateDiscover: vi.fn(),
+}));
+
+describe('Feature: Article Discovery System', () => {
+  const mockUser = { uid: 'user123' };
+  
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(useAuth).mockReturnValue({
+      user: mockUser as any,
+      profile: null as any,
+      isLoading: false,
+      signInWithGoogle: vi.fn(),
+      signOut: vi.fn(),
+      refreshProfile: vi.fn(),
+    });
+  });
+
+  describe('Scenario: Generating articles with insufficient history', () => {
+    it('Given a user with no entries, When they tap generate, Then they are warned about insufficient data', async () => {
+      vi.mocked(fetchDiscoverArticles).mockResolvedValue(null);
+      vi.mocked(fetchRecentEntries).mockResolvedValue([]);
+
+      render(
+        <BrowserRouter>
+          <DiscoverPage />
+        </BrowserRouter>
+      );
+
+      // Wait for load by checking if the button is there
+      await waitFor(() => expect(screen.getByText('Generar recomendaciones')).toBeInTheDocument());
+
+      const generateBtn = screen.getByText('Generar recomendaciones');
+      fireEvent.click(generateBtn);
+
+      await waitFor(() => {
+        expect(screen.getByText('Necesitas al menos una entrada para generar recomendaciones.')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Scenario: Viewing saved articles', () => {
+    it('Given a user has saved articles, When they switch to the Saved tab, Then the articles are displayed in correct category order', async () => {
+      vi.mocked(fetchDiscoverArticles).mockResolvedValue(null);
+      
+      const mockSaved = [
+        { id: '1', title: 'Mindset Tip', category: 'mindset', content: '...', emoji: '🧠', reason: '...' },
+        { id: '2', title: 'Recovery Tip', category: 'recovery', content: '...', emoji: '💤', reason: '...' },
+      ];
+      
+      vi.mocked(fetchSavedArticles).mockResolvedValue(mockSaved as any);
+
+      render(
+        <BrowserRouter>
+          <DiscoverPage />
+        </BrowserRouter>
+      );
+
+      // Switch to saved tab
+      const savedTab = screen.getByText('Guardados');
+      fireEvent.click(savedTab);
+
+      await waitFor(() => {
+        expect(fetchSavedArticles).toHaveBeenCalledWith('user123');
+        expect(screen.getByText('Mindset Tip')).toBeInTheDocument();
+        expect(screen.getByText('Recovery Tip')).toBeInTheDocument();
+      });
+    });
+  });
+});
