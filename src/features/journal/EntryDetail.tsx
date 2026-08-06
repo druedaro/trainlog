@@ -146,7 +146,7 @@ export function EntryDetail() {
         <Button
           variant="ghost"
           onClick={() => navigate('/')}
-          className="relative gap-2 rounded-xl px-3 text-white hover:text-white/80 hover:bg-white/10"
+          className="relative gap-2 rounded-xl px-3 text-foreground hover:bg-foreground/10"
           disabled={isDeleting}
         >
           <ArrowLeft className="h-4 w-4" />
