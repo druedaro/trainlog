@@ -8,11 +8,10 @@ const chatResponseSchema = z.object({
   response: z.string().describe('The coach response in Markdown format'),
   recommendedExercises: z.array(z.object({
     englishName: z.string(),
-    spanishName: z.string()
   })).default([]),
 });
 
-async function fetchExerciseGif(exercise: { englishName: string; spanishName: string }): Promise<string | null> {
+async function fetchExerciseGif(exercise: { englishName: string }): Promise<string | null> {
   try {
     const res = await fetch(
       `https://oss.exercisedb.dev/api/v1/exercises/search?search=${encodeURIComponent(exercise.englishName)}&threshold=0.8`
@@ -23,7 +22,7 @@ async function fetchExerciseGif(exercise: { englishName: string; spanishName: st
         const exerciseData = json.data[0];
         // capitalize standard name for readability
         const standardName = exerciseData.name.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-        return `\n**${exercise.spanishName} (${standardName})**\n![${exercise.spanishName}](${exerciseData.gifUrl})\n`;
+        return `\n**${standardName}**\n![${standardName}](${exerciseData.gifUrl})\n`;
       }
     }
   } catch (e) {
@@ -43,7 +42,7 @@ REGLAS ESTRICTAS DE RESPUESTA (TOLERANCIA CERO A ALUCINACIONES Y ANGLICISMOS):
 5. **Formato de Salida:** Utiliza formato Markdown. Usa negritas para destacar ideas clave, y listas de viñetas para enumerar patrones.
 6. **Recomendación de Ejercicios:** Si vas a sugerir ejercicios físicos, DEBES incluirlos en la lista 'recommendedExercises'. 
    - El campo 'englishName' DEBE ser el nombre estándar internacional en inglés de fitness/culturismo (ej. "barbell squat", "plank", "push up", "pull up", "deadlift", "dumbbell bicep curl"). Esto es crítico para buscar el vídeo correcto en la base de datos.
-   - El campo 'spanishName' será la traducción que usaste en el texto (ej. "sentadilla", "plancha"). Si no hay ejercicios, deja la lista vacía.
+   - Si no hay ejercicios, deja la lista vacía.
 
 ESTRUCTURA DE LOS DATOS QUE RECIBIRÁS:
 - Perfil del usuario.
@@ -53,7 +52,7 @@ ESTRUCTURA DE LOS DATOS QUE RECIBIRÁS:
 Debes devolver EXCLUSIVAMENTE un objeto JSON válido con la siguiente estructura:
 {
   "response": "string",
-  "recommendedExercises": [{"englishName": "string", "spanishName": "string"}]
+  "recommendedExercises": [{"englishName": "string"}]
 }`;
 
 export default async function handler(
