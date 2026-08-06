@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router';
-import { Activity } from 'lucide-react';
+import { Activity, Sparkles } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
@@ -9,6 +9,7 @@ import { RecordButton } from '@/features/journal/RecordButton';
 import { TranscriptEditor } from '@/features/journal/TranscriptEditor';
 import { AnalysisView } from '@/features/journal/AnalysisView';
 import { CalendarView } from '@/features/journal/CalendarView';
+import { JournalInstructionsModal } from '@/features/journal/JournalInstructionsModal';
 import { transcribeAudio, analyzeReflection, ApiError } from '@/lib/api';
 import { saveConfirmedEntry } from '@/lib/firestore';
 import { entryAnalysisSchema, type EntryAnalysis } from '@/types/entry';
@@ -24,6 +25,7 @@ export function JournalPage() {
   const [transcript, setTranscript] = useState('');
   const [analysis, setAnalysis] = useState<EntryAnalysis | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showInstructions, setShowInstructions] = useState(false);
 
   const resetFlow = useCallback(() => {
     setFlowStep('idle');
@@ -136,7 +138,14 @@ export function JournalPage() {
 
         {flowStep === 'idle' && !hasBlob && (
           <div className="space-y-8 animate-fade-in">
-            <div className="flex justify-center pt-6">
+            <div className="flex flex-col items-center pt-6 gap-6">
+              <button 
+                onClick={() => setShowInstructions(true)}
+                className="flex items-center gap-2 text-xs font-semibold text-primary bg-primary/10 hover:bg-primary/20 transition-colors px-4 py-2 rounded-full border border-primary/20 shadow-sm"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                Tips para grabar
+              </button>
               <RecordButton
                 isRecording={recorder.status === 'recording'}
                 durationMs={recorder.durationMs}
@@ -231,6 +240,11 @@ export function JournalPage() {
           </div>
         )}
       </main>
+
+      <JournalInstructionsModal 
+        isOpen={showInstructions} 
+        onClose={() => setShowInstructions(false)} 
+      />
     </div>
   );
 }
