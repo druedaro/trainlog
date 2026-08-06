@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { InsightsPage } from '@/features/insights/InsightsPage';
 import { useAuth } from '@/features/auth/useAuth';
-import { fetchInsights, fetchRecentEntries } from '@/lib/firestore';
+import { fetchInsights, fetchRecentEntries, fetchEntriesByDays } from '@/lib/firestore';
 
 // Mock Auth
 vi.mock('@/features/auth/useAuth', () => ({
