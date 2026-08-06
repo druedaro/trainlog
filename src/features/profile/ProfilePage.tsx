@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
-import { LogOut, User, Activity, Flame, Download, Edit2, Calendar } from 'lucide-react';
+import { LogOut, Download, Activity, Calendar, Flame, Edit2, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/theme/ThemeToggle';
 import { useAuth } from '@/features/auth/useAuth';
 import { countUserEntries, fetchRecentEntries, saveUserProfile } from '@/lib/firestore';
 import type { JournalEntry } from '@/types/entry';
@@ -215,18 +216,21 @@ export function ProfilePage() {
     <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
       <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5 flex justify-between items-center">
         <h1 className="text-lg font-bold text-gradient">Perfil</h1>
-        <button 
-          aria-label="Edit Profile"
-          onClick={() => {
-            setEditName(profile?.name || '');
-            setEditGender(profile?.gender || 'prefiero no decirlo');
-            setEditBirthDate(profile?.birthDate || '');
-            setIsEditing(true);
-          }} 
-          className="text-primary p-2"
-        >
-          <Edit2 className="h-5 w-5" />
-        </button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <button 
+            aria-label="Edit Profile"
+            onClick={() => {
+              setEditName(profile?.name || '');
+              setEditGender(profile?.gender || 'prefiero no decirlo');
+              setEditBirthDate(profile?.birthDate || '');
+              setIsEditing(true);
+            }} 
+            className="text-primary p-2"
+          >
+            <Edit2 className="h-5 w-5" />
+          </button>
+        </div>
       </header>
 
       <main className="flex-1 px-5 py-8 space-y-8 animate-slide-up pb-24">

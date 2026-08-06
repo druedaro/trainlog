@@ -47,6 +47,7 @@ describe('Feature: Weekly Insights Synthesis', () => {
   describe('Scenario: Generating insights with insufficient data', () => {
     it('Given a user with 0 recent entries, When they tap generate synthesis, Then an error message explains the business rule', async () => {
       vi.mocked(fetchRecentEntries).mockResolvedValue([]);
+      vi.mocked(fetchEntriesByDays).mockResolvedValue([]);
       vi.mocked(fetchInsights).mockResolvedValue(null);
 
       render(<InsightsPage />);
