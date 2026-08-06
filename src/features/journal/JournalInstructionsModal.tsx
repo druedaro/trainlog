@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Sparkles, Battery, Activity, Flame } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -7,10 +9,21 @@ interface JournalInstructionsModalProps {
 }
 
 export function JournalInstructionsModal({ isOpen, onClose }: JournalInstructionsModalProps) {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200">
       <div 
         className="absolute inset-0 bg-background/80 backdrop-blur-sm"
         onClick={onClose}
@@ -79,6 +92,7 @@ export function JournalInstructionsModal({ isOpen, onClose }: JournalInstruction
           ¡Entendido!
         </Button>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
