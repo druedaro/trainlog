@@ -15,13 +15,15 @@ const chatResponseSchema = z.object({
 async function fetchExerciseGif(exercise: { englishName: string; spanishName: string }): Promise<string | null> {
   try {
     const res = await fetch(
-      `https://oss.exercisedb.dev/api/v1/exercises/search?search=${encodeURIComponent(exercise.englishName)}&threshold=0.5`
+      `https://oss.exercisedb.dev/api/v1/exercises/search?search=${encodeURIComponent(exercise.englishName)}&threshold=0.8`
     );
     if (res.ok) {
       const json = (await res.json()) as any;
       if (json.success && json.data && json.data.length > 0) {
         const exerciseData = json.data[0];
-        return `\n**${exercise.spanishName}**\n![${exercise.spanishName}](${exerciseData.gifUrl})\n`;
+        // capitalize standard name for readability
+        const standardName = exerciseData.name.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        return `\n**${exercise.spanishName} (${standardName})**\n![${exercise.spanishName}](${exerciseData.gifUrl})\n`;
       }
     }
   } catch (e) {

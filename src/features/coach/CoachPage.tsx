@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { Send, AlertCircle } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { Send, AlertCircle, Mic, MicOff } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
@@ -10,6 +10,14 @@ type Message = {
   role: 'user' | 'assistant';
   content: string;
 };
+
+// Extensión para typescript de las APIs experimentales
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
 
 export function CoachPage() {
   const { user, profile } = useAuth();
@@ -23,8 +31,59 @@ export function CoachPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [entries, setEntries] = useState<any[]>([]);
+  const [isListening, setIsListening] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const recognitionRef = useRef<any>(null);
+
+  // Initialize SpeechRecognition
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'es-ES';
+
+      recognition.onresult = (event: any) => {
+        let currentTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          currentTranscript += event.results[i][0].transcript;
+        }
+        // Use a functional update or just rely on appending?
+        // Actually, interim results overwrite each other if we just do setInput(currentTranscript) 
+        // But since we want to append to existing input, we need a ref or state.
+        // For simplicity, we just set the input to what they are saying right now.
+        setInput(currentTranscript);
+      };
+
+      recognition.onerror = (event: any) => {
+        console.error('Speech recognition error', event.error);
+        setIsListening(false);
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognitionRef.current = recognition;
+    }
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, []);
+
+  const toggleListening = useCallback(() => {
+    if (isListening) {
+      recognitionRef.current?.stop();
+    } else {
+      setInput(''); // clear input before speaking
+      recognitionRef.current?.start();
+      setIsListening(true);
+    }
+  }, [isListening]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -136,6 +195,17 @@ export function CoachPage() {
 
       <div className="fixed bottom-[64px] left-1/2 -translate-x-1/2 w-full max-w-lg border-t border-border/40 bg-background/80 backdrop-blur-md p-3 z-20">
         <div className="flex gap-2">
+          {window.SpeechRecognition || window.webkitSpeechRecognition ? (
+            <Button
+              onClick={toggleListening}
+              variant={isListening ? "default" : "outline"}
+              size="icon"
+              className={`rounded-full shrink-0 h-[42px] w-[42px] ${isListening ? 'bg-red-500 hover:bg-red-600' : ''}`}
+              title={isListening ? "Detener grabación" : "Dictar por voz"}
+            >
+              {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+            </Button>
+          ) : null}
           <input
             type="text"
             value={input}
