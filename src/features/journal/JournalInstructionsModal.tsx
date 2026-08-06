@@ -12,11 +12,14 @@ export function JournalInstructionsModal({ isOpen, onClose }: JournalInstruction
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     };
   }, [isOpen]);
 
@@ -24,15 +27,15 @@ export function JournalInstructionsModal({ isOpen, onClose }: JournalInstruction
 
   return createPortal(
     <div 
-      className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 animate-in fade-in duration-200"
       style={{ WebkitTransform: 'translateZ(0)' }}
     >
       <div 
-        className="absolute inset-0 bg-background/80 backdrop-blur-sm touch-none"
+        className="absolute inset-0 bg-background/90 backdrop-blur-sm touch-none"
         onClick={onClose}
       />
       
-      <div className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto bg-card border-t sm:border border-border/40 sm:rounded-3xl rounded-t-3xl p-6 shadow-2xl animate-in slide-in-from-bottom-10 sm:slide-in-from-bottom-4 duration-300">
+      <div className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto bg-card border border-border/40 rounded-3xl p-6 shadow-2xl animate-in zoom-in-95 duration-300">
         <Button 
           variant="ghost" 
           size="icon" 
