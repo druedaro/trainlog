@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/button';
+import { HeaderLogo } from '@/components/layout/HeaderLogo';
 import { useAuth } from '@/features/auth/useAuth';
 import { useVoiceRecorder } from '@/features/journal/useVoiceRecorder';
 import { RecordButton } from '@/features/journal/RecordButton';
@@ -115,10 +116,8 @@ export function JournalPage() {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
-      <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5">
-        <div className="flex items-center justify-center h-9">
-          <h1 className="text-lg font-bold text-gradient">Trainlog</h1>
-        </div>
+      <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5 flex items-center h-16">
+        <HeaderLogo />
       </header>
 
       <main className="flex-1 px-5 py-6">
