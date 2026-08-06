@@ -11,7 +11,10 @@ const articleSchema = z.object({
   category: z.enum(['recovery', 'training', 'mindset', 'nutrition']),
   content: z.string(),
   reason: z.string(),
-  recommendedExercises: z.array(z.string()).default([]),
+  recommendedExercises: z.array(z.object({
+    englishName: z.string(),
+    spanishName: z.string()
+  })).default([]),
 });
 
 const discoverResponseSchema = z.object({
@@ -38,7 +41,7 @@ Quality Standards:
 Content Rules:
 1. Generate exactly 4 articles, one for each category: recovery, training, mindset, nutrition.
 2. The 'reason' field must explain WHY this article is relevant to the user specifically.
-3. If an article recommends specific physical exercises (and ONLY if relevant to physical training or mobility), include their EXACT STANDARD ENGLISH names in the 'recommendedExercises' array. DO NOT recommend exercises for nutrition or mindset articles unless directly relevant. Leave the array empty otherwise.
+3. If an article recommends specific physical exercises (and ONLY if relevant to physical training or mobility), include them in the 'recommendedExercises' array as objects with 'englishName' (the EXACT STANDARD ENGLISH name for the exercise database search) and 'spanishName' (the translated name to show the user). Leave the array empty otherwise.
 4. The 'emoji' field should be a single emoji representing the article topic.
 5. The 'id' field should be a short, unique slug (e.g., "recovery-sleep-hrv").
 6. Do NOT diagnose injuries or prescribe medical treatments.
@@ -54,25 +57,25 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
       "category": "recovery" | "training" | "mindset" | "nutrition",
       "content": "string (Markdown, 400-600 words, MUST include ## 📚 Fuentes y lectura recomendada section at the end)",
       "reason": "string",
-      "recommendedExercises": ["string"]
+      "recommendedExercises": [{"englishName": "string", "spanishName": "string"}]
     }
   ]
 };`;
 
-async function fetchExerciseGif(exerciseName: string): Promise<string | null> {
+async function fetchExerciseGif(exercise: { englishName: string; spanishName: string }): Promise<string | null> {
   try {
     const res = await fetch(
-      `https://oss.exercisedb.dev/api/v1/exercises/search?search=${encodeURIComponent(exerciseName)}&threshold=0.5`
+      `https://oss.exercisedb.dev/api/v1/exercises/search?search=${encodeURIComponent(exercise.englishName)}&threshold=0.5`
     );
     if (res.ok) {
       const json = (await res.json()) as any;
       if (json.success && json.data && json.data.length > 0) {
         const exerciseData = json.data[0];
-        return `\n**${exerciseData.name}**\n![${exerciseData.name}](${exerciseData.gifUrl})\n`;
+        return `\n**${exercise.spanishName}**\n![${exercise.spanishName}](${exerciseData.gifUrl})\n`;
       }
     }
   } catch (e) {
-    console.error(`Failed to fetch GIF for ${exerciseName}`, e);
+    console.error(`Failed to fetch GIF for ${exercise.englishName}`, e);
   }
   return null;
 }
@@ -158,12 +161,12 @@ export default async function handler(
 
         if (article.recommendedExercises.length > 0) {
           const gifResults = await Promise.all(
-            article.recommendedExercises.map(fetchExerciseGif),
+            article.recommendedExercises.map((ex: any) => fetchExerciseGif(ex)),
           );
           const validGifs = gifResults.filter(Boolean);
 
           if (validGifs.length > 0) {
-            enrichedContent += '\n\n---\n\n**📹 Exercise Demonstrations:**\n' + validGifs.join('');
+            enrichedContent += '\n\n---\n\n**📹 Demostración de ejercicios:**\n' + validGifs.join('');
           }
         }
 
