@@ -1,9 +1,10 @@
 import { useLocation, useNavigate } from 'react-router';
-import { BookOpen, Compass, Activity, User } from 'lucide-react';
+import { BookOpen, Compass, Activity, User, Bot } from 'lucide-react';
 
 const NAV_ITEMS = [
   { path: '/', label: 'Journal', icon: BookOpen },
   { path: '/insights', label: 'Insights', icon: Activity },
+  { path: '/coach', label: 'Coach', icon: Bot },
   { path: '/discover', label: 'Discover', icon: Compass },
   { path: '/profile', label: 'Perfil', icon: User },
 ];

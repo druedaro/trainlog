@@ -7,6 +7,7 @@ import { DayEntriesPage } from '@/features/journal/DayEntriesPage';
 import { DiscoverPage } from '@/features/discover/DiscoverPage';
 import { InsightsPage } from '@/features/insights/InsightsPage';
 import { ProfilePage } from '@/features/profile/ProfilePage';
+import { CoachPage } from '@/features/coach/CoachPage';
 import { AppLayout } from '@/app/AppLayout';
 
 export const router = createBrowserRouter([
@@ -35,6 +36,10 @@ export const router = createBrowserRouter([
           {
             path: '/discover',
             Component: DiscoverPage,
+          },
+          {
+            path: '/coach',
+            Component: CoachPage,
           },
           {
             path: '/entry/:id',

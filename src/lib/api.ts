@@ -161,4 +161,31 @@ export async function generateInsights(
   return response.json();
 }
 
+export async function sendMessageToCoach(
+  messages: { role: string; content: string }[],
+  entries: unknown[],
+  userProfile?: { name: string; gender: string } | null,
+): Promise<{ response: string }> {
+  const headers = await getAuthHeaders();
+
+  const response = await fetch(`${API_BASE_URL}/chatWithCoach`, {
+    method: 'POST',
+    headers: {
+      ...headers,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ messages, entries, userProfile }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => 'Unknown error');
+    throw new ApiError(
+      `Chat completion failed: ${errorText}`,
+      response.status,
+    );
+  }
+
+  return response.json();
+}
+
 export { ApiError };
