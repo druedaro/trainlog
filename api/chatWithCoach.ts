@@ -6,29 +6,50 @@ const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
 const chatResponseSchema = z.object({
   response: z.string().describe('The coach response in Markdown format'),
+  recommendedExercises: z.array(z.object({
+    englishName: z.string(),
+    spanishName: z.string()
+  })).default([]),
 });
+
+async function fetchExerciseGif(exercise: { englishName: string; spanishName: string }): Promise<string | null> {
+  try {
+    const res = await fetch(
+      `https://oss.exercisedb.dev/api/v1/exercises/search?search=${encodeURIComponent(exercise.englishName)}&threshold=0.5`
+    );
+    if (res.ok) {
+      const json = (await res.json()) as any;
+      if (json.success && json.data && json.data.length > 0) {
+        const exerciseData = json.data[0];
+        return `\n**${exercise.spanishName}**\n![${exercise.spanishName}](${exerciseData.gifUrl})\n`;
+      }
+    }
+  } catch (e) {
+    console.error(`Failed to fetch GIF for ${exercise.englishName}`, e);
+  }
+  return null;
+}
 
 const SYSTEM_PROMPT = `Eres el Entrenador Asistente de Trainlog, un asistente de Inteligencia Artificial de grado clínico y deportivo de élite.
 Tu misión principal es ayudar al usuario a entender sus patrones de entrenamiento, fatiga y progreso, utilizando ÚNICA Y EXCLUSIVAMENTE los datos proporcionados de su diario de entrenamiento.
 
-REGLAS ESTRICTAS DE RESPUESTA (TOLERANCIA CERO A ALUCINACIONES):
+REGLAS ESTRICTAS DE RESPUESTA (TOLERANCIA CERO A ALUCINACIONES Y ANGLICISMOS):
 1. **Verdad Absoluta:** Solo puedes basar tus afirmaciones en las notas proporcionadas en el JSON de entradas del usuario. Si te preguntan algo que no aparece en el historial provisto, DEBES responder: "No tengo registros en tu diario sobre eso." No asumas, no inventes, no deduzcas sin evidencia empírica del diario.
-2. **Cita de Fuentes (Evidencia):** Cuando respondas sobre algo que el usuario hizo o sintió, debes referenciar el momento aproximado (ej. "En tu sesión del [Fecha], indicaste que sentías dolor en la rodilla...").
-3. **Tono Clínico y Empático:** Eres un profesional de la salud y el deporte de pago. Tu tono debe ser altamente profesional, riguroso, empático y estructurado. No utilices excesivos emojis, solo los necesarios para estructurar la información.
-4. **Sin Diagnósticos Médicos:** Si el usuario describe un dolor grave o lesión, recomiéndale encarecidamente consultar a un profesional de la salud físico. Tú no diagnosticas.
-5. **Formato de Salida:** Utiliza formato Markdown. Usa negritas para destacar ideas clave, y listas de viñetas (bullet points) para enumerar patrones o recomendaciones.
-6. **Limitación de Ejercicios:** Si vas a sugerir modificaciones de entrenamiento debido a una fatiga documentada en el diario, básate en principios básicos de la ciencia del deporte (reducción de volumen, reducción de intensidad, días de descanso).
+2. **Español Puro (CERO Anglicismos):** BAJO NINGÚN CONCEPTO utilices palabras en inglés para referirte a ejercicios, músculos o técnicas (como 'core', 'leg drive', 'curl', 'press', etc.). Usa siempre la terminología equivalente en español (ej. 'zona media', 'empuje de piernas', 'flexión de bíceps', 'empuje de banca').
+3. **Cita de Fuentes (Evidencia):** Cuando respondas sobre algo que el usuario hizo o sintió, debes referenciar el momento aproximado (ej. "En tu sesión del [Fecha], indicaste que sentías dolor en la rodilla...").
+4. **Tono Clínico y Empático:** Eres un profesional de la salud y el deporte de pago. Tu tono debe ser altamente profesional, riguroso, empático y estructurado. No utilices excesivos emojis.
+5. **Formato de Salida:** Utiliza formato Markdown. Usa negritas para destacar ideas clave, y listas de viñetas para enumerar patrones.
+6. **Recomendación de Ejercicios:** Si vas a sugerir ejercicios físicos para aliviar dolor o fatiga, DEBES incluirlos en la lista 'recommendedExercises' con su 'englishName' (el nombre exacto y estándar en inglés) y su 'spanishName' (el nombre en español que usaste en el texto). Si no hay ejercicios, deja la lista vacía.
 
 ESTRUCTURA DE LOS DATOS QUE RECIBIRÁS:
-- Tendrás el perfil del usuario.
-- Tendrás un array de "entries" que contienen la transcripción original (transcript), la fecha (createdAt) y el análisis (themes, perceivedEnergy, etc).
-- Tendrás el historial de chat (messages) para tener contexto de la conversación actual.
-
-Tu respuesta debe estar SIEMPRE en Español, independientemente del idioma de las entradas.
+- Perfil del usuario.
+- Un array de "entries" que contienen la transcripción original, fecha y análisis.
+- El historial de chat para tener contexto actual.
 
 Debes devolver EXCLUSIVAMENTE un objeto JSON válido con la siguiente estructura:
 {
-  "response": "string"
+  "response": "string",
+  "recommendedExercises": [{"englishName": "string", "spanishName": "string"}]
 }`;
 
 export default async function handler(
@@ -76,7 +97,6 @@ export default async function handler(
   try {
     const groq = new Groq({ apiKey: GROQ_API_KEY });
     
-    // Format the entries as context for the AI
     const journalContext = JSON.stringify(
       (entries || []).map((e: any) => ({
         date: new Date(e.createdAt).toISOString().split('T')[0],
@@ -87,7 +107,6 @@ export default async function handler(
       2
     );
 
-    // Build conversation history
     const groqMessages = [
       { role: 'system', content: dynamicSystemPrompt },
       { role: 'system', content: `HISTORIAL DEL DIARIO DEL USUARIO (USAR COMO ÚNICA VERDAD):\n${journalContext}` },
@@ -100,7 +119,7 @@ export default async function handler(
     const chatCompletion = await groq.chat.completions.create({
       messages: groqMessages,
       model: 'llama-3.3-70b-versatile',
-      temperature: 0.1, // Very low temperature to prevent hallucination
+      temperature: 0.1, 
       response_format: { type: 'json_object' },
     });
 
@@ -112,9 +131,29 @@ export default async function handler(
 
     const cleanedContent = rawContent.replace(/```json\s*/gi, '').replace(/```\s*$/gi, '').trim();
     const parsed = JSON.parse(cleanedContent);
+    const validated = chatResponseSchema.safeParse(parsed);
+
+    if (!validated.success) {
+      console.error('Chat validation error:', validated.error);
+      return response.status(502).json({ error: 'The generated content did not meet validation standards.' });
+    }
+
+    let finalResponse = validated.data.response;
+
+    // Inject GIFs if exercises were recommended
+    if (validated.data.recommendedExercises.length > 0) {
+      const gifResults = await Promise.all(
+        validated.data.recommendedExercises.map(fetchExerciseGif)
+      );
+      const validGifs = gifResults.filter(Boolean);
+
+      if (validGifs.length > 0) {
+        finalResponse += '\n\n---\n\n**📹 Demostración de ejercicios recomendados:**\n' + validGifs.join('');
+      }
+    }
 
     return response.status(200).json({
-      response: parsed.response,
+      response: finalResponse,
     });
   } catch (error) {
     console.error('Groq LLaMA Chat error:', error instanceof Error ? error.stack || error.message : error);
