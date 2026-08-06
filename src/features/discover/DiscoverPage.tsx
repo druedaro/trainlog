@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router';
 import { RefreshCw, Sparkles, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { HeaderLogo } from '@/components/layout/HeaderLogo';
 import { useAuth } from '@/features/auth/useAuth';
 import {
   fetchDiscoverArticles,
@@ -209,10 +208,7 @@ export function DiscoverPage() {
     <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
       <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 pt-3.5 pb-2">
         <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-3">
-            <HeaderLogo />
-            <h1 className="text-lg font-bold text-gradient">Discover</h1>
-          </div>
+          <h1 className="text-lg font-bold text-gradient">Discover</h1>
           <Button
             variant="ghost"
             size="icon"
