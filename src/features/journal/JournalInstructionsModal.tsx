@@ -23,9 +23,12 @@ export function JournalInstructionsModal({ isOpen, onClose }: JournalInstruction
   if (!isOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200">
+    <div 
+      className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200"
+      style={{ WebkitTransform: 'translateZ(0)' }}
+    >
       <div 
-        className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+        className="absolute inset-0 bg-background/80 backdrop-blur-sm touch-none"
         onClick={onClose}
       />
       
