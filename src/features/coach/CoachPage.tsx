@@ -24,7 +24,7 @@ export function CoachPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: 'Hola, soy tu Coach personal. He estado analizando tu diario de entrenamiento. ¿En qué puedo ayudarte hoy? Puedes preguntarme sobre tus molestias, tu progresión o pedirme un resumen de tus entrenamientos recientes.',
+      content: 'Hola, soy Anna, la coach que te acompaña en tu día a día. He estado analizando tu diario de entrenamiento. ¿En qué puedo ayudarte hoy?',
     },
   ]);
   const [input, setInput] = useState('');
@@ -143,7 +143,7 @@ export function CoachPage() {
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background pb-[120px]">
       <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5">
-        <h1 className="text-lg font-bold text-gradient">Coach</h1>
+        <h1 className="text-lg font-bold text-gradient">Personal Coach</h1>
       </header>
 
       <main className="flex-1 overflow-y-auto px-5 py-6 space-y-4">
