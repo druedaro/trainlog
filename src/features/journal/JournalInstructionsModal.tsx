@@ -16,23 +16,23 @@ export function JournalInstructionsModal({ isOpen, onClose }: JournalInstruction
         onClick={onClose}
       />
       
-      <div className="relative w-full max-w-lg bg-card border-t sm:border border-border/40 sm:rounded-3xl rounded-t-3xl p-6 shadow-2xl animate-in slide-in-from-bottom-10 sm:slide-in-from-bottom-4 duration-300">
+      <div className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto bg-card border-t sm:border border-border/40 sm:rounded-3xl rounded-t-3xl p-6 shadow-2xl animate-in slide-in-from-bottom-10 sm:slide-in-from-bottom-4 duration-300">
         <Button 
           variant="ghost" 
           size="icon" 
           onClick={onClose}
-          className="absolute right-4 top-4 rounded-full"
+          className="absolute right-4 top-4 rounded-full bg-background/50 backdrop-blur z-10"
         >
           <X className="h-5 w-5 text-muted-foreground" />
         </Button>
 
-        <div className="flex items-center gap-3 mb-6">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+        <div className="flex items-center gap-3 mb-6 pr-8">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
             <Sparkles className="h-5 w-5" />
           </div>
           <div>
             <h2 className="text-lg font-bold text-foreground leading-tight">Tips para tu Diario</h2>
-            <p className="text-xs text-muted-foreground">Alimenta a la IA para mejores gráficos</p>
+            <p className="text-xs text-muted-foreground">Ayuda a tu coach a entenderte mejor</p>
           </div>
         </div>
 
@@ -75,7 +75,7 @@ export function JournalInstructionsModal({ isOpen, onClose }: JournalInstruction
           </div>
         </div>
 
-        <Button onClick={onClose} className="w-full mt-6 rounded-xl font-bold py-6">
+        <Button onClick={onClose} className="w-full mt-5 rounded-xl font-bold py-5">
           ¡Entendido!
         </Button>
       </div>
