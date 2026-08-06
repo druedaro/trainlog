@@ -83,14 +83,8 @@ export function CoachPage() {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background pb-[120px]">
-      <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5 flex items-center gap-3 h-16">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-          <Bot className="h-5 w-5" />
-        </div>
-        <div>
-          <h1 className="text-lg font-bold text-foreground leading-tight">Entrenador</h1>
-          <p className="text-[10px] font-medium text-muted-foreground leading-tight">Modo estricto basado en datos</p>
-        </div>
+      <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5">
+        <h1 className="text-lg font-bold text-gradient">Coach</h1>
       </header>
 
       <main className="flex-1 overflow-y-auto px-5 py-6 space-y-4">
