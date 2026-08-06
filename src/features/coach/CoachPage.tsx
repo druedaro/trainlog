@@ -11,7 +11,7 @@ type Message = {
   content: string;
 };
 
-// Extensión para typescript de las APIs experimentales
+
 declare global {
   interface Window {
     SpeechRecognition: any;
@@ -90,7 +90,7 @@ export function CoachPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Load user entries on mount
+  
   useEffect(() => {
     if (!user) return;
     async function loadEntries() {
@@ -119,7 +119,7 @@ export function CoachPage() {
     setIsLoading(true);
 
     try {
-      // Send chat history (up to last 10 messages to avoid token bloat)
+      
       const chatHistory = newMessages.slice(-10);
       const res = await sendMessageToCoach(chatHistory, entries, profile);
       
@@ -127,7 +127,7 @@ export function CoachPage() {
     } catch (err) {
       console.error('Coach chat error:', err);
       setError('Hubo un error al comunicarse con el coach. Intenta de nuevo.');
-      setMessages(newMessages); // Keep the user's message
+      setMessages(newMessages); 
     } finally {
       setIsLoading(false);
     }

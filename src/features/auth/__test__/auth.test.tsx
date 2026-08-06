@@ -4,7 +4,7 @@ import { AuthProvider, useAuth } from '@/features/auth/useAuth';
 import { onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth';
 import { fetchUserProfile } from '@/lib/firestore';
 
-// Mock Firebase Auth
+
 vi.mock('firebase/auth', () => ({
   onAuthStateChanged: vi.fn(),
   signInWithPopup: vi.fn(),
@@ -13,7 +13,7 @@ vi.mock('firebase/auth', () => ({
   getAuth: vi.fn(),
 }));
 
-// Mock Firestore
+
 vi.mock('@/lib/firestore', () => ({
   fetchUserProfile: vi.fn(),
 }));
@@ -49,11 +49,11 @@ describe('Feature: User Authentication', () => {
 
   describe('Scenario: Successful login with existing profile', () => {
     it('Given an unauthenticated user, When they log in, Then they are authenticated and profile loads', async () => {
-      // Setup initial state: not logged in
+      
       let authCallback: any;
       vi.mocked(onAuthStateChanged).mockImplementation((_auth, callback) => {
         authCallback = callback;
-        (callback as Function)(null); // Initially null
+        (callback as Function)(null); 
         return vi.fn();
       });
 
@@ -63,17 +63,17 @@ describe('Feature: User Authentication', () => {
         </AuthProvider>
       );
 
-      // Verify unauthenticated state
+      
       expect(screen.getByText('Login')).toBeInTheDocument();
 
-      // Mock the login action
+      
       vi.mocked(signInWithPopup).mockImplementation(async () => {
-        // Simulate Firebase auth state change
+        
         await authCallback({ uid: 'user123' });
         return {} as any;
       });
 
-      // Mock profile fetch
+      
       vi.mocked(fetchUserProfile).mockResolvedValue({
         uid: 'user123',
         name: 'David',
@@ -81,10 +81,10 @@ describe('Feature: User Authentication', () => {
         createdAt: 123456789,
       });
 
-      // User clicks login
+      
       fireEvent.click(screen.getByText('Login'));
 
-      // Verify authenticated state
+      
       await waitFor(() => {
         expect(screen.getByTestId('user-id')).toHaveTextContent('user123');
         expect(screen.getByTestId('profile-name')).toHaveTextContent('David');
@@ -97,7 +97,7 @@ describe('Feature: User Authentication', () => {
       let authCallback: any;
       vi.mocked(onAuthStateChanged).mockImplementation((_auth, callback) => {
         authCallback = callback;
-        (callback as Function)({ uid: 'user123' }); // Start logged in
+        (callback as Function)({ uid: 'user123' }); 
         return vi.fn();
       });
 
@@ -114,12 +114,12 @@ describe('Feature: User Authentication', () => {
         </AuthProvider>
       );
 
-      // Wait for load
+      
       await waitFor(() => {
         expect(screen.getByText('Logout')).toBeInTheDocument();
       });
 
-      // Mock the logout action
+      
       vi.mocked(firebaseSignOut).mockImplementation(async () => {
         await authCallback(null);
       });

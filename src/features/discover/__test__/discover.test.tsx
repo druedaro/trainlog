@@ -5,12 +5,12 @@ import { useAuth } from '@/features/auth/useAuth';
 import { fetchDiscoverArticles, fetchRecentEntries, fetchSavedArticles } from '@/lib/firestore';
 import { BrowserRouter } from 'react-router';
 
-// Mock Auth
+
 vi.mock('@/features/auth/useAuth', () => ({
   useAuth: vi.fn(),
 }));
 
-// Mock Firestore
+
 vi.mock('@/lib/firestore', () => ({
   fetchDiscoverArticles: vi.fn(),
   fetchSavedArticles: vi.fn(),
@@ -18,7 +18,7 @@ vi.mock('@/lib/firestore', () => ({
   saveDiscoverArticles: vi.fn(),
 }));
 
-// Mock API
+
 vi.mock('@/lib/api', () => ({
   generateDiscover: vi.fn(),
 }));
@@ -49,7 +49,7 @@ describe('Feature: Article Discovery System', () => {
         </BrowserRouter>
       );
 
-      // Wait for load by checking if the button is there
+      
       await waitFor(() => expect(screen.getByText('Generar recomendaciones')).toBeInTheDocument());
 
       const generateBtn = screen.getByText('Generar recomendaciones');
@@ -78,7 +78,7 @@ describe('Feature: Article Discovery System', () => {
         </BrowserRouter>
       );
 
-      // Switch to saved tab
+      
       const savedTab = screen.getByText('Guardados');
       fireEvent.click(savedTab);
 

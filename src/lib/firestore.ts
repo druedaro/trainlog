@@ -57,7 +57,7 @@ export async function fetchEntryById(
 
   const data = docSnap.data();
 
-  // Only return entries that belong to the requesting user
+  
   if (data.userId !== userId) {
     return null;
   }

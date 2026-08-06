@@ -113,7 +113,7 @@ export function JournalPage() {
     }
   }, [analysis, user, transcript, resetFlow, navigate]);
 
-  // When audioBlob becomes available after recording, auto-trigger transcription
+  
   const hasBlob = recorder.audioBlob !== null;
 
   return (

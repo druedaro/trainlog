@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
 
-const MAX_RECORDING_DURATION_MS = 300_000; // 5 minutes
+const MAX_RECORDING_DURATION_MS = 300_000; 
 
 type RecorderStatus = 'idle' | 'recording' | 'processing' | 'error';
 
@@ -105,15 +105,15 @@ export function useVoiceRecorder(): VoiceRecorderState {
 
       mediaRecorderRef.current = recorder;
       startTimeRef.current = Date.now();
-      recorder.start(1000); // Collect data every second
+      recorder.start(1000); 
       setStatus('recording');
 
-      // Update duration every 100ms for responsive UI
+      
       timerRef.current = setInterval(() => {
         setDurationMs(Date.now() - startTimeRef.current);
       }, 100);
 
-      // Auto-stop at max duration
+      
       maxDurationTimerRef.current = setTimeout(() => {
         stopRecording();
       }, MAX_RECORDING_DURATION_MS);

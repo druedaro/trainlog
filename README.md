@@ -111,6 +111,21 @@ Trainlog does not diagnose injuries, medical conditions, or psychological condit
 
 * Vercel
 
+## 🧪 Testing Architecture
+
+Trainlog implements a robust testing suite focused on Behavior-Driven Development (BDD). We use `vitest` alongside `@testing-library/react` to test the application exactly as the user interacts with it.
+
+### Core Testing Principles
+- **Given/When/Then Structure**: Tests are written using clear scenarios (e.g., *Given an unauthenticated user, When rendering, Then it shows a warning*).
+- **Component & Integration Testing**: Coverage spans from isolated UI elements (`AnalysisView`, `JournalInstructionsModal`) to full page integrations (`JournalPage`, `CoachPage`).
+- **Global Mocking**: We mock core browser APIs (`window.scrollTo`, `scrollIntoView`) and external dependencies (`Firebase Auth`, `Firestore`) globally to ensure fast and deterministic tests.
+
+### Running Tests
+To run the full test suite locally:
+```bash
+npm run test
+```
+
 ## 🏗️ Main User Flow
 
 ```text

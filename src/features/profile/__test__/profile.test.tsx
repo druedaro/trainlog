@@ -4,7 +4,7 @@ import { ProfilePage } from '@/features/profile/ProfilePage';
 import { fetchRecentEntries, countUserEntries, saveUserProfile } from '@/lib/firestore';
 import { BrowserRouter } from 'react-router';
 
-// Mock Auth
+
 const mockRefreshProfile = vi.fn();
 vi.mock('@/features/auth/useAuth', () => ({
   useAuth: () => ({
@@ -29,7 +29,7 @@ describe('Feature: User Profile Dashboard', () => {
 
   describe('Scenario: Viewing profile metrics', () => {
     it('Given a user with continuous training history, When they view the profile, Then they see their streak and top activity', async () => {
-      // Mock 3 consecutive days of entries
+      
       const today = new Date();
       const yesterday = new Date(today);
       yesterday.setDate(yesterday.getDate() - 1);
@@ -52,9 +52,9 @@ describe('Feature: User Profile Dashboard', () => {
       );
 
       await waitFor(() => {
-        expect(screen.getAllByText('3')[0]).toBeInTheDocument(); // 3 days streak
-        expect(screen.getByText('running')).toBeInTheDocument(); // top activity (appears twice)
-        expect(screen.getByText(/David/)).toBeInTheDocument(); // Name is shown in the stats block
+        expect(screen.getAllByText('3')[0]).toBeInTheDocument(); 
+        expect(screen.getByText('running')).toBeInTheDocument(); 
+        expect(screen.getByText(/David/)).toBeInTheDocument(); 
       });
     });
   });
@@ -70,20 +70,20 @@ describe('Feature: User Profile Dashboard', () => {
         </BrowserRouter>
       );
 
-      // Wait for load
+      
       await waitFor(() => expect(screen.getByText(/David/)).toBeInTheDocument());
 
-      // Click Edit
+      
       fireEvent.click(screen.getByLabelText('Edit Profile'));
 
-      // Should be in edit mode
+      
       expect(screen.getByText('Editar Perfil')).toBeInTheDocument();
 
-      // Change name
+      
       const nameInput = screen.getByDisplayValue('David');
       fireEvent.change(nameInput, { target: { value: 'Alex' } });
 
-      // Save
+      
       fireEvent.click(screen.getByText('Guardar'));
 
       await waitFor(() => {

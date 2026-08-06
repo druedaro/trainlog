@@ -6,12 +6,12 @@ export interface DiscoverArticle {
   title: string;
   emoji: string;
   category: DiscoverCategory;
-  content: string;  // Markdown (may include ExerciseDB GIFs)
-  reason: string;   // e.g. "Based on your recent fatigue reports"
+  content: string;  
+  reason: string;   
   isRead?: boolean;
 }
 
 export interface DiscoverDocument {
   articles: DiscoverArticle[];
-  updatedAt: number; // Unix timestamp (ms)
+  updatedAt: number; 
 }

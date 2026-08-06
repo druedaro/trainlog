@@ -5,5 +5,5 @@ export interface WeeklySynthesis {
 
 export interface InsightsDocument {
   synthesis: WeeklySynthesis | null;
-  updatedAt: number; // Unix timestamp (ms)
+  updatedAt: number; 
 }

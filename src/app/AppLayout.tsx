@@ -5,7 +5,7 @@ import { BottomNav } from '@/components/BottomNav';
 export function AppLayout() {
   const { pathname } = useLocation();
 
-  // Scroll to top on every route change
+  
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);

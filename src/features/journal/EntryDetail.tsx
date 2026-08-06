@@ -56,17 +56,17 @@ export function EntryDetail() {
 
         if (isMounted) setEntry(result);
 
-        // If contextualResponse is undefined, generate it now
+        
         if (result.contextualResponse === undefined) {
           if (isMounted) setIsGeneratingResponse(true);
 
           try {
-            // Fetch last 5 entries to give context (excluding the current one if it's the newest, though fetchRecentEntries will include it)
+            
             const recentEntries = await fetchRecentEntries(user!.uid, 5);
             
             const aiResult = await generateContextualResponse(result, recentEntries, profile);
             
-            // Null means no meaningful pattern found (Minimum Intervention Principle)
+            
             const responseText = aiResult.response ?? null;
 
             await updateEntryContextualResponse(id!, responseText);
@@ -76,7 +76,7 @@ export function EntryDetail() {
             }
           } catch (error) {
             console.error('Failed to generate contextual response:', error);
-            // On failure, we set it to null so we don't infinitely retry
+            
             if (isMounted) {
               setEntry((prev) => prev ? { ...prev, contextualResponse: null } : null);
             }

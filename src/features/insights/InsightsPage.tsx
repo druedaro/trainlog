@@ -45,7 +45,7 @@ export function InsightsPage() {
 
     try {
       const [recentEntries, cachedInsights] = await Promise.all([
-        fetchEntriesByDays(user.uid, 7), // Last 7 days
+        fetchEntriesByDays(user.uid, 7), 
         fetchInsights(user.uid),
       ]);
 
@@ -122,7 +122,7 @@ export function InsightsPage() {
       }
     });
 
-    // Sort themes by count
+    
     const topThemes = Object.entries(themeCounts)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5);

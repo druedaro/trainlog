@@ -4,12 +4,12 @@ import { InsightsPage } from '@/features/insights/InsightsPage';
 import { useAuth } from '@/features/auth/useAuth';
 import { fetchInsights, fetchRecentEntries, fetchEntriesByDays } from '@/lib/firestore';
 
-// Mock Auth
+
 vi.mock('@/features/auth/useAuth', () => ({
   useAuth: vi.fn(),
 }));
 
-// Mock Firestore
+
 vi.mock('@/lib/firestore', () => ({
   fetchInsights: vi.fn(),
   fetchRecentEntries: vi.fn(),
@@ -17,7 +17,7 @@ vi.mock('@/lib/firestore', () => ({
   saveInsights: vi.fn(),
 }));
 
-// Mock Recharts to prevent rendering issues in JSDOM
+
 vi.mock('recharts', () => ({
   ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
   LineChart: () => <div data-testid="line-chart" />,
@@ -52,7 +52,7 @@ describe('Feature: Weekly Insights Synthesis', () => {
 
       render(<InsightsPage />);
 
-      // Wait for initial load to finish
+      
       await waitFor(() => {
         expect(screen.getByText('Sin datos esta semana')).toBeInTheDocument();
         expect(screen.getByText('Graba algunas entradas para ver tus patrones.')).toBeInTheDocument();

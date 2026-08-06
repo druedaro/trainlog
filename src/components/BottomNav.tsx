@@ -13,15 +13,15 @@ export function BottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Don't show on login
+  
   const hiddenPrefixes = ['/login'];
   if (hiddenPrefixes.some((p) => location.pathname.startsWith(p))) {
     return null;
   }
 
   const handleNavClick = (path: string) => {
-    // Always navigate with a fresh state timestamp so the target page
-    // can detect "user tapped the tab" and reset its internal state.
+    
+    
     navigate(path, { state: { navReset: Date.now() } });
   };
 

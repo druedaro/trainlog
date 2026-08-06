@@ -47,7 +47,7 @@ export function DiscoverPage() {
   const [selectedArticle, setSelectedArticle] = useState<DiscoverArticle | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Reset selected article if we get a navReset signal from BottomNav
+  
   useEffect(() => {
     if (location.state?.navReset) {
       setSelectedArticle(null);
@@ -66,10 +66,10 @@ export function DiscoverPage() {
         setArticles(sortArticles(cached.articles));
         setUpdatedAt(cached.updatedAt);
 
-        // Auto-update if older than 3 days
+        
         const age = Date.now() - cached.updatedAt;
         if (age > THREE_DAYS_MS) {
-          handleGenerate(true); // silent background refresh
+          handleGenerate(true); 
         }
       }
     } catch (e) {
@@ -160,14 +160,14 @@ export function DiscoverPage() {
       if (!user) return;
       const isSaved = savedArticles.some((a) => a.id === article.id);
 
-      // Optimistic update
+      
       if (isSaved) {
         setSavedArticles((prev) => prev.filter((a) => a.id !== article.id));
         try {
           await removeSavedArticle(user.uid, article.id);
         } catch (e) {
           console.error('Failed to remove saved article:', e);
-          setSavedArticles((prev) => [...prev, article]); // rollback
+          setSavedArticles((prev) => [...prev, article]); 
         }
       } else {
         setSavedArticles((prev) => [...prev, article]);
@@ -175,7 +175,7 @@ export function DiscoverPage() {
           await saveArticle(user.uid, article);
         } catch (e) {
           console.error('Failed to save article:', e);
-          setSavedArticles((prev) => prev.filter((a) => a.id !== article.id)); // rollback
+          setSavedArticles((prev) => prev.filter((a) => a.id !== article.id)); 
         }
       }
     },
@@ -186,7 +186,7 @@ export function DiscoverPage() {
     setSelectedArticle(article);
     
     if (!article.isRead && activeTab === 'explore' && user) {
-      // Optimistic local update
+      
       setArticles(prev => prev.map(a => a.id === article.id ? { ...a, isRead: true } : a));
       await markArticleAsRead(user.uid, article.id).catch(console.error);
     }

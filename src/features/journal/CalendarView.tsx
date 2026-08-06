@@ -17,7 +17,7 @@ export function CalendarView() {
   const [recentEntries, setRecentEntries] = useState<JournalEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch month entries for calendar dots
+  
   useEffect(() => {
     if (!user) return;
     const year = selectedMonth.getFullYear();
@@ -33,7 +33,7 @@ export function CalendarView() {
       .finally(() => setIsLoading(false));
   }, [user, selectedMonth]);
 
-  // Fetch global recent entries (max 4)
+  
   useEffect(() => {
     if (!user) return;
     fetchRecentEntries(user.uid, 4)

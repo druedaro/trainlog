@@ -38,11 +38,11 @@ export function ProfilePage() {
     }
   }, [user]);
 
-  // Derived Stats
+  
   const stats = useMemo(() => {
     if (recentEntries.length === 0) return null;
 
-    // 1. Streak
+    
     let streak = 0;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -68,7 +68,7 @@ export function ProfilePage() {
         }
       }
     } else if (uniqueDates[0] === currentDate - 86400000) {
-      // Completed yesterday, streak is still alive
+      
       streak = 1;
       currentDate -= 172800000;
       for (let i = 1; i < uniqueDates.length; i++) {
@@ -81,7 +81,7 @@ export function ProfilePage() {
       }
     }
 
-    // 2. Top Activity
+    
     const activityCounts: Record<string, number> = {};
     recentEntries.forEach(entry => {
       entry.analysis.activities?.forEach(act => {
@@ -99,7 +99,7 @@ export function ProfilePage() {
       }
     });
 
-    // 3. Last Entry Date
+    
     const lastEntryDate = recentEntries[0]?.createdAt;
     const daysAgo = lastEntryDate 
       ? Math.floor((today.getTime() - lastEntryDate.getTime()) / 86400000)
