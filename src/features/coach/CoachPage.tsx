@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Send, Bot, AlertCircle } from 'lucide-react';
+import { Send, AlertCircle } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
@@ -141,7 +141,7 @@ export function CoachPage() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Pregunta a tu entrenador..."
+            placeholder="Pregunta a tu coach..."
             disabled={isLoading || entries.length === 0}
             className="flex-1 rounded-full border border-border/40 bg-card/50 px-4 py-2.5 text-sm outline-none transition-colors focus:border-primary disabled:opacity-50"
           />
