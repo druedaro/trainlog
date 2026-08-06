@@ -12,6 +12,8 @@ describe('Feature: Article View', () => {
       tags: ['recovery'],
       content: '# Rest is important\n\nMake sure you sleep 8 hours.',
       readTimeMinutes: 2,
+      emoji: '💤',
+      reason: 'Because you are tired',
     };
 
     render(
