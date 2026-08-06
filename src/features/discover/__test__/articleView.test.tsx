@@ -8,7 +8,7 @@ describe('Feature: Article View', () => {
       id: 'article1',
       title: 'How to rest properly',
       type: 'tip' as const,
-      category: 'recovery',
+      category: 'recovery' as const,
       tags: ['recovery'],
       content: '# Rest is important\n\nMake sure you sleep 8 hours.',
       readTimeMinutes: 2,
