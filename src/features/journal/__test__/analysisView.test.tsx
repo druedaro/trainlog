@@ -13,7 +13,7 @@ describe('Feature: Journal Analysis View', () => {
       reflectionPrompt: null,
     };
 
-    render(<AnalysisView analysis={analysis} />);
+    render(<AnalysisView analysis={analysis as any} onConfirm={vi.fn()} onRetry={vi.fn()} />);
 
     expect(screen.getByText('Análisis de tu reflexión')).toBeInTheDocument();
     expect(screen.getByText('Good run today.')).toBeInTheDocument();
@@ -31,7 +31,7 @@ describe('Feature: Journal Analysis View', () => {
       reflectionPrompt: 'Why did you feel so tired?',
     };
 
-    render(<AnalysisView analysis={analysis} />);
+    render(<AnalysisView analysis={analysis as any} onConfirm={vi.fn()} onRetry={vi.fn()} />);
     expect(screen.getByText('Why did you feel so tired?')).toBeInTheDocument();
   });
 });

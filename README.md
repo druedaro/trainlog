@@ -223,6 +223,12 @@ The microphone is the main interaction and is intended to be quick and easy to a
 * [ ] Identify recurring themes.
 * [ ] Connect current reflections with previous experiences.
 
+### Phase 8 — AI Coach (Anna)
+
+* [ ] Add a chat interface for the Personal Coach.
+* [ ] Integrate Gemini AI to provide personalized coaching based on journal entries.
+* [ ] Allow users to ask about their progress, recurring pain, or training summaries.
+
 ## 🚀 Getting Started
 
 ### Prerequisites
