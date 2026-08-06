@@ -82,7 +82,7 @@ export function CoachPage() {
   };
 
   return (
-    <div className="mx-auto flex h-[100dvh] max-w-lg flex-col bg-background pb-16">
+    <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background pb-[120px]">
       <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5 flex items-center gap-3 h-16">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
           <Bot className="h-5 w-5" />
@@ -140,7 +140,7 @@ export function CoachPage() {
         </div>
       </main>
 
-      <div className="sticky bottom-16 border-t border-border/40 bg-background/80 backdrop-blur-md p-3">
+      <div className="fixed bottom-[64px] left-1/2 -translate-x-1/2 w-full max-w-lg border-t border-border/40 bg-background/80 backdrop-blur-md p-3 z-20">
         <div className="flex gap-2">
           <input
             type="text"
