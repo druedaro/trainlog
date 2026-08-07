@@ -35,6 +35,12 @@ service cloud.firestore {
                          && request.auth.uid == userId;
     }
 
+    // Explore: users can read/write their own explore articles
+    match /users/{userId}/explore/{docId} {
+      allow read, write: if request.auth != null
+                         && request.auth.uid == userId;
+    }
+
     // Insights: users can read/write their own insights
     match /users/{userId}/insights/{docId} {
       allow read, write: if request.auth != null

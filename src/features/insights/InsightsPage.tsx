@@ -320,6 +320,18 @@ export function InsightsPage() {
                     </div>
                     <span className="text-xs font-semibold text-primary">Leer resumen completo...</span>
                   </div>
+
+                  <div className="rounded-2xl border border-border/40 bg-card/50 p-5 backdrop-blur-sm">
+                    <h3 className="mb-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Puntos clave</h3>
+                    <ul className="space-y-3">
+                      {insightsDoc.synthesis.highlights.map((highlight, i) => (
+                        <li key={i} className="flex items-start gap-3">
+                          <div className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                          <span className="text-sm leading-snug text-foreground/80">{highlight}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               )}
             </section>
