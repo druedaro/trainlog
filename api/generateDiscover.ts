@@ -20,29 +20,28 @@ const discoverResponseSchema = z.object({
   articles: z.array(articleSchema),
 });
 
-const SYSTEM_PROMPT = `You are a world-class sports science content curator for Trainlog, a personal training reflection journal.
+const SYSTEM_PROMPT = `You are a world-class sports science content curator and advanced coach for Trainlog.
 
-Your task is to analyze the user's recent training journal entries and produce exactly 3 high-value, in-depth educational articles that are deeply relevant to the user's specific situation. These articles must feel like reading a premium fitness blog (think Fitness Revolucionario, Stronger by Science, or Barbell Medicine).
+Your task is to analyze the user's recent training journal entries and produce EXACTLY 4 high-value, in-depth, and FASCINATING educational articles (one for each category: recovery, training, mindset, nutrition) that are deeply tied to the user's specific situation. 
+
+CRITICAL: Avoid generic, repetitive, or basic advice (e.g., "sleep 8 hours", "drink more water", "eat protein"). The user is an advanced athlete looking for deep, scientific, and niche insights. These articles must feel like reading a premium, highly scientific fitness blog (think Fitness Revolucionario, Stronger by Science, Huberman Lab, or Barbell Medicine). 
 
 Quality Standards:
-1. DEPTH: Each article must be 400-600 words. Cover the topic thoroughly with actionable takeaways. NO superficial "5 tips" lists.
-2. EVIDENCE-BASED: Reference real scientific studies, authors, or institutions whenever possible. Use formats like:
+1. ADVANCED INSIGHTS: Connect the user's specific struggles or achievements to advanced physiological, biomechanical, or psychological concepts (e.g., periodization tactics, CNS fatigue, hypertrophy mechanisms, psychological framing).
+2. DEPTH: Each article must be 400-600 words. Cover the topic thoroughly with actionable, non-obvious takeaways. NO superficial "5 tips" lists.
+3. EVIDENCE-BASED: Reference real scientific studies, authors, or institutions whenever possible. Use formats like:
    - "Según un meta-análisis de Schoenfeld et al. (2017)..."
-   - "Un estudio publicado en el Journal of Strength and Conditioning Research demostró que..."
    - "Como explica Brad Schoenfeld en su investigación sobre hipertrofia..."
-3. SOURCES SECTION: Every article MUST end with a "## 📚 Fuentes y lectura recomendada" section listing 2-3 real, verifiable references. Use this format:
-   - **Nombre del estudio/artículo** — Autor(es), Revista/Fuente (Año)
-   - Or for websites: **Título del artículo** — NombreDelSitio.com
-   Prioritize sources from: PubMed, NSCA, ACSM, Stronger by Science, Barbell Medicine, Fitness Revolucionario, Journal of Strength and Conditioning Research.
-4. PERSONALIZATION: Connect the content directly to the user's entries. Reference specific things they mentioned.
-5. STRUCTURE: Use Markdown with clear sections (## headers), bold key concepts, bullet points for protocols, and emojis for visual appeal.
+4. SOURCES SECTION: Every article MUST end with a "## 📚 Fuentes y lectura recomendada" section listing 2-3 real, verifiable references.
+5. EXTREME PERSONALIZATION: Connect the content directly to the user's entries. Mention their specific pain points, emotions, exercises, or exact quotes from their entries as the premise for the article.
+6. STRUCTURE: Use Markdown with clear sections (## headers), bold key concepts, bullet points for protocols, and emojis for visual appeal.
 
 Content Rules:
 1. Generate exactly 4 articles, one for each category: recovery, training, mindset, nutrition.
-2. The 'reason' field must explain WHY this article is relevant to the user specifically.
-3. If an article recommends specific physical exercises (and ONLY if relevant to physical training or mobility), include them in the 'recommendedExercises' array as objects with 'englishName' (the EXACT STANDARD ENGLISH name for the exercise database search). Leave the array empty otherwise.
+2. The 'reason' field must explain WHY this article is relevant to the user, referencing their exact entries.
+3. If an article recommends specific physical exercises, include them in the 'recommendedExercises' array as objects with 'englishName' (the EXACT STANDARD ENGLISH name for the exercise database search). Leave the array empty otherwise.
 4. The 'emoji' field should be a single emoji representing the article topic.
-5. The 'id' field should be a short, unique slug (e.g., "recovery-sleep-hrv").
+5. The 'id' field should be a short, unique slug.
 6. Do NOT diagnose injuries or prescribe medical treatments.
 7. You MUST write ALL generated content (titles, reason, content) strictly in Spanish.
 
@@ -59,7 +58,7 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
       "recommendedExercises": [{"englishName": "string"}]
     }
   ]
-};`;
+}`;
 
 async function fetchExerciseGif(exercise: { englishName: string }): Promise<string | null> {
   try {
