@@ -126,7 +126,7 @@ export default async function handler(
         category: article.category,
         content: article.content,
         reason: article.reason,
-        imageUrl: `https://images.unsplash.com/featured/?${encodeURIComponent(article.imageKeyword)}`,
+        imageUrl: `https://loremflickr.com/800/600/fitness,${encodeURIComponent(article.imageKeyword)}/all`,
       };
     });
 
