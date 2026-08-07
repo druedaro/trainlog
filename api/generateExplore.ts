@@ -124,7 +124,7 @@ export default async function handler(
       validated.data.articles.map(async (article) => {
         let imageUrl = `https://loremflickr.com/800/600/fitness,${encodeURIComponent(article.imageKeyword)}/all`;
         try {
-          const res = await fetch(\`https://api.unsplash.com/search/photos?query=\${encodeURIComponent(article.imageKeyword + ' fitness')}&per_page=1&orientation=landscape&client_id=\${UNSPLASH_ACCESS_KEY}\`);
+          const res = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(article.imageKeyword + ' fitness')}&per_page=1&orientation=landscape&client_id=${UNSPLASH_ACCESS_KEY}`);
           if (res.ok) {
             const data = await res.json() as any;
             if (data.results && data.results.length > 0) {
