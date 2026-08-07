@@ -118,17 +118,34 @@ export default async function handler(
       return response.status(502).json({ error: 'The generated content did not meet validation standards.' });
     }
 
-    const enrichedArticles = validated.data.articles.map((article) => {
-      return {
-        id: article.id,
-        title: article.title,
-        emoji: article.emoji,
-        category: article.category,
-        content: article.content,
-        reason: article.reason,
-        imageUrl: `https://loremflickr.com/800/600/fitness,${encodeURIComponent(article.imageKeyword)}/all`,
-      };
-    });
+    const UNSPLASH_ACCESS_KEY = process.env.UNSPLASH_ACCESS_KEY || 'JM_DldTer7pAVMlERjx5H-bbTP_EgBemd9XhfZl7-2s';
+
+    const enrichedArticles = await Promise.all(
+      validated.data.articles.map(async (article) => {
+        let imageUrl = `https://loremflickr.com/800/600/fitness,${encodeURIComponent(article.imageKeyword)}/all`;
+        try {
+          const res = await fetch(\`https://api.unsplash.com/search/photos?query=\${encodeURIComponent(article.imageKeyword + ' fitness')}&per_page=1&orientation=landscape&client_id=\${UNSPLASH_ACCESS_KEY}\`);
+          if (res.ok) {
+            const data = await res.json() as any;
+            if (data.results && data.results.length > 0) {
+              imageUrl = data.results[0].urls.regular;
+            }
+          }
+        } catch (e) {
+          console.error('Failed to fetch from Unsplash:', e);
+        }
+
+        return {
+          id: article.id,
+          title: article.title,
+          emoji: article.emoji,
+          category: article.category,
+          content: article.content,
+          reason: article.reason,
+          imageUrl,
+        };
+      })
+    );
 
     return response.status(200).json({
       articles: enrichedArticles,
