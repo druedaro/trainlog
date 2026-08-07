@@ -1,4 +1,5 @@
 import { auth } from '@/lib/firebase';
+import type { DiscoverDocument } from '@/types/discover';
 
 const API_BASE_URL = '/api';
 
