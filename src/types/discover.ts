@@ -8,6 +8,7 @@ export interface DiscoverArticle {
   category: DiscoverCategory;
   content: string;  
   reason: string;   
+  imageUrl?: string;
   isRead?: boolean;
 }
 

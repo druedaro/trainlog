@@ -189,3 +189,23 @@ export async function sendMessageToCoach(
 }
 
 export { ApiError };
+
+export async function generateExplore(): Promise<DiscoverDocument> {
+  const headers = await getAuthHeaders();
+
+  const response = await fetch(`${API_BASE_URL}/generateExplore`, {
+    method: 'POST',
+    headers: {
+      ...headers,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({}),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => 'Unknown error');
+    throw new ApiError(`Explore generation failed: ${errorText}`, response.status);
+  }
+
+  return (await response.json()) as DiscoverDocument;
+}

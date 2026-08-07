@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { ArrowLeft, Bookmark } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ReactMarkdown from 'react-markdown';
@@ -23,6 +24,10 @@ export function ArticleView({ article, isSaved = false, onToggleSave, onBack }: 
     color: 'text-muted-foreground',
     bg: 'bg-muted/10',
   };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className="mx-auto min-h-screen max-w-lg bg-background">

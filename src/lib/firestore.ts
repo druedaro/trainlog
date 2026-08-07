@@ -185,6 +185,27 @@ export async function fetchDiscoverArticles(
   return docSnap.data() as DiscoverDocument;
 }
 
+export async function fetchExploreArticles(
+  userId: string,
+): Promise<DiscoverDocument | null> {
+  const docRef = doc(db, 'users', userId, 'explore', 'latest');
+  const docSnap = await getDoc(docRef);
+
+  if (!docSnap.exists()) {
+    return null;
+  }
+
+  return docSnap.data() as DiscoverDocument;
+}
+
+export async function saveExploreArticles(
+  userId: string,
+  data: DiscoverDocument,
+): Promise<void> {
+  const docRef = doc(db, 'users', userId, 'explore', 'latest');
+  await setDoc(docRef, data);
+}
+
 export async function markArticleAsRead(
   userId: string,
   articleId: string,

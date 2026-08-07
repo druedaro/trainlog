@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Activity, Sparkles, AlertCircle } from 'lucide-react';
+import { Activity, Sparkles, AlertCircle, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
 import {
@@ -36,6 +36,7 @@ export function InsightsPage() {
   const [insightsDoc, setInsightsDoc] = useState<InsightsDocument | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showFullSynthesis, setShowFullSynthesis] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const loadData = useCallback(async () => {
@@ -133,6 +134,48 @@ export function InsightsPage() {
       avgMood: moodCount > 0 ? totalMood / moodCount : 0,
     };
   }, [entries]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [showFullSynthesis]);
+
+  if (showFullSynthesis && insightsDoc?.synthesis) {
+    return (
+      <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
+        <header className="glass sticky top-0 z-20 flex items-center gap-3 border-b border-border/40 px-5 py-3.5">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setShowFullSynthesis(false)}
+            className="h-9 w-9 rounded-xl border border-border/50 bg-background hover:bg-accent"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <h1 className="text-sm font-semibold text-foreground">Resumen de la semana</h1>
+        </header>
+
+        <main className="flex-1 space-y-6 p-5">
+          <div className="prose-trainlog text-sm leading-relaxed text-foreground/90">
+            {insightsDoc.synthesis.summary.split('\n').map((paragraph, i) => (
+              <p key={i} className="mb-4 last:mb-0">{paragraph}</p>
+            ))}
+          </div>
+
+          <div className="rounded-2xl border border-border/40 bg-card/50 p-5 mt-6">
+            <h3 className="mb-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Puntos clave</h3>
+            <ul className="space-y-4">
+              {insightsDoc.synthesis.highlights.map((highlight, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <div className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                  <span className="text-sm leading-snug text-foreground/80">{highlight}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
@@ -270,22 +313,12 @@ export function InsightsPage() {
 
               {insightsDoc?.synthesis && !isGenerating && (
                 <div className="space-y-4">
-                  <div className="prose-trainlog rounded-2xl border border-primary/20 bg-primary/5 p-5 text-sm leading-relaxed text-foreground/90 backdrop-blur-sm">
-                    {insightsDoc.synthesis.summary.split('\n').map((paragraph, i) => (
-                      <p key={i} className="mb-3 last:mb-0">{paragraph}</p>
-                    ))}
-                  </div>
-
-                  <div className="rounded-2xl border border-border/40 bg-card/50 p-5 backdrop-blur-sm">
-                    <h3 className="mb-4 text-xs font-semibold text-muted-foreground">Puntos clave</h3>
-                    <ul className="space-y-3">
-                      {insightsDoc.synthesis.highlights.map((highlight, i) => (
-                        <li key={i} className="flex items-start gap-3">
-                          <div className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                          <span className="text-sm leading-snug text-foreground/80">{highlight}</span>
-                        </li>
-                      ))}
-                    </ul>
+                  <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5 text-sm leading-relaxed text-foreground/90 backdrop-blur-sm cursor-pointer hover:bg-primary/10 transition-colors"
+                       onClick={() => setShowFullSynthesis(true)}>
+                    <div className="line-clamp-3 mb-2">
+                      {insightsDoc.synthesis.summary}
+                    </div>
+                    <span className="text-xs font-semibold text-primary">Leer resumen completo...</span>
                   </div>
                 </div>
               )}
