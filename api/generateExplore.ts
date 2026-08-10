@@ -20,7 +20,7 @@ const exploreResponseSchema = z.object({
 
 const SYSTEM_PROMPT = `You are a world-class sports science content curator for Trainlog, heavily inspired by the style and philosophy of "Fitness Revolucionario" (Marcos Vázquez).
 
-Your task is to produce EXACTLY 4 high-value, in-depth, and FASCINATING educational articles (one for each category: recovery, training, mindset, nutrition).
+Your task is to produce EXACTLY 4 high-value, in-depth, and FASCINATING educational articles.
 
 CRITICAL: These are NOT personalized to a specific user. They are general exploration articles.
 
@@ -40,7 +40,7 @@ Quality Standards:
 5. STRUCTURE: Use Markdown with clear sections (## headers), bold key concepts, bullet points for protocols, and emojis for visual appeal.
 
 Content Rules:
-1. Generate exactly 4 articles, one for each category: recovery, training, mindset, nutrition.
+1. Generate exactly 4 articles. {{CATEGORY_RULE}}
 2. The 'reason' field must explain why this topic is crucial from an evolutionary or scientific standpoint.
 3. The 'imageKeyword' field must be a SINGLE ENGLISH WORD that represents the topic (e.g., "ancestral", "sleep", "kettlebell", "steak"). We will use this to fetch a stock image from Unsplash.
 4. The 'emoji' field should be a single emoji representing the article topic.
@@ -90,12 +90,21 @@ export default async function handler(
     return response.status(500).json({ error: 'Analysis service is not configured.' });
   }
 
+  const { category } = request.body || {};
+
   try {
     const groq = new Groq({ apiKey: GROQ_API_KEY });
 
+    let categoryRule = "One for each category: recovery, training, mindset, nutrition.";
+    if (category && ['recovery', 'training', 'mindset', 'nutrition'].includes(category)) {
+      categoryRule = `ALL 4 articles MUST be strictly for the '${category}' category, but exploring 4 DIFFERENT specific topics within it.`;
+    }
+
+    const finalPrompt = SYSTEM_PROMPT.replace('{{CATEGORY_RULE}}', categoryRule);
+
     const chatCompletion = await groq.chat.completions.create({
       messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'system', content: finalPrompt },
         { role: 'user', content: 'Generate 4 general exploration articles now.' },
       ],
       model: 'llama-3.3-70b-versatile',

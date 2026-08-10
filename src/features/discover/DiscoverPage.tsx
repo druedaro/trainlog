@@ -187,14 +187,14 @@ export function DiscoverPage() {
   }, [user]);
 
   const handleGenerateExplore = useCallback(
-    async (silent = false) => {
+    async (silent = false, category?: string) => {
       if (!user) return;
       if (!silent) {
         setIsGeneratingExplore(true);
         setError(null);
       }
       try {
-        const result = await generateExplore();
+        const result = await generateExplore(category);
         const docToSave: DiscoverDocument = {
           articles: result.articles as DiscoverArticle[],
           updatedAt: result.updatedAt,
@@ -374,24 +374,51 @@ export function DiscoverPage() {
           </div>
         )}
 
-        {activeTab === 'explore' && !isLoadingExplore && !isGeneratingExplore && exploreArticles.length === 0 && (
-          <div className="flex flex-col items-center gap-6 pt-12 animate-fade-in">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
-              <Sparkles className="h-8 w-8 text-primary" />
+        {activeTab === 'explore' && (
+          <div className="px-5 pt-6 pb-2 animate-fade-in">
+            <h2 className="text-sm font-bold text-foreground mb-4">Categorías</h2>
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              {[
+                { id: 'training', label: 'Entrenamiento', emoji: '🏋️', bg: 'bg-blue-500/10', color: 'text-blue-500' },
+                { id: 'nutrition', label: 'Nutrición', emoji: '🥗', bg: 'bg-orange-500/10', color: 'text-orange-500' },
+                { id: 'mindset', label: 'Mentalidad', emoji: '🧠', bg: 'bg-purple-500/10', color: 'text-purple-500' },
+                { id: 'recovery', label: 'Recuperación', emoji: '🧘', bg: 'bg-emerald-500/10', color: 'text-emerald-500' },
+              ].map(cat => (
+                <button
+                  key={cat.id}
+                  onClick={() => handleGenerateExplore(false, cat.id)}
+                  disabled={isGeneratingExplore}
+                  className={`flex items-center gap-3 rounded-xl border border-border/40 p-4 text-left transition-all hover:border-primary/50 active:scale-95 ${cat.bg}`}
+                >
+                  <span className="text-2xl">{cat.emoji}</span>
+                  <span className={`text-sm font-bold ${cat.color}`}>{cat.label}</span>
+                </button>
+              ))}
             </div>
-            <div className="text-center">
-              <h2 className="text-base font-semibold text-foreground">Aún no hay artículos</h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Explora las últimas tendencias en fitness y ciencia.
-              </p>
+            
+            <div className="flex items-center gap-4 mb-6">
+              <hr className="flex-1 border-border/40" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">O</span>
+              <hr className="flex-1 border-border/40" />
             </div>
+
             <Button
+              variant="outline"
               onClick={() => handleGenerateExplore(false)}
-              className="rounded-xl bg-primary px-6 py-5 font-semibold text-primary-foreground"
+              disabled={isGeneratingExplore}
+              className="w-full justify-center gap-2 rounded-xl py-6 font-semibold"
             >
-              <Sparkles className="mr-2 h-4 w-4" />
-              Generar artículos
+              <Sparkles className="h-5 w-5 text-primary" />
+              Sorpréndeme con temas nuevos
             </Button>
+          </div>
+        )}
+
+        {activeTab === 'explore' && !isLoadingExplore && !isGeneratingExplore && exploreArticles.length === 0 && (
+          <div className="flex flex-col items-center gap-4 pt-12 animate-fade-in px-5 text-center">
+            <p className="text-sm text-muted-foreground">
+              Selecciona una categoría arriba o déjate sorprender para descubrir nuevos artículos.
+            </p>
           </div>
         )}
 
@@ -442,23 +469,23 @@ export function DiscoverPage() {
                       className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-700 group-hover:scale-105"
                       style={{ backgroundImage: `url(${article.imageUrl})` }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/20" />
-                    
-                    <div className="relative flex h-full flex-col justify-end p-5">
-                      <div className="mb-2 flex items-center gap-2">
-                        <span className="flex h-6 w-6 items-center justify-center rounded-md bg-background/50 text-xs backdrop-blur-md">
-                          {article.emoji}
-                        </span>
-                        <span className={`text-[10px] font-bold uppercase tracking-widest ${catConfig.color} drop-shadow-md`}>
-                          {catConfig.label}
-                        </span>
+                    <div className="relative flex h-full flex-col justify-end p-3">
+                      <div className="rounded-xl bg-black/50 backdrop-blur-md p-4 border border-white/10 shadow-xl">
+                        <div className="mb-2 flex items-center gap-2">
+                          <span className="flex h-6 w-6 items-center justify-center rounded-md bg-white/20 text-xs backdrop-blur-sm">
+                            {article.emoji}
+                          </span>
+                          <span className={`text-[10px] font-bold uppercase tracking-widest ${catConfig.color}`}>
+                            {catConfig.label}
+                          </span>
+                        </div>
+                        <h3 className="text-sm font-semibold text-white line-clamp-2 leading-tight">
+                          {article.title}
+                        </h3>
+                        <p className="mt-1 text-xs leading-relaxed text-gray-300 line-clamp-1">
+                          {article.reason}
+                        </p>
                       </div>
-                      <h3 className="text-sm font-semibold text-foreground line-clamp-2 drop-shadow-md">
-                        {article.title}
-                      </h3>
-                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground line-clamp-1 drop-shadow-sm">
-                        {article.reason}
-                      </p>
                     </div>
                   </button>
                 );

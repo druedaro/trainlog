@@ -35,6 +35,7 @@ describe('Feature: Article Discovery System', () => {
       signInWithGoogle: vi.fn(),
       signOut: vi.fn(),
       refreshProfile: vi.fn(),
+      deleteAccount: vi.fn(),
     });
   });
 

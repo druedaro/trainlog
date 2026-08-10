@@ -191,7 +191,7 @@ export async function sendMessageToCoach(
 
 export { ApiError };
 
-export async function generateExplore(): Promise<DiscoverDocument> {
+export async function generateExplore(category?: string): Promise<DiscoverDocument> {
   const headers = await getAuthHeaders();
 
   const response = await fetch(`${API_BASE_URL}/generateExplore`, {
@@ -200,7 +200,7 @@ export async function generateExplore(): Promise<DiscoverDocument> {
       ...headers,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({}),
+    body: JSON.stringify({ category }),
   });
 
   if (!response.ok) {
