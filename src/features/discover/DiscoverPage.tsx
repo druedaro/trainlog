@@ -233,6 +233,7 @@ export function DiscoverPage() {
         setSavedArticles((prev) => prev.filter((a) => a.id !== article.id));
         try {
           await removeSavedArticle(user.uid, article.id);
+          toast.info('Artículo eliminado de guardados');
         } catch (e) {
           toast.error('Error al quitar de guardados.');
           setSavedArticles((prev) => [...prev, article]); 
@@ -241,6 +242,7 @@ export function DiscoverPage() {
         setSavedArticles((prev) => [...prev, article]);
         try {
           await saveArticle(user.uid, article);
+          toast.success('Artículo guardado correctamente');
         } catch (e) {
           toast.error('Error al guardar artículo.');
           setSavedArticles((prev) => prev.filter((a) => a.id !== article.id)); 
@@ -421,9 +423,9 @@ export function DiscoverPage() {
                 handleGenerateExplore(false);
               }}
               disabled={isGeneratingExplore}
-              className="w-full justify-center gap-2 rounded-xl py-6 font-semibold"
+              className="group w-full justify-center gap-2 rounded-xl py-6 font-semibold"
             >
-              <Sparkles className="h-5 w-5 text-primary" />
+              <Sparkles className="h-5 w-5 text-primary transition-colors group-hover:text-black dark:group-hover:text-white" />
               Sorpréndeme con temas nuevos
             </Button>
           </div>
