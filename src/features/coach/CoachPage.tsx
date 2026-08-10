@@ -21,22 +21,12 @@ declare global {
 
 export function CoachPage() {
   const { user, profile } = useAuth();
-  const [messages, setMessages] = useState<Message[]>(() => {
-    const saved = localStorage.getItem('coachChat');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error('Failed to parse chat history', e);
-      }
-    }
-    return [
-      {
-        role: 'assistant',
-        content: 'Hola, soy Anna, la coach que te acompaña en tu día a día. He estado analizando tu diario de entrenamiento. ¿En qué puedo ayudarte hoy?',
-      },
-    ];
-  });
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      role: 'assistant',
+      content: 'Hola, soy Anna, la coach que te acompaña en tu día a día. He estado analizando tu diario de entrenamiento. ¿En qué puedo ayudarte hoy?',
+    },
+  ]);
   const [input, setInput] = useState('');
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -96,9 +86,8 @@ export function CoachPage() {
     }
   }, [isListening]);
 
-  // Persist messages & Auto-scroll
+  // Auto-scroll
   useEffect(() => {
-    localStorage.setItem('coachChat', JSON.stringify(messages));
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
@@ -133,7 +122,6 @@ export function CoachPage() {
         content: 'Hola, soy Anna. He reseteado nuestra conversación. ¿En qué puedo ayudarte hoy?',
       }];
       setMessages(initialMessage);
-      localStorage.setItem('coachChat', JSON.stringify(initialMessage));
     }
   };
 
