@@ -459,7 +459,7 @@ export function DiscoverPage() {
               <Button
                 variant="ghost"
                 onClick={() => setShowExploreGrid(true)}
-                className="mb-2 -ml-2 text-muted-foreground hover:bg-primary/10 hover:text-foreground transition-colors"
+                className="mb-2 -ml-2 text-muted-foreground hover:bg-[#2bd4bd] hover:text-black transition-colors"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Volver a categorías
