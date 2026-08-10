@@ -20,7 +20,6 @@ async function fetchExerciseGif(exercise: { englishName: string }): Promise<stri
       const json = (await res.json()) as any;
       if (json.success && json.data && json.data.length > 0) {
         const exerciseData = json.data[0];
-        // capitalize standard name for readability
         const standardName = exerciseData.name.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         return `\n**${standardName}**\n![${standardName}](${exerciseData.gifUrl})\n`;
       }
@@ -143,7 +142,6 @@ export default async function handler(
 
     let finalResponse = validated.data.response;
 
-    // Inject GIFs if exercises were recommended
     if (validated.data.recommendedExercises.length > 0) {
       const gifResults = await Promise.all(
         validated.data.recommendedExercises.map(fetchExerciseGif)

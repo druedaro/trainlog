@@ -37,7 +37,6 @@ export function CoachPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
 
-  // Initialize SpeechRecognition
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
@@ -51,10 +50,6 @@ export function CoachPage() {
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           currentTranscript += event.results[i][0].transcript;
         }
-        // Use a functional update or just rely on appending?
-        // Actually, interim results overwrite each other if we just do setInput(currentTranscript) 
-        // But since we want to append to existing input, we need a ref or state.
-        // For simplicity, we just set the input to what they are saying right now.
         setInput(currentTranscript);
       };
 
@@ -80,18 +75,16 @@ export function CoachPage() {
     if (isListening) {
       recognitionRef.current?.stop();
     } else {
-      setInput(''); // clear input before speaking
+      setInput('');
       recognitionRef.current?.start();
       setIsListening(true);
     }
   }, [isListening]);
 
-  // Auto-scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Clean up speech on unmount
   useEffect(() => {
     return () => {
       window.speechSynthesis.cancel();

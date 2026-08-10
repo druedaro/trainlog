@@ -39,7 +39,6 @@ export function JournalPage() {
     recorder.stopRecording();
   }, [recorder]);
 
-  // After recording stops and we have a blob, transcribe it
   const handleTranscribe = useCallback(async () => {
     if (!recorder.audioBlob) return;
 

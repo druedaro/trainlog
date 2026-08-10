@@ -28,7 +28,6 @@ describe('Feature: Coach Chat', () => {
   it('Given an authenticated user, When sending a message, Then it adds it to the chat', async () => {
     vi.mocked(useAuth).mockReturnValue({ user: { uid: '123' }, profile: { displayName: 'John' } } as any);
     
-    // Mock entries so the input is enabled
     vi.mocked(firestore.fetchEntriesByDays).mockResolvedValue([{ id: '1', transcript: 'test' }] as any);
     
     const { sendMessageToCoach } = await import('@/lib/api');
@@ -46,7 +45,6 @@ describe('Feature: Coach Chat', () => {
     const input = screen.getByPlaceholderText(/Pregunta a tu coach/i);
     fireEvent.change(input, { target: { value: 'How is my form?' } });
     
-    // Using closest button with Send icon or adding role
     const sendButton = input.nextElementSibling as HTMLButtonElement;
     fireEvent.click(sendButton);
 

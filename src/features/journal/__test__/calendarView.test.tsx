@@ -26,7 +26,6 @@ describe('Feature: Calendar View', () => {
       </BrowserRouter>
     );
 
-    // Initial loading
     expect(screen.getByText('Cargando entradas…')).toBeInTheDocument();
 
     await waitFor(() => {

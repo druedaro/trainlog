@@ -15,7 +15,6 @@ function initializeFirebaseAdmin() {
 
     initializeApp({ credential: cert(serviceAccount) });
   } else {
-    // Fallback for local development without service account
     initializeApp({
       projectId: 'trainlog-e6ed0',
     });

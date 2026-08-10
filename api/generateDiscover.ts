@@ -154,7 +154,6 @@ export default async function handler(
       return response.status(502).json({ error: 'The generated content did not meet validation standards.' });
     }
 
-    // Enrich each article with ExerciseDB GIFs
     const enrichedArticles = await Promise.all(
       validated.data.articles.map(async (article) => {
         let enrichedContent = article.content;

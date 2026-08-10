@@ -11,14 +11,12 @@ export default async function handler(
     return response.status(405).json({ error: 'Method not allowed.' });
   }
 
-  // Verify auth token
   const authHeader = request.headers.authorization;
 
   if (!authHeader?.startsWith('Bearer ')) {
     return response.status(401).json({ error: 'Authentication required.' });
   }
 
-  // Lazy-import firebase-admin to keep cold starts fast when not needed
   const { verifyFirebaseToken } = await import('./lib/verifyToken.js');
   const decodedToken = await verifyFirebaseToken(authHeader.split('Bearer ')[1] ?? '');
 
@@ -32,15 +30,12 @@ export default async function handler(
   }
 
   try {
-    // Parse the multipart form data
     const contentType = request.headers['content-type'] ?? '';
 
     if (!contentType.includes('multipart/form-data')) {
       return response.status(400).json({ error: 'Expected multipart/form-data with an audio file.' });
     }
 
-    // Vercel automatically parses multipart form data into request.body
-    // For file uploads, we need to handle the raw body
     const chunks: Buffer[] = [];
 
     await new Promise<void>((resolve, reject) => {
@@ -55,7 +50,6 @@ export default async function handler(
       return response.status(400).json({ error: 'No audio data received.' });
     }
 
-    // Extract the audio file from multipart form data
     const boundary = contentType.split('boundary=')[1];
 
     if (!boundary) {
@@ -70,7 +64,6 @@ export default async function handler(
 
     const groq = new Groq({ apiKey: GROQ_API_KEY });
 
-    // Create a File object from the buffer for the Groq SDK
     const audioFile = new File([audioBuffer], 'recording.webm', {
       type: 'audio/webm',
     });
@@ -78,7 +71,7 @@ export default async function handler(
     const transcription = await groq.audio.transcriptions.create({
       file: audioFile,
       model: 'whisper-large-v3',
-      language: 'es', // Spanish — matches user's primary language
+      language: 'es',
       prompt: 'El usuario está grabando un diario de entrenamiento en español. Habla sobre deporte, gimnasio, pesas, ejercicios, repeticiones, series, nutrición, calorías, peso corporal, descanso, sueño y recuperación física.',
     });
 
@@ -101,15 +94,12 @@ function extractFileFromMultipart(body: Buffer, boundary: string): Buffer | null
   const parts = bodyStr.split(`--${boundary}`);
 
   for (const part of parts) {
-    // Look for the audio file part (Content-Disposition with filename)
     if (part.includes('Content-Disposition') && part.includes('filename')) {
-      // Find the empty line that separates headers from body
       const headerEndIndex = part.indexOf('\r\n\r\n');
 
       if (headerEndIndex === -1) continue;
 
       const fileContent = part.slice(headerEndIndex + 4);
-      // Remove trailing boundary markers
       const cleanContent = fileContent.replace(/\r\n--$/, '').replace(/\r\n$/, '');
 
       return Buffer.from(cleanContent, 'binary');

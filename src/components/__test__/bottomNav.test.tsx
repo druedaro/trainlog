@@ -11,7 +11,6 @@ describe('Feature: Bottom Navigation', () => {
       </BrowserRouter>
     );
 
-    // The nav uses buttons for routing
     expect(screen.getByText('Journal')).toBeInTheDocument();
     expect(screen.getByText('Insights')).toBeInTheDocument();
     expect(screen.getByText('Coach')).toBeInTheDocument();

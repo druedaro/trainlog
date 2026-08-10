@@ -20,7 +20,6 @@ describe('Feature: Article View', () => {
       <ArticleView article={mockArticle} onBack={vi.fn()} />
     );
 
-    // Testing markdown rendering
     await waitFor(() => {
       expect(screen.getByText('How to rest properly')).toBeInTheDocument();
       expect(screen.getByText('Rest is important')).toBeInTheDocument();

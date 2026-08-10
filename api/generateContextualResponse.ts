@@ -74,7 +74,6 @@ export default async function handler(
   try {
     const groq = new Groq({ apiKey: GROQ_API_KEY });
     
-    // We stringify the payload to send to the prompt
     const payload = JSON.stringify({
       currentEntry,
       recentEntries: Array.isArray(recentEntries) ? recentEntries : [],
@@ -99,7 +98,6 @@ export default async function handler(
     const cleanedContent = rawContent.replace(/```json\s*/gi, '').replace(/```\s*$/gi, '').trim();
     const parsed = JSON.parse(cleanedContent);
 
-    // Validate structure
     const validated = responseSchema.safeParse(parsed);
 
     if (!validated.success) {
@@ -109,7 +107,6 @@ export default async function handler(
     const { response: aiResponse, recommendedExercises } = validated.data;
     let finalResponse = aiResponse;
 
-    // Fetch GIFs for recommended exercises
     if (finalResponse && recommendedExercises && recommendedExercises.length > 0) {
       finalResponse += '\n\n**Visual References:**\n';
       
@@ -135,7 +132,6 @@ export default async function handler(
       if (validResults.length > 0) {
         finalResponse += validResults.join('');
       } else {
-        // If we found no visuals, just remove the header
         finalResponse = finalResponse.replace('\n\n**Visual References:**\n', '');
       }
     }

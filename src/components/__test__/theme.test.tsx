@@ -10,11 +10,10 @@ describe('Feature: Theme System', () => {
   });
 
   it('Given no initial theme, When rendering ThemeProvider, Then it defaults to system preference', () => {
-    // Mock system preference
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
       value: vi.fn().mockImplementation(query => ({
-        matches: false, // system is light
+        matches: false,
         media: query,
         onchange: null,
         addEventListener: vi.fn(),
@@ -29,7 +28,6 @@ describe('Feature: Theme System', () => {
       </ThemeProvider>
     );
 
-    // Light theme should not have 'dark' class on HTML
     expect(document.documentElement.classList.contains('dark')).toBe(false);
   });
 
