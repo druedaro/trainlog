@@ -46,7 +46,8 @@ Content Rules:
 4. The 'emoji' field should be a single emoji representing the article topic.
 5. The 'id' field should be a short, unique slug.
 6. Do NOT diagnose injuries or prescribe medical treatments.
-7. You MUST write ALL generated content (titles, reason, content) strictly in Spanish.
+7. You MUST write ALL generated content strictly in Spanish.
+8. Do NOT use markdown formatting (like **bold**) inside the 'title' field. It must be plain text.
 
 Respond ONLY with a valid raw JSON object matching this exact structure:
 {

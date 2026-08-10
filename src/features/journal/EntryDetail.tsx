@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 import { ArrowLeft, Zap, Smile, Sparkles, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
@@ -168,10 +169,10 @@ export function EntryDetail() {
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
         <div className="relative">
           <p className="text-sm font-medium text-muted-foreground">
-            {format(entry.createdAt, 'PPPP')}
+            {format(entry.createdAt, 'PPPP', { locale: es })}
           </p>
           <p className="mt-0.5 text-xs text-muted-foreground/60">
-            {format(entry.createdAt, 'p')}
+            {format(entry.createdAt, 'p', { locale: es })}
           </p>
         </div>
       </div>
