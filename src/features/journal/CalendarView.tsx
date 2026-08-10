@@ -14,7 +14,12 @@ export function CalendarView() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [selectedMonth, setSelectedMonth] = useState(new Date());
-  const [showFullMonth, setShowFullMonth] = useState(false);
+  const [showFullMonth, setShowFullMonth] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 768;
+    }
+    return false;
+  });
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [recentEntries, setRecentEntries] = useState<JournalEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -38,7 +43,7 @@ export function CalendarView() {
   
   useEffect(() => {
     if (!user) return;
-    fetchRecentEntries(user.uid, 4)
+    fetchRecentEntries(user.uid, 6)
       .then(setRecentEntries)
       .catch(() => toast.error('Error al cargar historial.'));
   }, [user]);

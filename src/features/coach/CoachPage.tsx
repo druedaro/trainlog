@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Send, AlertCircle, Mic, MicOff, Volume2, VolumeX, Trash2 } from 'lucide-react';
+import { Send, AlertCircle, Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
 import { Button } from '@/components/ui/button';
@@ -110,16 +110,6 @@ export function CoachPage() {
     }
   };
 
-  const clearChat = () => {
-    if (window.confirm('¿Estás seguro de que quieres borrar el historial de chat?')) {
-      const initialMessage: Message[] = [{
-        role: 'assistant',
-        content: 'Hola, soy Anna. He reseteado nuestra conversación. ¿En qué puedo ayudarte hoy?',
-      }];
-      setMessages(initialMessage);
-    }
-  };
-
   
   useEffect(() => {
     if (!user) return;
@@ -173,15 +163,6 @@ export function CoachPage() {
     <div className="mx-auto flex min-h-screen w-full max-w-3xl flex-col bg-background pb-[120px] md:pb-[80px]">
       <header className="glass sticky top-0 z-20 flex items-center justify-between border-b border-border/40 px-5 py-3.5">
         <h1 className="text-lg font-bold text-gradient">Personal Coach</h1>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={clearChat}
-          className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-          title="Borrar chat"
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
       </header>
 
       <main className="flex-1 overflow-y-auto px-5 py-6 space-y-4">

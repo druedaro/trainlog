@@ -219,7 +219,7 @@ export function InsightsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
                   <span className="text-xs font-semibold text-muted-foreground">Energía media</span>
-                  <div className="mt-3 flex h-24 items-end gap-1.5">
+                  <div className="mt-3 flex h-24 md:h-48 items-end gap-1.5">
                     {[1, 2, 3, 4, 5].map((val) => (
                       <div
                         key={val}
@@ -236,7 +236,7 @@ export function InsightsPage() {
 
                 <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
                   <span className="text-xs font-semibold text-muted-foreground">Ánimo medio</span>
-                  <div className="mt-3 flex h-24 items-end gap-1.5">
+                  <div className="mt-3 flex h-24 md:h-48 items-end gap-1.5">
                     {[1, 2, 3, 4, 5].map((val) => (
                       <div
                         key={val}

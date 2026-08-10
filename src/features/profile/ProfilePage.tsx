@@ -237,7 +237,7 @@ export function ProfilePage() {
         </div>
       </header>
 
-      <main className="flex-1 px-5 py-8 space-y-8 animate-slide-up pb-24">
+      <main className="flex-1 flex flex-col justify-center px-5 py-8 space-y-8 animate-slide-up pb-24 md:pb-8">
         <section className="flex flex-col items-center justify-center text-center">
           <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 border border-primary/20 shadow-inner">
             <User className="h-10 w-10 text-primary" />
