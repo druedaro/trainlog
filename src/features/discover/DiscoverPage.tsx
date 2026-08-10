@@ -396,6 +396,9 @@ export function DiscoverPage() {
                   onClick={() => {
                     setSelectedExploreCategory(cat.id);
                     setShowExploreGrid(false);
+                    if (exploreArticles.length === 0) {
+                      handleGenerateExplore(false);
+                    }
                   }}
                   className={`flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/40 p-4 text-center transition-all hover:border-primary/50 active:scale-95 aspect-square ${cat.bg}`}
                 >
@@ -449,14 +452,14 @@ export function DiscoverPage() {
         )}
 
         {((activeTab === 'foryou' && !isLoading && !isGenerating && articles.length > 0) ||
-          (activeTab === 'explore' && !isLoadingExplore && !isGeneratingExplore && exploreArticles.length > 0) ||
+          (activeTab === 'explore' && !showExploreGrid) ||
           (activeTab === 'saved' && !isLoadingSaved && savedArticles.length > 0)) && (
           <div className="space-y-4 animate-slide-up">
-            {activeTab === 'explore' && !showExploreGrid && exploreArticles.length > 0 && (
+            {activeTab === 'explore' && !showExploreGrid && (
               <Button
                 variant="ghost"
                 onClick={() => setShowExploreGrid(true)}
-                className="mb-2 -ml-2 text-muted-foreground hover:bg-[#2bd4bd]/10 hover:text-[#2bd4bd]"
+                className="mb-2 -ml-2 text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Volver a categorías
