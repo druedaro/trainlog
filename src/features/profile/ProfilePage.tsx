@@ -22,6 +22,8 @@ export function ProfilePage() {
   const [editGender, setEditGender] = useState<Gender>('prefiero no decirlo');
   const [editBirthDate, setEditBirthDate] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -317,20 +319,7 @@ export function ProfilePage() {
             <h3 className="text-xs font-bold uppercase tracking-wider text-destructive/80 px-2 mb-4">Zona Peligrosa</h3>
             <Button
               variant="ghost"
-              onClick={async () => {
-                if (window.confirm('¿Estás seguro de que quieres eliminar tu cuenta y todos tus datos? Esta acción no se puede deshacer.')) {
-                  try {
-                    await deleteAccount();
-                    toast.success('Cuenta eliminada con éxito.');
-                  } catch (e: any) {
-                    if (e.code === 'auth/requires-recent-login') {
-                      toast.error('Por seguridad, cierra sesión y vuelve a entrar antes de eliminar tu cuenta.');
-                    } else {
-                      toast.error('Error al eliminar la cuenta. Inténtalo de nuevo.');
-                    }
-                  }
-                }
-              }}
+              onClick={() => setIsDeleteModalOpen(true)}
               className="w-full justify-start gap-3 rounded-xl bg-destructive/10 text-destructive hover:bg-destructive/20 hover:text-destructive px-4 py-6"
             >
               <AlertTriangle className="h-5 w-5" />
@@ -339,6 +328,54 @@ export function ProfilePage() {
           </div>
         </section>
       </main>
+
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-fade-in">
+          <div className="bg-card w-full max-w-sm rounded-2xl p-6 shadow-2xl border border-border/40">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
+              <AlertTriangle className="h-6 w-6 text-destructive" />
+            </div>
+            <h2 className="text-xl font-bold text-foreground mb-2">Eliminar cuenta</h2>
+            <p className="text-sm text-muted-foreground mb-6">
+              ¿Estás seguro de que quieres eliminar tu cuenta y todos tus datos? Esta acción es irreversible.
+            </p>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setIsDeleteModalOpen(false)}
+                disabled={isDeleting}
+                className="flex-1 rounded-xl"
+              >
+                Cancelar
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={async () => {
+                  setIsDeleting(true);
+                  try {
+                    await deleteAccount();
+                    toast.success('Cuenta eliminada con éxito.');
+                    setIsDeleteModalOpen(false);
+                  } catch (e: any) {
+                    if (e.code === 'auth/requires-recent-login') {
+                      toast.error('Por seguridad, cierra sesión y vuelve a entrar antes de eliminar tu cuenta.');
+                    } else {
+                      toast.error('Error al eliminar la cuenta. Inténtalo de nuevo.');
+                    }
+                    setIsDeleteModalOpen(false);
+                  } finally {
+                    setIsDeleting(false);
+                  }
+                }}
+                disabled={isDeleting}
+                className="flex-1 rounded-xl"
+              >
+                {isDeleting ? 'Eliminando...' : 'Eliminar'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

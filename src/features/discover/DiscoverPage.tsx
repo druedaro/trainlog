@@ -374,7 +374,7 @@ export function DiscoverPage() {
           </div>
         )}
 
-        {activeTab === 'explore' && (
+        {activeTab === 'explore' && exploreArticles.length === 0 && (
           <div className="px-5 pt-6 pb-2 animate-fade-in">
             <h2 className="text-sm font-bold text-foreground mb-4">Categorías</h2>
             <div className="grid grid-cols-2 gap-3 mb-6">
@@ -388,9 +388,9 @@ export function DiscoverPage() {
                   key={cat.id}
                   onClick={() => handleGenerateExplore(false, cat.id)}
                   disabled={isGeneratingExplore}
-                  className={`flex items-center gap-3 rounded-xl border border-border/40 p-4 text-left transition-all hover:border-primary/50 active:scale-95 ${cat.bg}`}
+                  className={`flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/40 p-4 text-center transition-all hover:border-primary/50 active:scale-95 aspect-square ${cat.bg}`}
                 >
-                  <span className="text-2xl">{cat.emoji}</span>
+                  <span className="text-4xl mb-2">{cat.emoji}</span>
                   <span className={`text-sm font-bold ${cat.color}`}>{cat.label}</span>
                 </button>
               ))}
@@ -440,6 +440,17 @@ export function DiscoverPage() {
           (activeTab === 'explore' && !isLoadingExplore && !isGeneratingExplore && exploreArticles.length > 0) ||
           (activeTab === 'saved' && !isLoadingSaved && savedArticles.length > 0)) && (
           <div className="space-y-4 animate-slide-up">
+            {activeTab === 'explore' && exploreArticles.length > 0 && (
+              <Button
+                variant="ghost"
+                onClick={() => setExploreArticles([])}
+                className="mb-2 -ml-2 text-muted-foreground hover:text-foreground"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Volver a categorías
+              </Button>
+            )}
+            
             {activeTab === 'foryou' && updatedAt && (
               <p className="text-xs text-muted-foreground/60">
                 Última actualización: {new Date(updatedAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
