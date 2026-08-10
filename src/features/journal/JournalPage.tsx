@@ -116,7 +116,7 @@ export function JournalPage() {
   const hasBlob = recorder.audioBlob !== null;
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
+    <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col bg-background">
       <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5">
         <div className="flex items-center justify-center h-9 gap-2">
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">

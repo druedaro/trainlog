@@ -30,7 +30,7 @@ export function ArticleView({ article, isSaved = false, onToggleSave, onBack }: 
   }, []);
 
   return (
-    <div className="mx-auto min-h-screen max-w-lg bg-background">
+    <div className="mx-auto min-h-screen w-full max-w-3xl bg-background">
       <header className="glass sticky top-0 z-20 flex items-center justify-between border-b border-border/40 px-5 py-3">
         <Button
           variant="ghost"

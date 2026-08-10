@@ -170,7 +170,7 @@ export function CoachPage() {
   };
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background pb-[120px]">
+    <div className="mx-auto flex min-h-screen w-full max-w-3xl flex-col bg-background pb-[120px] md:pb-[80px]">
       <header className="glass sticky top-0 z-20 flex items-center justify-between border-b border-border/40 px-5 py-3.5">
         <h1 className="text-lg font-bold text-gradient">Personal Coach</h1>
         <Button
@@ -247,7 +247,7 @@ export function CoachPage() {
         </div>
       </main>
 
-      <div className="fixed bottom-[64px] left-1/2 -translate-x-1/2 w-full max-w-lg border-t border-border/40 bg-background/80 backdrop-blur-md p-3 z-20">
+      <div className="fixed bottom-[64px] md:bottom-0 left-1/2 -translate-x-1/2 md:ml-12 w-full max-w-3xl border-t border-border/40 bg-background/80 backdrop-blur-md p-4 z-20">
         <div className="flex gap-2">
           {window.SpeechRecognition || window.webkitSpeechRecognition ? (
             <Button

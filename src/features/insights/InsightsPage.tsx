@@ -142,7 +142,7 @@ export function InsightsPage() {
 
   if (showFullSynthesis && insightsDoc?.synthesis) {
     return (
-      <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
+      <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col bg-background">
         <header className="glass sticky top-0 z-20 flex items-center gap-3 border-b border-border/40 px-5 py-3.5">
           <Button
             variant="ghost"
@@ -179,7 +179,7 @@ export function InsightsPage() {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
+    <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col bg-background">
       <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5">
         <h1 className="text-lg font-bold text-gradient">Resumen semanal</h1>
       </header>
@@ -210,7 +210,7 @@ export function InsightsPage() {
             </div>
           </div>
         ) : (
-          <>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
             <section className="space-y-5">
               <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
                 Los números (últimos 7 días)
@@ -272,7 +272,7 @@ export function InsightsPage() {
               )}
             </section>
 
-            <section className="space-y-4 pt-4 border-t border-border/30">
+            <section className="space-y-4 pt-4 md:pt-0 border-t md:border-t-0 border-border/30">
               <div className="flex items-center justify-between">
                 <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
                   Síntesis IA
@@ -336,7 +336,7 @@ export function InsightsPage() {
                 </div>
               )}
             </section>
-          </>
+          </div>
         )}
       </main>
     </div>

@@ -142,7 +142,7 @@ export function EntryDetail() {
   const moodInfo = analysis.perceivedMood ? MOOD_CONFIG[analysis.perceivedMood] : null;
 
   return (
-    <div className="mx-auto min-h-screen max-w-lg bg-background">
+    <div className="mx-auto min-h-screen w-full max-w-3xl bg-background">
       <header className="glass sticky top-0 z-20 flex items-center justify-between border-b border-border/40 px-5 py-3 bg-background/80 backdrop-blur-md">
         <Button
           variant="ghost"

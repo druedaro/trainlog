@@ -139,37 +139,41 @@ export function CalendarView() {
       )}
 
       {!isLoading && recentEntries.length > 0 && (
-        <div className="mt-5 w-full space-y-2">
+        <div className="mt-5 w-full">
           <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Entradas recientes
           </h2>
-          {recentEntries.map((entry) => (
-            <button
-              key={entry.id}
-              onClick={() => navigate(`/entry/${entry.id}`)}
-              className="card-interactive flex w-full items-center gap-3 rounded-xl border border-border/40 bg-card/50 p-4 text-left backdrop-blur-sm"
-            >
-              <div className="min-w-0 flex-1">
-                <p className="text-xs font-medium text-muted-foreground">
-                  {format(entry.createdAt, "d 'de' MMMM, HH:mm", { locale: es })}
-                </p>
-                <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-foreground">
-                  {entry.analysis.summary}
-                </p>
-                <div className="flex flex-wrap gap-1 mt-2.5">
-                  {(entry.analysis.themes || []).slice(0, 3).map((theme) => (
-                    <span
-                      key={theme}
-                      className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"
-                    >
-                      {theme}
-                    </span>
-                  ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {recentEntries.map((entry) => (
+              <button
+                key={entry.id}
+                onClick={() => navigate(`/entry/${entry.id}`)}
+                className="card-interactive flex h-full w-full flex-col gap-3 rounded-xl border border-border/40 bg-card/50 p-4 text-left backdrop-blur-sm"
+              >
+                <div className="flex w-full justify-between items-start">
+                  <p className="text-xs font-medium text-muted-foreground">
+                    {format(entry.createdAt, "d 'de' MMMM, HH:mm", { locale: es })}
+                  </p>
+                  <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/50" />
                 </div>
-              </div>
-              <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/50" />
-            </button>
-          ))}
+                <div className="min-w-0 flex-1 w-full">
+                  <p className="line-clamp-3 text-sm leading-relaxed text-foreground">
+                    {entry.analysis.summary}
+                  </p>
+                  <div className="flex flex-wrap gap-1 mt-3">
+                    {(entry.analysis.themes || []).slice(0, 3).map((theme) => (
+                      <span
+                        key={theme}
+                        className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"
+                      >
+                        {theme}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>

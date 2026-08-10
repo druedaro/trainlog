@@ -161,7 +161,7 @@ export function ProfilePage() {
 
   if (isEditing) {
     return (
-      <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background p-6">
+      <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col bg-background p-6">
         <h1 className="text-2xl font-bold mb-6 text-foreground">Editar Perfil</h1>
         <div className="space-y-4">
           <div>
@@ -217,7 +217,7 @@ export function ProfilePage() {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
+    <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col bg-background">
       <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5 flex justify-between items-center">
         <h1 className="text-lg font-bold text-gradient">Perfil</h1>
         <div className="flex items-center gap-2">
@@ -251,7 +251,8 @@ export function ProfilePage() {
             <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
           </div>
         ) : (
-          <section className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+            <section className="grid grid-cols-2 gap-4">
             <div className="rounded-2xl border border-border/40 bg-card/50 p-5 text-center backdrop-blur-sm">
               <Activity className="mx-auto mb-2 h-6 w-6 text-emerald-400" />
               <p className="text-3xl font-bold text-foreground">
@@ -292,9 +293,8 @@ export function ProfilePage() {
               </p>
             </div>
           </section>
-        )}
 
-        <section className="pt-6 border-t border-border/40 space-y-4">
+            <section className="pt-4 md:pt-0 border-t md:border-t-0 border-border/40 space-y-4">
           <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-2">Cuenta</h3>
           <Button
             variant="ghost"
@@ -326,7 +326,9 @@ export function ProfilePage() {
               <span className="text-base font-semibold">Eliminar cuenta</span>
             </Button>
           </div>
-        </section>
+            </section>
+          </div>
+        )}
       </main>
 
       {isDeleteModalOpen && (

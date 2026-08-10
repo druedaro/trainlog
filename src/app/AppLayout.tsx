@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router';
 import { BottomNav } from '@/components/BottomNav';
+import { SideNav } from '@/components/SideNav';
 import { Toaster } from 'sonner';
 
 export function AppLayout() {
@@ -12,12 +13,15 @@ export function AppLayout() {
   }, [pathname]);
 
   return (
-    <>
-      <div className="pb-16">
+    <div className="flex min-h-screen flex-col md:flex-row bg-background">
+      <SideNav />
+      <div className="flex-1 pb-16 md:pb-0 md:pl-24 w-full">
         <Outlet />
       </div>
-      <BottomNav />
+      <div className="md:hidden">
+        <BottomNav />
+      </div>
       <Toaster position="top-center" theme="dark" />
-    </>
+    </div>
   );
 }

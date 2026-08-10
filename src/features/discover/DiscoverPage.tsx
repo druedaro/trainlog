@@ -274,7 +274,7 @@ export function DiscoverPage() {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
+    <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col bg-background">
       <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 pt-3.5 pb-2">
         <div className="flex items-center justify-between mb-3">
           <h1 className="text-lg font-bold text-gradient">Discover</h1>
@@ -384,7 +384,7 @@ export function DiscoverPage() {
         {activeTab === 'explore' && showExploreGrid && (
           <div className="px-5 pt-6 pb-2 animate-fade-in">
             <h2 className="text-xl font-bold text-foreground mb-4">Categorías</h2>
-            <div className="grid grid-cols-2 gap-3 mb-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
               {[
                 { id: 'training', label: 'Entrenamiento', emoji: '🏋️', bg: 'bg-blue-500/10', color: 'text-blue-500' },
                 { id: 'nutrition', label: 'Nutrición', emoji: '🥗', bg: 'bg-orange-500/10', color: 'text-orange-500' },
@@ -477,7 +477,8 @@ export function DiscoverPage() {
               </p>
             )}
 
-            {(activeTab === 'foryou' ? articles : activeTab === 'explore' && !showExploreGrid ? exploreArticles : savedArticles).map((article) => {
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {(activeTab === 'foryou' ? articles : activeTab === 'explore' && !showExploreGrid ? exploreArticles : savedArticles).map((article) => {
               const catConfig = CATEGORY_CONFIG[article.category] ?? {
                 label: article.category,
                 color: 'text-muted-foreground',
@@ -551,7 +552,8 @@ export function DiscoverPage() {
               );
             })}
           </div>
-        )}
+        </div>
+      )}
       </main>
     </div>
   );
