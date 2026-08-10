@@ -210,7 +210,7 @@ export function InsightsPage() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             <section className="space-y-5">
               <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
                 Los números (últimos 7 días)

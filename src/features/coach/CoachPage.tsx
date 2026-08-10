@@ -228,8 +228,8 @@ export function CoachPage() {
         </div>
       </main>
 
-      <div className="fixed bottom-[64px] md:bottom-0 left-1/2 -translate-x-1/2 md:ml-12 w-full max-w-3xl border-t border-border/40 bg-background/80 backdrop-blur-md p-4 z-20">
-        <div className="flex gap-2">
+      <div className="fixed bottom-[64px] md:bottom-0 left-0 md:left-24 right-0 border-t border-border/40 bg-background/80 backdrop-blur-md p-4 z-20">
+        <div className="mx-auto flex w-full max-w-3xl gap-2">
           {window.SpeechRecognition || window.webkitSpeechRecognition ? (
             <Button
               onClick={toggleListening}
@@ -260,7 +260,7 @@ export function CoachPage() {
           </Button>
         </div>
         {entries.length === 0 && (
-          <p className="text-center text-[10px] text-muted-foreground mt-2">
+          <p className="mx-auto max-w-3xl text-center text-[10px] text-muted-foreground mt-2">
             Cargando historial de entrenamiento...
           </p>
         )}
