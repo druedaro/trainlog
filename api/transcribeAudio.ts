@@ -64,7 +64,7 @@ export default async function handler(
 
     const groq = new Groq({ apiKey: GROQ_API_KEY });
 
-    const audioFile = new File([audioBuffer], 'recording.webm', {
+    const audioFile = new File([new Uint8Array(audioBuffer)], 'recording.webm', {
       type: 'audio/webm',
     });
 
