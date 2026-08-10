@@ -42,6 +42,7 @@ export function DiscoverPage() {
 
   const [articles, setArticles] = useState<DiscoverArticle[]>([]);
   const [exploreArticles, setExploreArticles] = useState<DiscoverArticle[]>([]);
+  const [showExploreGrid, setShowExploreGrid] = useState(true);
   const [savedArticles, setSavedArticles] = useState<DiscoverArticle[]>([]);
   const [activeTab, setActiveTab] = useState<'foryou' | 'explore' | 'saved'>('foryou');
   const [updatedAt, setUpdatedAt] = useState<number | null>(null);
@@ -202,6 +203,7 @@ export function DiscoverPage() {
         await saveExploreArticles(user.uid, docToSave);
         setExploreArticles(sortArticles(docToSave.articles));
         setExploreUpdatedAt(docToSave.updatedAt);
+        setShowExploreGrid(false);
       } catch (e) {
         if (!silent) {
           toast.error('Error al generar exploración.');
@@ -374,7 +376,7 @@ export function DiscoverPage() {
           </div>
         )}
 
-        {activeTab === 'explore' && exploreArticles.length === 0 && (
+        {activeTab === 'explore' && showExploreGrid && (
           <div className="px-5 pt-6 pb-2 animate-fade-in">
             <h2 className="text-sm font-bold text-foreground mb-4">Categorías</h2>
             <div className="grid grid-cols-2 gap-3 mb-6">
@@ -440,10 +442,10 @@ export function DiscoverPage() {
           (activeTab === 'explore' && !isLoadingExplore && !isGeneratingExplore && exploreArticles.length > 0) ||
           (activeTab === 'saved' && !isLoadingSaved && savedArticles.length > 0)) && (
           <div className="space-y-4 animate-slide-up">
-            {activeTab === 'explore' && exploreArticles.length > 0 && (
+            {activeTab === 'explore' && !showExploreGrid && exploreArticles.length > 0 && (
               <Button
                 variant="ghost"
-                onClick={() => setExploreArticles([])}
+                onClick={() => setShowExploreGrid(true)}
                 className="mb-2 -ml-2 text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
@@ -462,7 +464,7 @@ export function DiscoverPage() {
               </p>
             )}
 
-            {(activeTab === 'foryou' ? articles : activeTab === 'explore' ? exploreArticles : savedArticles).map((article) => {
+            {(activeTab === 'foryou' ? articles : activeTab === 'explore' && !showExploreGrid ? exploreArticles : savedArticles).map((article) => {
               const catConfig = CATEGORY_CONFIG[article.category] ?? {
                 label: article.category,
                 color: 'text-muted-foreground',
@@ -473,30 +475,26 @@ export function DiscoverPage() {
                   <button
                     key={article.id}
                     onClick={() => handleArticleClick(article)}
-                    className="group relative w-full overflow-hidden rounded-2xl border border-border/40 text-left transition-all hover:border-primary/50 active:scale-[0.98]"
-                    style={{ minHeight: '160px' }}
+                    className="group relative w-full overflow-hidden rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm text-left transition-all hover:border-primary/50 active:scale-[0.98] p-4 flex gap-4"
                   >
-                    <div 
-                      className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-700 group-hover:scale-105"
-                      style={{ backgroundImage: `url(${article.imageUrl})` }}
-                    />
-                    <div className="relative flex h-full flex-col justify-end p-3">
-                      <div className="rounded-xl bg-black/50 backdrop-blur-md p-4 border border-white/10 shadow-xl">
-                        <div className="mb-2 flex items-center gap-2">
-                          <span className="flex h-6 w-6 items-center justify-center rounded-md bg-white/20 text-xs backdrop-blur-sm">
-                            {article.emoji}
-                          </span>
-                          <span className={`text-[10px] font-bold uppercase tracking-widest ${catConfig.color}`}>
-                            {catConfig.label}
-                          </span>
-                        </div>
-                        <h3 className="text-sm font-semibold text-white line-clamp-2 leading-tight">
-                          {article.title}
-                        </h3>
-                        <p className="mt-1 text-xs leading-relaxed text-gray-300 line-clamp-1">
-                          {article.reason}
-                        </p>
+                    <div className="flex-1 flex flex-col justify-center min-w-0">
+                      <div className="mb-2 flex items-center gap-2">
+                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-background/50 text-xs">
+                          {article.emoji}
+                        </span>
+                        <span className={`text-[10px] font-bold uppercase tracking-widest ${catConfig.color} truncate`}>
+                          {catConfig.label}
+                        </span>
                       </div>
+                      <h3 className="text-sm font-semibold text-foreground line-clamp-2 leading-tight">
+                        {article.title}
+                      </h3>
+                      <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground line-clamp-2">
+                        {article.reason}
+                      </p>
+                    </div>
+                    <div className="w-24 h-28 shrink-0 rounded-xl overflow-hidden bg-muted">
+                      <img src={article.imageUrl} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     </div>
                   </button>
                 );

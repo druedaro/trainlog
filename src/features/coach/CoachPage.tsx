@@ -54,8 +54,9 @@ export function CoachPage() {
         setInput(currentTranscript);
       };
 
-      recognition.onerror = () => {
-        toast.error('Error en el reconocimiento de voz.');
+      recognition.onerror = (event: any) => {
+        if (event.error === 'no-speech') return;
+        toast.error(`Error en el micrófono: ${event.error}`);
         setIsListening(false);
       };
 
