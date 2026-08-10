@@ -16,6 +16,14 @@ vi.mock('@/lib/firestore', () => ({
   fetchEntriesByDays: vi.fn(),
 }));
 
+Object.defineProperty(window, 'speechSynthesis', {
+  value: {
+    speak: vi.fn(),
+    cancel: vi.fn(),
+  },
+  writable: true
+});
+
 describe('Feature: Coach Chat', () => {
   it('Given an authenticated user, When sending a message, Then it adds it to the chat', async () => {
     vi.mocked(useAuth).mockReturnValue({ user: { uid: '123' }, profile: { displayName: 'John' } } as any);

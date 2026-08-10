@@ -30,6 +30,9 @@ The goal is not to constantly tell users how they should train. Trainlog is desi
 * 📚 **Personalized learning content**
   Discover articles, scientific reviews, studies, and educational resources related to the user's experiences and interests.
 
+* 🤖 **AI Coach (Anna)**
+  A persistent chat interface with your personal AI sports coach. Anna has full context of your entire journal, can respond to voice dictation, read her responses out loud via Text-to-Speech, and provide deep, evidence-based guidance.
+
 * 💡 **Relevant recommendations only**
   Trainlog can choose not to recommend anything when no action or additional guidance is needed.
 

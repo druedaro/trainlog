@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Send, AlertCircle, Mic, MicOff } from 'lucide-react';
+import { Send, AlertCircle, Mic, MicOff, Volume2, VolumeX, Trash2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
@@ -21,13 +21,24 @@ declare global {
 
 export function CoachPage() {
   const { user, profile } = useAuth();
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: 'assistant',
-      content: 'Hola, soy Anna, la coach que te acompaña en tu día a día. He estado analizando tu diario de entrenamiento. ¿En qué puedo ayudarte hoy?',
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>(() => {
+    const saved = localStorage.getItem('coachChat');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Failed to parse chat history', e);
+      }
+    }
+    return [
+      {
+        role: 'assistant',
+        content: 'Hola, soy Anna, la coach que te acompaña en tu día a día. He estado analizando tu diario de entrenamiento. ¿En qué puedo ayudarte hoy?',
+      },
+    ];
+  });
   const [input, setInput] = useState('');
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [entries, setEntries] = useState<any[]>([]);
@@ -85,10 +96,46 @@ export function CoachPage() {
     }
   }, [isListening]);
 
-  // Auto-scroll to bottom
+  // Persist messages & Auto-scroll
   useEffect(() => {
+    localStorage.setItem('coachChat', JSON.stringify(messages));
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Clean up speech on unmount
+  useEffect(() => {
+    return () => {
+      window.speechSynthesis.cancel();
+    };
+  }, []);
+
+  const toggleSpeech = (text: string) => {
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+    } else {
+      const cleanText = text.replace(/[*_#]/g, '').replace(/\[.*?\]\(.*?\)/g, '');
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      utterance.lang = 'es-ES';
+      
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+      
+      window.speechSynthesis.speak(utterance);
+      setIsSpeaking(true);
+    }
+  };
+
+  const clearChat = () => {
+    if (window.confirm('¿Estás seguro de que quieres borrar el historial de chat?')) {
+      const initialMessage: Message[] = [{
+        role: 'assistant',
+        content: 'Hola, soy Anna. He reseteado nuestra conversación. ¿En qué puedo ayudarte hoy?',
+      }];
+      setMessages(initialMessage);
+      localStorage.setItem('coachChat', JSON.stringify(initialMessage));
+    }
+  };
 
   
   useEffect(() => {
@@ -142,8 +189,17 @@ export function CoachPage() {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background pb-[120px]">
-      <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5">
+      <header className="glass sticky top-0 z-20 flex items-center justify-between border-b border-border/40 px-5 py-3.5">
         <h1 className="text-lg font-bold text-gradient">Personal Coach</h1>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={clearChat}
+          className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+          title="Borrar chat"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
       </header>
 
       <main className="flex-1 overflow-y-auto px-5 py-6 space-y-4">
@@ -163,16 +219,32 @@ export function CoachPage() {
               }`}
             >
               <div
-                className={`max-w-[85%] rounded-2xl px-4 py-3 ${
+                className={`max-w-[85%] rounded-3xl px-5 py-3.5 shadow-sm backdrop-blur-md ${
                   msg.role === 'user'
                     ? 'bg-primary text-primary-foreground rounded-br-sm'
-                    : 'bg-card/50 border border-border/40 text-foreground rounded-bl-sm prose prose-sm dark:prose-invert prose-p:leading-snug prose-p:m-0 prose-ul:m-0 prose-li:m-0'
+                    : 'bg-card/60 border border-border/40 text-foreground rounded-bl-sm'
                 }`}
               >
                 {msg.role === 'user' ? (
-                  <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                  <p className="text-[15px] leading-relaxed whitespace-pre-wrap">{msg.content}</p>
                 ) : (
-                  <ReactMarkdown>{msg.content}</ReactMarkdown>
+                  <div className="relative">
+                    <div className="prose prose-sm dark:prose-invert prose-p:leading-relaxed prose-p:m-0 prose-ul:my-2 prose-li:my-0.5 max-w-none break-words">
+                      <ReactMarkdown>
+                        {msg.content}
+                      </ReactMarkdown>
+                    </div>
+                    <div className="mt-2 flex justify-end">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => toggleSpeech(msg.content)}
+                        className="h-7 w-7 rounded-full p-0 text-muted-foreground hover:bg-primary/20 hover:text-primary transition-colors"
+                      >
+                        {isSpeaking ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
