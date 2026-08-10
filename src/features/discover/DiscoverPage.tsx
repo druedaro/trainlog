@@ -43,6 +43,7 @@ export function DiscoverPage() {
   const [articles, setArticles] = useState<DiscoverArticle[]>([]);
   const [exploreArticles, setExploreArticles] = useState<DiscoverArticle[]>([]);
   const [showExploreGrid, setShowExploreGrid] = useState(true);
+  const [selectedExploreCategory, setSelectedExploreCategory] = useState<string | null>(null);
   const [savedArticles, setSavedArticles] = useState<DiscoverArticle[]>([]);
   const [activeTab, setActiveTab] = useState<'foryou' | 'explore' | 'saved'>('foryou');
   const [updatedAt, setUpdatedAt] = useState<number | null>(null);
@@ -308,7 +309,11 @@ export function DiscoverPage() {
             Para ti
           </button>
           <button
-            onClick={() => setActiveTab('explore')}
+            onClick={() => {
+              setActiveTab('explore');
+              setShowExploreGrid(true);
+              setSelectedExploreCategory(null);
+            }}
             className={`flex-1 rounded-lg py-2 text-xs font-semibold transition-colors ${
               activeTab === 'explore'
                 ? 'bg-primary text-primary-foreground'
@@ -388,8 +393,10 @@ export function DiscoverPage() {
               ].map(cat => (
                 <button
                   key={cat.id}
-                  onClick={() => handleGenerateExplore(false, cat.id)}
-                  disabled={isGeneratingExplore}
+                  onClick={() => {
+                    setSelectedExploreCategory(cat.id);
+                    setShowExploreGrid(false);
+                  }}
                   className={`flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/40 p-4 text-center transition-all hover:border-primary/50 active:scale-95 aspect-square ${cat.bg}`}
                 >
                   <span className="text-4xl mb-2">{cat.emoji}</span>
@@ -406,7 +413,10 @@ export function DiscoverPage() {
 
             <Button
               variant="outline"
-              onClick={() => handleGenerateExplore(false)}
+              onClick={() => {
+                setSelectedExploreCategory(null);
+                handleGenerateExplore(false);
+              }}
               disabled={isGeneratingExplore}
               className="w-full justify-center gap-2 rounded-xl py-6 font-semibold"
             >
@@ -446,7 +456,7 @@ export function DiscoverPage() {
               <Button
                 variant="ghost"
                 onClick={() => setShowExploreGrid(true)}
-                className="mb-2 -ml-2 text-muted-foreground hover:text-foreground"
+                className="mb-2 -ml-2 text-muted-foreground hover:bg-[#2bd4bd]/10 hover:text-[#2bd4bd]"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Volver a categorías
@@ -464,7 +474,7 @@ export function DiscoverPage() {
               </p>
             )}
 
-            {(activeTab === 'foryou' ? articles : activeTab === 'explore' && !showExploreGrid ? exploreArticles : savedArticles).map((article) => {
+            {(activeTab === 'foryou' ? articles : activeTab === 'explore' && !showExploreGrid ? exploreArticles.filter(a => selectedExploreCategory ? a.category === selectedExploreCategory : true) : savedArticles).map((article) => {
               const catConfig = CATEGORY_CONFIG[article.category] ?? {
                 label: article.category,
                 color: 'text-muted-foreground',
