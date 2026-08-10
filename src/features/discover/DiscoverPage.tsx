@@ -43,7 +43,6 @@ export function DiscoverPage() {
   const [articles, setArticles] = useState<DiscoverArticle[]>([]);
   const [exploreArticles, setExploreArticles] = useState<DiscoverArticle[]>([]);
   const [showExploreGrid, setShowExploreGrid] = useState(true);
-  const [selectedExploreCategory, setSelectedExploreCategory] = useState<string | null>(null);
   const [savedArticles, setSavedArticles] = useState<DiscoverArticle[]>([]);
   const [activeTab, setActiveTab] = useState<'foryou' | 'explore' | 'saved'>('foryou');
   const [updatedAt, setUpdatedAt] = useState<number | null>(null);
@@ -314,7 +313,6 @@ export function DiscoverPage() {
             onClick={() => {
               setActiveTab('explore');
               setShowExploreGrid(true);
-              setSelectedExploreCategory(null);
             }}
             className={`flex-1 rounded-lg py-2 text-xs font-semibold transition-colors ${
               activeTab === 'explore'
@@ -385,7 +383,7 @@ export function DiscoverPage() {
 
         {activeTab === 'explore' && showExploreGrid && (
           <div className="px-5 pt-6 pb-2 animate-fade-in">
-            <h2 className="text-sm font-bold text-foreground mb-4">Categorías</h2>
+            <h2 className="text-xl font-bold text-foreground mb-4">Categorías</h2>
             <div className="grid grid-cols-2 gap-3 mb-6">
               {[
                 { id: 'training', label: 'Entrenamiento', emoji: '🏋️', bg: 'bg-blue-500/10', color: 'text-blue-500' },
@@ -396,11 +394,7 @@ export function DiscoverPage() {
                 <button
                   key={cat.id}
                   onClick={() => {
-                    setSelectedExploreCategory(cat.id);
-                    setShowExploreGrid(false);
-                    if (exploreArticles.length === 0) {
-                      handleGenerateExplore(false);
-                    }
+                    handleGenerateExplore(false, cat.id);
                   }}
                   className={`flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/40 p-4 text-center transition-all hover:border-primary/50 active:scale-95 aspect-square ${cat.bg}`}
                 >
@@ -419,7 +413,6 @@ export function DiscoverPage() {
             <Button
               variant="outline"
               onClick={() => {
-                setSelectedExploreCategory(null);
                 handleGenerateExplore(false);
               }}
               disabled={isGeneratingExplore}
@@ -479,7 +472,7 @@ export function DiscoverPage() {
               </p>
             )}
 
-            {(activeTab === 'foryou' ? articles : activeTab === 'explore' && !showExploreGrid ? exploreArticles.filter(a => selectedExploreCategory ? a.category === selectedExploreCategory : true) : savedArticles).map((article) => {
+            {(activeTab === 'foryou' ? articles : activeTab === 'explore' && !showExploreGrid ? exploreArticles : savedArticles).map((article) => {
               const catConfig = CATEGORY_CONFIG[article.category] ?? {
                 label: article.category,
                 color: 'text-muted-foreground',

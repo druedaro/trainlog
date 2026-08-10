@@ -35,7 +35,7 @@ export function ArticleView({ article, isSaved = false, onToggleSave, onBack }: 
         <Button
           variant="ghost"
           onClick={onBack}
-          className="relative gap-2 rounded-xl px-3 text-foreground hover:bg-foreground/10"
+          className="relative gap-2 rounded-xl px-3 text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           Volver
