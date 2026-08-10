@@ -394,7 +394,12 @@ export function DiscoverPage() {
                 <button
                   key={cat.id}
                   onClick={() => {
-                    handleGenerateExplore(false, cat.id);
+                    const categoryCount = exploreArticles.filter(a => a.category === cat.id).length;
+                    if (categoryCount > 1) {
+                      setShowExploreGrid(false);
+                    } else {
+                      handleGenerateExplore(false, cat.id);
+                    }
                   }}
                   className={`flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/40 p-4 text-center transition-all hover:border-primary/50 active:scale-95 aspect-square ${cat.bg}`}
                 >
@@ -454,7 +459,7 @@ export function DiscoverPage() {
               <Button
                 variant="ghost"
                 onClick={() => setShowExploreGrid(true)}
-                className="mb-2 -ml-2 text-muted-foreground hover:bg-transparent hover:text-foreground transition-colors"
+                className="mb-2 -ml-2 text-muted-foreground hover:bg-primary/10 hover:text-foreground transition-colors"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Volver a categorías
