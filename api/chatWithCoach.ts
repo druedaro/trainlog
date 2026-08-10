@@ -25,7 +25,7 @@ async function fetchExerciseGif(exercise: { englishName: string }): Promise<stri
       }
     }
   } catch (e) {
-    console.error(`Failed to fetch GIF for ${exercise.englishName}`, e);
+
   }
   return null;
 }
@@ -136,7 +136,7 @@ export default async function handler(
     const validated = chatResponseSchema.safeParse(parsed);
 
     if (!validated.success) {
-      console.error('Chat validation error:', validated.error);
+
       return response.status(502).json({ error: 'The generated content did not meet validation standards.' });
     }
 
@@ -157,7 +157,7 @@ export default async function handler(
       response: finalResponse,
     });
   } catch (error) {
-    console.error('Groq LLaMA Chat error:', error instanceof Error ? error.stack || error.message : error);
+
     return response.status(500).json({ error: 'Chat completion failed.' });
   }
 }

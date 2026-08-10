@@ -121,7 +121,7 @@ export default async function handler(
             }
           }
         } catch (e) {
-          console.error(`Failed to fetch GIF for ${exercise}`, e);
+
         }
         return null;
       });
@@ -138,7 +138,7 @@ export default async function handler(
 
     return response.status(200).json({ response: finalResponse });
   } catch (error) {
-    console.error('Groq LLaMA Contextual Response error:', error instanceof Error ? error.stack || error.message : error);
+
     return response.status(500).json({ error: 'Contextual response execution failed.' });
   }
 }

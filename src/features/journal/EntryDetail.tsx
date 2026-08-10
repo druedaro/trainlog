@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { toast } from 'sonner';
 import { ArrowLeft, Zap, Smile, Sparkles, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
@@ -76,8 +77,7 @@ export function EntryDetail() {
               setEntry((prev) => prev ? { ...prev, contextualResponse: responseText } : null);
             }
           } catch (error) {
-            console.error('Failed to generate contextual response:', error);
-            
+            toast.error('Error al generar respuesta contextual.');
             if (isMounted) {
               setEntry((prev) => prev ? { ...prev, contextualResponse: null } : null);
             }
@@ -107,7 +107,7 @@ export function EntryDetail() {
       await deleteEntry(id);
       navigate('/');
     } catch (e) {
-      console.error('Failed to delete entry:', e);
+      toast.error('Error al eliminar la entrada.');
       setErrorMessage('Error al eliminar la entrada.');
       setIsDeleting(false);
     }

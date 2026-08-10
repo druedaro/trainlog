@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Send, AlertCircle, Mic, MicOff, Volume2, VolumeX, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
@@ -54,7 +55,7 @@ export function CoachPage() {
       };
 
       recognition.onerror = (event: any) => {
-        console.error('Speech recognition error', event.error);
+        toast.error('Error en el reconocimiento de voz.');
         setIsListening(false);
       };
 
@@ -126,7 +127,7 @@ export function CoachPage() {
         const data = await fetchEntriesByDays(user!.uid, 90);
         setEntries(data);
       } catch (err) {
-        console.error('Error loading entries for coach', err);
+        toast.error('Error al cargar historial para el Coach.');
       }
     }
     loadEntries();
@@ -153,7 +154,6 @@ export function CoachPage() {
       
       setMessages([...newMessages, { role: 'assistant', content: res.response }]);
     } catch (err) {
-      console.error('Coach chat error:', err);
       setError('Hubo un error al comunicarse con el coach. Intenta de nuevo.');
       setMessages(newMessages); 
     } finally {

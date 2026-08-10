@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Activity, Sparkles, AlertCircle, ArrowLeft } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
 import {
@@ -55,7 +56,7 @@ export function InsightsPage() {
         setInsightsDoc(cachedInsights as InsightsDocument);
       }
     } catch (e) {
-      console.error('Failed to load Insights data:', e);
+      toast.error('No se pudieron cargar los insights.');
       setError('No se pudieron cargar los insights. Inténtalo de nuevo.');
     } finally {
       setIsLoading(false);
@@ -92,7 +93,7 @@ export function InsightsPage() {
       await saveInsights(user.uid, result);
       setInsightsDoc(result);
     } catch (e) {
-      console.error('Failed to generate synthesis:', e);
+      toast.error('Error al generar la síntesis.');
       setError('Error al generar la síntesis de IA.');
     } finally {
       setIsGenerating(false);

@@ -25,7 +25,7 @@ export default async function handler(
   }
 
   if (!GROQ_API_KEY) {
-    console.error('GROQ_API_KEY is not configured.');
+
     return response.status(500).json({ error: 'Transcription service is not configured.' });
   }
 
@@ -83,7 +83,7 @@ export default async function handler(
 
     return response.status(200).json({ transcript });
   } catch (error) {
-    console.error('Transcription error:', error instanceof Error ? error.message : 'Unknown error');
+
     return response.status(500).json({ error: 'Transcription failed. Please try again.' });
   }
 }

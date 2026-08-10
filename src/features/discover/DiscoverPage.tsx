@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router';
-import { RefreshCw, Sparkles, ArrowLeft } from 'lucide-react';
+import { RefreshCw, Sparkles, ArrowLeft, Bookmark } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
 import {
@@ -79,7 +80,7 @@ export function DiscoverPage() {
         }
       }
     } catch (e) {
-      console.error('Failed to load discover articles:', e);
+      toast.error('Error al cargar los artículos.');
       setError('Error al cargar los artículos.');
     } finally {
       setIsLoading(false);
@@ -92,9 +93,9 @@ export function DiscoverPage() {
     try {
       const saved = await fetchSavedArticles(user.uid);
       setSavedArticles(saved);
-    } catch (e) {
-      console.error('Failed to load saved articles:', e);
-    } finally {
+      } catch (e) {
+        toast.error('Error al cargar recomendaciones.');
+      } finally {
       setIsLoadingSaved(false);
     }
   }, [user]);
@@ -150,9 +151,9 @@ export function DiscoverPage() {
         setArticles(sortArticles(discoverDoc.articles));
         setUpdatedAt(discoverDoc.updatedAt);
       } catch (e) {
-        console.error('Failed to generate Discover articles:', e);
         if (!silent) {
           setError('Error al generar recomendaciones. Inténtalo de nuevo.');
+          toast.error('Error al generar recomendaciones.');
         }
       } finally {
         setIsGenerating(false);
@@ -178,7 +179,7 @@ export function DiscoverPage() {
         handleGenerateExplore(false);
       }
     } catch (e) {
-      console.error('Failed to load explore articles:', e);
+      toast.error('Error al cargar exploración.');
       setError('Error al cargar exploración.');
     } finally {
       setIsLoadingExplore(false);
@@ -202,8 +203,8 @@ export function DiscoverPage() {
         setExploreArticles(sortArticles(docToSave.articles));
         setExploreUpdatedAt(docToSave.updatedAt);
       } catch (e) {
-        console.error('Failed to generate Explore articles:', e);
         if (!silent) {
+          toast.error('Error al generar exploración.');
           setError('Error al generar exploración. Inténtalo de nuevo.');
         }
       } finally {
@@ -230,7 +231,7 @@ export function DiscoverPage() {
         try {
           await removeSavedArticle(user.uid, article.id);
         } catch (e) {
-          console.error('Failed to remove saved article:', e);
+          toast.error('Error al quitar de guardados.');
           setSavedArticles((prev) => [...prev, article]); 
         }
       } else {
@@ -238,7 +239,7 @@ export function DiscoverPage() {
         try {
           await saveArticle(user.uid, article);
         } catch (e) {
-          console.error('Failed to save article:', e);
+          toast.error('Error al guardar artículo.');
           setSavedArticles((prev) => prev.filter((a) => a.id !== article.id)); 
         }
       }
@@ -252,7 +253,7 @@ export function DiscoverPage() {
     if (!article.isRead && activeTab === 'explore' && user) {
       
       setArticles(prev => prev.map(a => a.id === article.id ? { ...a, isRead: true } : a));
-      await markArticleAsRead(user.uid, article.id).catch(console.error);
+      await markArticleAsRead(user.uid, article.id).catch(() => {});
     }
   };
 

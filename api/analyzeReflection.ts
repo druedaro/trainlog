@@ -102,7 +102,7 @@ export default async function handler(
   }
 
   if (!GROQ_API_KEY) {
-    console.error('GROQ_API_KEY is not configured.');
+
     return response.status(500).json({ error: 'Analysis service is not configured.' });
   }
 
@@ -128,7 +128,7 @@ export default async function handler(
     const rawContent = chatCompletion.choices[0]?.message?.content;
 
     if (!rawContent) {
-      console.error('Groq returned empty response body.');
+
       return response.status(502).json({ error: 'The analysis service returned an empty response.' });
     }
 
@@ -139,27 +139,27 @@ export default async function handler(
     try {
       parsed = JSON.parse(cleanedContent);
     } catch (parseErr) {
-      console.error('Groq LLaMA returned unparseable JSON:', rawContent);
+
       return response.status(502).json({ error: 'The analysis service returned an invalid JSON format.' });
     }
 
     const sanitized = sanitizeAnalysisPayload(parsed);
 
     if (!sanitized) {
-      console.error('Failed to sanitize Groq payload:', parsed);
+
       return response.status(502).json({ error: 'The analysis response payload was invalid.' });
     }
 
     const validated = analysisResponseSchema.safeParse(sanitized);
 
     if (!validated.success) {
-      console.error('Sanitized payload failed Zod schema:', validated.error.issues);
+
       return response.status(502).json({ error: 'The analysis did not meet validation standards.' });
     }
 
     return response.status(200).json(validated.data);
   } catch (error) {
-    console.error('Groq LLaMA execution error:', error instanceof Error ? error.stack || error.message : error);
+
     return response.status(500).json({ error: 'Analysis execution failed. Please try again.' });
   }
 }

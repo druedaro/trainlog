@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import { format } from 'date-fns';
+import { format, parseISO, isValid } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { toast } from 'sonner';
 import { ArrowLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
@@ -24,7 +25,7 @@ export function DayEntriesPage() {
     setIsLoading(true);
     fetchEntriesByDay(user.uid, date)
       .then(setEntries)
-      .catch((error) => console.error('Failed to fetch day entries:', error))
+      .catch(() => toast.error('Error al cargar las entradas del día.'))
       .finally(() => setIsLoading(false));
   }, [date, user]);
 

@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
-import { LogOut, Download, Activity, Calendar, Flame, Edit2, User } from 'lucide-react';
+import { LogOut, Download, Activity, Calendar, Flame, Edit2, User, AlertTriangle } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
 import { useAuth } from '@/features/auth/useAuth';
@@ -9,7 +10,7 @@ import type { JournalEntry } from '@/types/entry';
 import type { Gender } from '@/types/user';
 
 export function ProfilePage() {
-  const { user, profile, signOut, refreshProfile } = useAuth();
+  const { user, profile, signOut, refreshProfile, deleteAccount } = useAuth();
   const navigate = useNavigate();
   
   const [entryCount, setEntryCount] = useState<number | null>(null);
@@ -33,7 +34,7 @@ export function ProfilePage() {
           setEntryCount(count);
           setRecentEntries(entries);
         })
-        .catch((e) => console.error('Failed to load profile data', e))
+        .catch(() => toast.error('Error al cargar datos del perfil.'))
         .finally(() => setIsLoading(false));
     }
   }, [user]);
@@ -139,8 +140,9 @@ export function ProfilePage() {
       });
       await refreshProfile();
       setIsEditing(false);
+      toast.success('Perfil guardado con éxito.');
     } catch (e) {
-      console.error('Failed to save profile', e);
+      toast.error('Error al guardar el perfil.');
     } finally {
       setIsSaving(false);
     }
@@ -310,6 +312,31 @@ export function ProfilePage() {
             <LogOut className="h-5 w-5" />
             <span className="text-base font-semibold">Cerrar sesión</span>
           </Button>
+
+          <div className="pt-8">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-destructive/80 px-2 mb-4">Zona Peligrosa</h3>
+            <Button
+              variant="ghost"
+              onClick={async () => {
+                if (window.confirm('¿Estás seguro de que quieres eliminar tu cuenta y todos tus datos? Esta acción no se puede deshacer.')) {
+                  try {
+                    await deleteAccount();
+                    toast.success('Cuenta eliminada con éxito.');
+                  } catch (e: any) {
+                    if (e.code === 'auth/requires-recent-login') {
+                      toast.error('Por seguridad, cierra sesión y vuelve a entrar antes de eliminar tu cuenta.');
+                    } else {
+                      toast.error('Error al eliminar la cuenta. Inténtalo de nuevo.');
+                    }
+                  }
+                }
+              }}
+              className="w-full justify-start gap-3 rounded-xl bg-destructive/10 text-destructive hover:bg-destructive/20 hover:text-destructive px-4 py-6"
+            >
+              <AlertTriangle className="h-5 w-5" />
+              <span className="text-base font-semibold">Eliminar cuenta</span>
+            </Button>
+          </div>
         </section>
       </main>
     </div>

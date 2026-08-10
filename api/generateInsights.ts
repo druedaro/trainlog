@@ -91,7 +91,6 @@ export default async function handler(
 
     const validated = insightsSchema.safeParse(parsed);
     if (!validated.success) {
-      console.error('Insights validation error:', validated.error);
       return response.status(502).json({ error: 'The generated content did not meet validation standards.' });
     }
 
@@ -100,7 +99,6 @@ export default async function handler(
       updatedAt: Date.now(),
     });
   } catch (error) {
-    console.error('Groq LLaMA Insights error:', error instanceof Error ? error.stack || error.message : error);
     return response.status(500).json({ error: 'Insights generation failed.' });
   }
 }

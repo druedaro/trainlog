@@ -75,7 +75,7 @@ async function fetchExerciseGif(exercise: { englishName: string }): Promise<stri
       }
     }
   } catch (e) {
-    console.error(`Failed to fetch GIF for ${exercise.englishName}`, e);
+
   }
   return null;
 }
@@ -150,7 +150,7 @@ export default async function handler(
     const validated = discoverResponseSchema.safeParse(parsed);
 
     if (!validated.success) {
-      console.error('Discover validation error:', validated.error);
+
       return response.status(502).json({ error: 'The generated content did not meet validation standards.' });
     }
 
@@ -185,7 +185,7 @@ export default async function handler(
       updatedAt: Date.now(),
     });
   } catch (error) {
-    console.error('Groq LLaMA Discover error:', error instanceof Error ? error.stack || error.message : error);
+
     return response.status(500).json({ error: 'Discover content generation failed.' });
   }
 }

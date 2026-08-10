@@ -115,7 +115,7 @@ export default async function handler(
     const validated = exploreResponseSchema.safeParse(parsed);
 
     if (!validated.success) {
-      console.error('Explore validation error:', validated.error);
+
       return response.status(502).json({ error: 'The generated content did not meet validation standards.' });
     }
 
@@ -133,7 +133,7 @@ export default async function handler(
             }
           }
         } catch (e) {
-          console.error('Failed to fetch from Unsplash:', e);
+
         }
 
         return {
@@ -153,7 +153,7 @@ export default async function handler(
       updatedAt: Date.now(),
     });
   } catch (error) {
-    console.error('Groq LLaMA Discover error:', error instanceof Error ? error.stack || error.message : error);
+
     return response.status(500).json({ error: 'Discover content generation failed.' });
   }
 }

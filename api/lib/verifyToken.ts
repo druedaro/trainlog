@@ -29,7 +29,7 @@ export async function verifyFirebaseToken(
     const decodedToken = await getAuth().verifyIdToken(token);
     return decodedToken;
   } catch (error) {
-    console.error(
+
       'Token verification failed:',
       error instanceof Error ? error.message : 'Unknown error',
     );

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import { DayPicker } from 'react-day-picker';
 import { format, isSameDay, subDays } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { toast } from 'sonner';
 import { ChevronRight, Calendar as CalendarIcon, ChevronUp } from 'lucide-react';
 import { useAuth } from '@/features/auth/useAuth';
 import { fetchEntriesByMonth, fetchRecentEntries } from '@/lib/firestore';
@@ -27,8 +28,8 @@ export function CalendarView() {
     setIsLoading(true);
     fetchEntriesByMonth(user.uid, year, month)
       .then(setEntries)
-      .catch((error) => {
-        console.error('Failed to fetch entries:', error);
+      .catch(() => {
+        toast.error('Error al cargar las entradas.');
         setEntries([]);
       })
       .finally(() => setIsLoading(false));
@@ -39,7 +40,7 @@ export function CalendarView() {
     if (!user) return;
     fetchRecentEntries(user.uid, 4)
       .then(setRecentEntries)
-      .catch(console.error);
+      .catch(() => toast.error('Error al cargar historial.'));
   }, [user]);
 
   const daysWithEntries = entries.map((entry) => entry.createdAt);

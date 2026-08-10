@@ -10,9 +10,11 @@ import {
   onAuthStateChanged,
   signInWithPopup,
   signOut as firebaseSignOut,
+  deleteUser,
   GoogleAuthProvider,
   type User,
 } from 'firebase/auth';
+import { toast } from 'sonner';
 import { auth } from '@/lib/firebase';
 import { fetchUserProfile } from '@/lib/firestore';
 import type { UserProfile } from '@/types/user';
@@ -24,6 +26,7 @@ interface AuthState {
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
+  deleteAccount: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthState | null>(null);
@@ -40,7 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const p = await fetchUserProfile(uid);
       setProfile(p);
     } catch (e) {
-      console.error('Failed to fetch user profile', e);
+      toast.error('Error al cargar tu perfil.');
     }
   }, []);
 
@@ -72,8 +75,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await firebaseSignOut(auth);
   }, []);
 
+  const deleteAccount = useCallback(async () => {
+    if (auth.currentUser) {
+      await deleteUser(auth.currentUser);
+      setUser(null);
+      setProfile(null);
+    }
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, profile, isLoading, signInWithGoogle, signOut, refreshProfile }}>
+    <AuthContext.Provider value={{ user, profile, isLoading, signInWithGoogle, signOut, refreshProfile, deleteAccount }}>
       {children}
     </AuthContext.Provider>
   );
