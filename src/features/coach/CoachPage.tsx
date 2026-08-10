@@ -160,7 +160,7 @@ export function CoachPage() {
   };
 
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-3xl flex-col bg-background pb-[120px] md:pb-[80px]">
+    <div className="mx-auto flex h-[100dvh] w-full max-w-3xl flex-col bg-background pb-[120px] md:pb-[80px]">
       <header className="glass sticky top-0 z-20 flex items-center justify-between border-b border-border/40 px-5 py-3.5">
         <h1 className="text-lg font-bold text-gradient">Personal Coach</h1>
       </header>

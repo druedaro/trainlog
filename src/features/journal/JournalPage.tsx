@@ -135,7 +135,7 @@ export function JournalPage() {
           </div>
         )}
 
-        {flowStep === 'idle' && !hasBlob && (
+        {flowStep === 'idle' && !hasBlob && recorder.status !== 'recording' && (
           <div className="space-y-8 animate-fade-in">
             <div className="flex flex-col items-center pt-6 gap-6">
               <button 
@@ -146,7 +146,7 @@ export function JournalPage() {
                 Tips para grabar
               </button>
               <RecordButton
-                isRecording={recorder.status === 'recording'}
+                isRecording={false}
                 durationMs={recorder.durationMs}
                 onStart={recorder.startRecording}
                 onStop={handleStopRecording}
