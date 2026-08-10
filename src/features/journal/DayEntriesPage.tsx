@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import { format, parseISO, isValid } from 'date-fns';
+import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { ArrowLeft, ChevronRight, ChevronDown } from 'lucide-react';

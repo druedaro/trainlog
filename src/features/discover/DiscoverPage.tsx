@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router';
-import { RefreshCw, Sparkles, ArrowLeft, Bookmark } from 'lucide-react';
+import { RefreshCw, Sparkles, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
