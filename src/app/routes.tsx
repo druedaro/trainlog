@@ -8,12 +8,22 @@ import { DiscoverPage } from '@/features/discover/DiscoverPage';
 import { InsightsPage } from '@/features/insights/InsightsPage';
 import { ProfilePage } from '@/features/profile/ProfilePage';
 import { CoachPage } from '@/features/coach/CoachPage';
+import { PrivacyPage } from '@/features/legal/PrivacyPage';
+import { TermsPage } from '@/features/legal/TermsPage';
 import { AppLayout } from '@/app/AppLayout';
 
 export const router = createBrowserRouter([
   {
     path: '/login',
     Component: LoginPage,
+  },
+  {
+    path: '/privacy',
+    Component: PrivacyPage,
+  },
+  {
+    path: '/terms',
+    Component: TermsPage,
   },
   {
     Component: AuthGuard,
@@ -54,3 +64,4 @@ export const router = createBrowserRouter([
     ],
   },
 ]);
+

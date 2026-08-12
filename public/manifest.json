@@ -1,0 +1,20 @@
+{
+  "name": "Trainlog — Diario de Reflexión Deportiva",
+  "short_name": "Trainlog",
+  "description": "Tu diario personal de reflexión deportiva basado en voz. Graba, reflexiona, aprende.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#09090b",
+  "background_color": "#09090b",
+  "lang": "es",
+  "categories": ["health", "fitness", "lifestyle"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

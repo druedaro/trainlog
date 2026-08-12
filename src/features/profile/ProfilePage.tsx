@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router';
-import { LogOut, Download, Activity, Calendar, Flame, Edit2, User, AlertTriangle } from 'lucide-react';
+import { useNavigate, Link } from 'react-router';
+import { LogOut, Download, Activity, Calendar, Flame, Edit2, User, AlertTriangle, Shield, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
@@ -305,6 +305,22 @@ export function ProfilePage() {
             <Download className="h-5 w-5" />
             <span className="text-base font-semibold">Exportar mis datos (JSON)</span>
           </Button>
+
+          <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-2 pt-6">Legal</h3>
+          <Link
+            to="/privacy"
+            className="flex w-full items-center gap-3 rounded-xl bg-card/50 border border-border/40 text-foreground hover:bg-primary/5 px-4 py-4 transition-colors"
+          >
+            <Shield className="h-5 w-5 text-muted-foreground" />
+            <span className="text-sm font-semibold">Política de Privacidad</span>
+          </Link>
+          <Link
+            to="/terms"
+            className="flex w-full items-center gap-3 rounded-xl bg-card/50 border border-border/40 text-foreground hover:bg-primary/5 px-4 py-4 transition-colors"
+          >
+            <FileText className="h-5 w-5 text-muted-foreground" />
+            <span className="text-sm font-semibold">Términos de Uso</span>
+          </Link>
           
           <Button
             variant="ghost"

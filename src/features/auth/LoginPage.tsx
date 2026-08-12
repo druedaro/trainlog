@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router';
+import { Navigate, Link } from 'react-router';
 import { useAuth } from '@/features/auth/useAuth';
 import { Button } from '@/components/ui/button';
 
@@ -54,6 +54,17 @@ export function LoginPage() {
             Continuar con Google
           </Button>
         </div>
+
+        <p className="mt-8 text-center text-xs text-muted-foreground/60">
+          Al continuar, aceptas nuestros{' '}
+          <Link to="/terms" className="underline hover:text-muted-foreground transition-colors">
+            Términos de Uso
+          </Link>{' '}
+          y nuestra{' '}
+          <Link to="/privacy" className="underline hover:text-muted-foreground transition-colors">
+            Política de Privacidad
+          </Link>
+        </p>
       </div>
     </div>
   );

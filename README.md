@@ -2,13 +2,13 @@
 
 > **Train. Reflect. Understand. Learn.**
 
-Trainlog is a mobile-first sports reflection journal designed to help users better understand their training experiences through voice.
+Trainlog is a voice-first sports reflection journal designed to help users better understand their training experiences through natural speech.
 
-After a workout, users can record a voice note describing how the session went, how they felt, what they enjoyed, what they found challenging, or anything else relevant to their experience. The app transcribes the recording, extracts structured insights, provides contextual reflections when useful, and builds a personal history that can be explored through a calendar.
+After a workout, users record a voice note describing how the session went — what they felt, what they enjoyed, what challenged them. The app transcribes the recording, extracts structured insights using AI, provides contextual reflections, and builds a personal history that can be explored through a calendar, weekly summaries, and a personal AI coach.
 
-Trainlog also recommends relevant articles, scientific reviews, studies, and educational resources based on the user's experiences, recurring themes, interests, and activities.
+## 🌐 Live Demo
 
-The goal is not to constantly tell users how they should train. Trainlog is designed to support reflection, personal understanding, and learning.
+**[trainlog-journal.vercel.app](https://trainlog-journal.vercel.app/)**
 
 ## ✨ Key Features
 
@@ -24,24 +24,22 @@ The goal is not to constantly tell users how they should train. Trainlog is desi
 * 📅 **Calendar-based history**
   Browse previous training reflections and revisit experiences by date.
 
-* 🔍 **Personal pattern detection**
-  Explore recurring themes and connections across previous entries.
+* 🔍 **Weekly insights & pattern detection**
+  Explore energy levels, mood trends, recurring themes, and AI-generated weekly summaries across your entries.
 
-* 📚 **Personalized learning content**
-  Discover articles, scientific reviews, studies, and educational resources related to the user's experiences and interests.
+* 📚 **Personalized learning content (Discover)**
+  Browse curated articles by category (Training, Nutrition, Mindset, Recovery) or get AI-generated recommendations based on your journal entries.
 
 * 🤖 **AI Coach (Anna)**
-  A persistent chat interface with your personal AI sports coach. Anna has full context of your entire journal, can respond to voice dictation, read her responses out loud via Text-to-Speech, and provide deep, evidence-based guidance.
+  A persistent chat interface with your personal AI sports coach. Anna has full context of your entire journal, responds to voice dictation, reads her responses aloud via Text-to-Speech, and provides evidence-based guidance.
 
-* 💡 **Relevant recommendations only**
-  Trainlog can choose not to recommend anything when no action or additional guidance is needed.
+* 🔖 **Save & revisit content**
+  Bookmark articles from Discover to build your personal knowledge library.
 
 * 🔒 **User-controlled data**
-  AI-generated information is reviewed by the user before it is stored.
+  AI-generated information is reviewed by the user before it is stored. Account deletion removes all data.
 
 ## 🧭 Product Principles
-
-Trainlog is built around three core ideas:
 
 ```text
 🎙️ REFLECT
@@ -61,20 +59,16 @@ Discover relevant and evidence-aware educational content.
 ### What Trainlog is
 
 * A personal sports reflection journal.
-* A voice-first mobile experience.
+* A voice-first experience optimized for mobile, tablet, and desktop.
 * A tool for understanding training experiences over time.
 * A learning companion that connects experiences with relevant content.
-* A portfolio project focused on modern frontend development, AI integration, and thoughtful product design.
 
 ### What Trainlog is not
 
 * A medical application.
 * A diagnostic tool.
 * A replacement for a sports psychologist, doctor, physiotherapist, or coach.
-* A workout generator.
-* A calorie tracker.
-* A wearable integration platform.
-* A social fitness network.
+* A workout generator, calorie tracker, or wearable integration platform.
 
 Trainlog does not diagnose injuries, medical conditions, or psychological conditions. It does not prescribe treatments or present AI-generated interpretations as clinical conclusions.
 
@@ -82,52 +76,42 @@ Trainlog does not diagnose injuries, medical conditions, or psychological condit
 
 ### Frontend
 
-* React 19
-* TypeScript
+* React 19 + TypeScript
 * Vite
-* Tailwind CSS
-* shadcn/ui
-* React Router
+* Tailwind CSS + shadcn/ui
+* React Router v7
 * React Day Picker
-* React Hook Form
-* Zod
+* React Markdown
 
-### Audio and AI
+### Audio & AI
 
-* MediaRecorder API
-* Groq Whisper for speech-to-text
-* Gemini Flash for structured analysis and contextual responses
+* MediaRecorder API (browser-native)
+* Groq Whisper — speech-to-text
+* Google Gemini Flash — structured analysis, contextual responses, article generation, AI coaching
 
 ### Backend
 
-* Firebase Authentication
-* Cloud Firestore
-* Firebase Cloud Functions
+* Firebase Authentication (Google OAuth)
+* Cloud Firestore (per-user data isolation)
+* Vercel Serverless Functions (API layer)
 
 ### Testing
 
-* Vitest
-* React Testing Library
-* jsdom
+* Vitest + React Testing Library + jsdom
 
 ### Deployment
 
-* Vercel
+* Vercel (frontend + serverless API)
 
-## 🧪 Testing Architecture
+## 📱 Responsive Design
 
-Trainlog implements a robust testing suite focused on Behavior-Driven Development (BDD). We use `vitest` alongside `@testing-library/react` to test the application exactly as the user interacts with it.
+Trainlog is designed for daily use across all screen sizes:
 
-### Core Testing Principles
-- **Given/When/Then Structure**: Tests are written using clear scenarios (e.g., *Given an unauthenticated user, When rendering, Then it shows a warning*).
-- **Component & Integration Testing**: Coverage spans from isolated UI elements (`AnalysisView`, `JournalInstructionsModal`) to full page integrations (`JournalPage`, `CoachPage`).
-- **Global Mocking**: We mock core browser APIs (`window.scrollTo`, `scrollIntoView`) and external dependencies (`Firebase Auth`, `Firestore`) globally to ensure fast and deterministic tests.
-
-### Running Tests
-To run the full test suite locally:
-```bash
-npm run test
-```
+| Screen | Navigation | Layout |
+|--------|-----------|--------|
+| **Mobile** (< 768px) | Bottom navigation bar | Single column, full-width |
+| **Tablet** (768px–1024px) | Side navigation rail | Bento-box grids, expanded calendars |
+| **Desktop** (> 1024px) | Side navigation rail | Centered content with comfortable reading widths |
 
 ## 🏗️ Main User Flow
 
@@ -136,7 +120,7 @@ User records a voice note
           ↓
 MediaRecorder captures the audio
           ↓
-A Firebase Cloud Function receives the audio
+Vercel serverless function receives the audio
           ↓
 Groq Whisper generates a transcript
           ↓
@@ -153,111 +137,56 @@ The user reviews and confirms the analysis
 Firestore stores the entry
           ↓
 Trainlog displays a contextual response
-          ↓
-Relevant educational resources may be added to Discover
 ```
 
 No entry is stored before the user explicitly confirms it.
 
-## 📱 Mobile-First Experience
+## 🧪 Testing
 
-Trainlog is designed primarily for daily use on a smartphone.
+Trainlog implements a BDD-style testing suite using Vitest and React Testing Library:
 
-The microphone is the main interaction and is intended to be quick and easy to access after a workout. The interface prioritizes:
+```bash
+# Run tests once
+npm run test
 
-* Large touch targets.
-* Clear visual hierarchy.
-* Minimal friction.
-* Readable content.
-* Calm and focused interactions.
-* Fast access to the recording flow.
+# Run tests in watch mode
+npm run test:watch
+```
+
+**29 tests across 17 test files** covering:
+- Authentication flows and route guards
+- Journal recording, transcription, and analysis flows
+- Calendar navigation and entry detail views
+- Discover page article rendering and interaction
+- AI Coach chat interface
+- Insights and profile pages
+- Layout and navigation components
 
 ## 🗺️ Roadmap
 
-### Phase 1 — Project Foundation
-
-* [ ] Initialize React, TypeScript, and Vite.
-* [ ] Configure Tailwind CSS.
-* [ ] Configure shadcn/ui.
-* [ ] Configure routing.
-* [ ] Configure testing.
-* [ ] Define the initial project structure.
-
-### Phase 2 — Authentication
-
-* [ ] User registration.
-* [ ] User login.
-* [ ] User logout.
-* [ ] Protected routes.
-
-### Phase 3 — Core Voice Journal
-
-* [ ] Record audio with MediaRecorder.
-* [ ] Upload audio securely.
-* [ ] Transcribe audio with Groq Whisper.
-* [ ] Review and edit transcripts.
-* [ ] Analyze confirmed transcripts with Gemini.
-* [ ] Validate AI responses with Zod.
-* [ ] Review and confirm generated insights.
-* [ ] Store confirmed entries in Firestore.
-
-### Phase 4 — Calendar History
-
-* [ ] Display recorded entries in a calendar.
-* [ ] Open an entry by selecting a date.
-* [ ] Display the original reflection and structured insights.
-
-### Phase 5 — Contextual Support
-
-* [ ] Add contextual responses.
-* [ ] Add recommendations only when relevant.
-* [ ] Support recovery, preparation, and reflection-related suggestions.
-
-### Phase 6 — Discover
-
-* [ ] Add a small curated resource collection.
-* [ ] Recommend resources based on activities and recurring themes.
-* [ ] Display why each resource was recommended.
-* [ ] Allow users to save or dismiss resources.
-
-### Phase 7 — Personal Patterns
-
-* [ ] Analyze structured historical data.
-* [ ] Identify recurring themes.
-* [ ] Connect current reflections with previous experiences.
-
-### Phase 8 — AI Coach (Anna)
-
-* [ ] Add a chat interface for the Personal Coach.
-* [ ] Integrate Gemini AI to provide personalized coaching based on journal entries.
-* [ ] Allow users to ask about their progress, recurring pain, or training summaries.
+### Phase 1 — Project Foundation ✅
+### Phase 2 — Authentication ✅
+### Phase 3 — Core Voice Journal ✅
+### Phase 4 — Calendar History ✅
+### Phase 5 — Contextual Support ✅
+### Phase 6 — Discover ✅
+### Phase 7 — Personal Patterns & Weekly Insights ✅
+### Phase 8 — AI Coach (Anna) ✅
+### Phase 9 — Tablet & Desktop Adaptation ✅
+### Phase 10 — Release Preparation ✅
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-Make sure you have the following installed:
-
-* Node.js
+* Node.js (v18+)
 * npm
 
 ### Installation
 
-Clone the repository:
-
 ```bash
-git clone https://github.com/druedaro/trainlog-ai.git
-```
-
-Move into the project directory:
-
-```bash
-cd trainlog-ai
-```
-
-Install dependencies:
-
-```bash
+git clone https://github.com/druedaro/trainlog.git
+cd trainlog
 npm install
 ```
 
@@ -267,9 +196,12 @@ Create a local environment file:
 cp .env.example .env
 ```
 
-Add the required public Firebase configuration values to `.env`.
+Add the required configuration values to `.env`:
+- `GROQ_API_KEY` — Groq API key for Whisper transcription (server-side)
+- `GOOGLE_GENAI_API_KEY` — Google Gemini API key (server-side)
+- `FIREBASE_SERVICE_ACCOUNT` — Firebase Admin SDK service account, base64 encoded (server-side)
 
-> Private API keys for Groq and Gemini must never be exposed in the frontend. They are configured securely in Firebase Cloud Functions.
+> Firebase client configuration (public keys) is set in `src/lib/firebase.ts`.
 
 Start the development server:
 
@@ -277,93 +209,32 @@ Start the development server:
 npm run dev
 ```
 
-## 🧪 Testing
-
-Run the test suite:
-
-```bash
-npm run test
-```
-
-Run tests once:
-
-```bash
-npm run test:run
-```
-
 ## 🏗️ Production Build
-
-Create a production build:
 
 ```bash
 npm run build
-```
-
-Preview the production build locally:
-
-```bash
 npm run preview
 ```
 
-## 🔐 Security and Privacy
-
-Trainlog follows these principles:
+## 🔐 Security & Privacy
 
 * API keys are never exposed in the frontend.
-* Groq and Gemini requests are handled through Firebase Cloud Functions.
+* Groq and Gemini requests are handled through Vercel serverless functions.
+* Firebase Auth tokens are verified server-side before processing any request.
 * User input is validated at application boundaries.
 * AI responses are validated with Zod before being used or persisted.
-* Firestore access is restricted to authenticated users.
+* Firestore security rules enforce per-user data isolation.
 * Users review AI-generated information before it is stored.
-* AI-generated interpretations are kept separate from the user's original words.
-* Historical pattern analysis uses structured data rather than full transcripts whenever possible.
-
-## 🧪 Testing Strategy
-
-The most important flow is:
-
-```text
-Audio
-  ↓
-Transcription
-  ↓
-AI analysis
-  ↓
-User confirmation
-  ↓
-Firestore
-```
-
-Tests cover:
-
-* The main success flow.
-* Empty transcripts.
-* Invalid AI responses.
-* Failed transcription requests.
-* Firestore write failures.
-* Attempts to save entries without confirmation.
-
-The goal is not exhaustive coverage. The priority is ensuring that the most important user flow is reliable.
+* Voice recordings are processed for transcription and never stored as audio files.
+* Users can delete their account and all associated data from the profile page.
 
 ## 📁 Project Documentation
 
-The complete product, architecture, development, security, and scope guidelines are available in:
+Complete product, architecture, development, security, and scope guidelines:
 
-```text
+```
 PROJECT_GUIDE.md
 ```
-
-This document should be read before making architectural decisions or implementing new features.
-
-## 📸 Screenshots
-
-Screenshots and product mockups will be added during development.
-
-## 🌐 Live Demo
-
-The live application will be deployed on Vercel.
-
-> Coming soon.
 
 ## 👤 Author
 
@@ -371,11 +242,9 @@ The live application will be deployed on Vercel.
 
 Frontend Developer focused on React, TypeScript, accessible interfaces, and modern web experiences.
 
-* Portfolio: [David Rueda Portfolio](https://davidrueda.vercel.app/)
-* GitHub: [David Rueda on GitHub](https://github.com/druedaro)
+* Portfolio: [davidrueda.vercel.app](https://davidrueda.vercel.app/)
+* GitHub: [github.com/druedaro](https://github.com/druedaro)
 
 ## 📄 License
 
-This project is intended as a personal project and portfolio piece.
-
-License information will be added before the first public release.
+This project is licensed under the [MIT License](LICENSE).
