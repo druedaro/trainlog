@@ -39,6 +39,9 @@ After a workout, users record a voice note describing how the session went — w
 * 🔒 **User-controlled data**
   AI-generated information is reviewed by the user before it is stored. Account deletion removes all data.
 
+* 📱 **Installable PWA**
+  Trainlog can be installed as a Progressive Web App (PWA) on iOS, Android, and Desktop, behaving like a native application with an immersive full-screen experience and high-resolution icons.
+
 ## 🧭 Product Principles
 
 ```text
