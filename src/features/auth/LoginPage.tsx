@@ -18,7 +18,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-6">
+    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-6">
       <div className="pointer-events-none absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2">
         <div className="h-[300px] w-[300px] rounded-full bg-primary/10 blur-[100px]" />
       </div>
@@ -55,18 +55,18 @@ export function LoginPage() {
           </Button>
         </div>
 
-        <p className="mt-8 text-center text-xs text-muted-foreground/60">
+        <p className="mt-8 text-center text-xs text-muted-foreground">
           Al continuar, aceptas nuestros{' '}
-          <Link to="/terms" className="underline hover:text-muted-foreground transition-colors">
+          <Link to="/terms" className="underline hover:text-foreground transition-colors">
             Términos de Uso
           </Link>{' '}
           y nuestra{' '}
-          <Link to="/privacy" className="underline hover:text-muted-foreground transition-colors">
+          <Link to="/privacy" className="underline hover:text-foreground transition-colors">
             Política de Privacidad
           </Link>
         </p>
       </div>
-    </div>
+    </main>
   );
 }
 

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://trainlog-journal.vercel.app/sitemap.xml

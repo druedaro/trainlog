@@ -1,0 +1,29 @@
+# Trainlog
+
+> Personal sports reflection journal powered by voice notes.
+
+Trainlog is a voice-first sports reflection journal designed to help users better understand their training experiences through natural speech.
+
+## Links
+
+- [Live App](https://trainlog-journal.vercel.app/)
+- [Privacy Policy](https://trainlog-journal.vercel.app/privacy)
+- [Terms of Use](https://trainlog-journal.vercel.app/terms)
+- [Source Code](https://github.com/druedaro/trainlog)
+
+## Features
+
+- Voice-first training journal with AI-powered transcription
+- Structured analysis of training sessions (themes, energy, mood)
+- Calendar-based history and weekly insights
+- Personalized learning content (Discover)
+- AI Coach (Anna) with full journal context
+- Export and delete all personal data
+
+## Tech Stack
+
+React 19, TypeScript, Vite, Tailwind CSS, Firebase, Groq Whisper, Google Gemini, Vercel.
+
+## Author
+
+David Rueda — [Portfolio](https://davidrueda.vercel.app/) — [GitHub](https://github.com/druedaro)
