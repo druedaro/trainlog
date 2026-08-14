@@ -148,7 +148,7 @@ export function CalendarView() {
           <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Entradas recientes
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-3">
             {recentEntries.map((entry) => (
               <button
                 key={entry.id}

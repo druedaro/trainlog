@@ -161,7 +161,7 @@ export function ProfilePage() {
 
   if (isEditing) {
     return (
-      <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col bg-background p-6">
+      <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col bg-background p-6">
         <h1 className="text-2xl font-bold mb-6 text-foreground">Editar Perfil</h1>
         <div className="space-y-4">
           <div>
@@ -217,7 +217,7 @@ export function ProfilePage() {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col bg-background">
+    <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col bg-background">
       <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5 flex justify-between items-center">
         <h1 className="text-lg font-bold text-gradient">Perfil</h1>
         <div className="flex items-center gap-2">

@@ -116,7 +116,7 @@ export function JournalPage() {
   const hasBlob = recorder.audioBlob !== null;
 
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col bg-background">
+    <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col bg-background">
       <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5">
         <div className="flex items-center justify-center h-9 gap-2">
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -136,8 +136,8 @@ export function JournalPage() {
         )}
 
         {flowStep === 'idle' && !hasBlob && recorder.status !== 'recording' && (
-          <div className="space-y-8 animate-fade-in">
-            <div className="flex flex-col items-center pt-6 gap-6">
+          <div className="space-y-8 lg:space-y-0 lg:grid lg:grid-cols-[1fr_minmax(350px,400px)] lg:gap-10 lg:items-start animate-fade-in">
+            <div className="flex flex-col items-center pt-6 lg:pt-16 gap-6 lg:sticky lg:top-28">
               <button 
                 onClick={() => setShowInstructions(true)}
                 className="flex items-center gap-2 text-xs font-semibold text-primary bg-primary/10 hover:bg-primary/20 transition-colors px-4 py-2 rounded-full border border-primary/20 shadow-sm"

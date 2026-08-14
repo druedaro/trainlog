@@ -274,7 +274,7 @@ export function DiscoverPage() {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col bg-background">
+    <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col bg-background">
       <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 pt-3.5 pb-2">
         <div className="flex items-center justify-between mb-3">
           <h1 className="text-lg font-bold text-gradient">Discover</h1>
@@ -477,7 +477,7 @@ export function DiscoverPage() {
               </p>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {(activeTab === 'foryou' ? articles : activeTab === 'explore' && !showExploreGrid ? exploreArticles : savedArticles).map((article) => {
               const catConfig = CATEGORY_CONFIG[article.category] ?? {
                 label: article.category,
