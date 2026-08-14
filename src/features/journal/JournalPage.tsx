@@ -10,6 +10,7 @@ import { TranscriptEditor } from '@/features/journal/TranscriptEditor';
 import { AnalysisView } from '@/features/journal/AnalysisView';
 import { CalendarView } from '@/features/journal/CalendarView';
 import { JournalInstructionsModal } from '@/features/journal/JournalInstructionsModal';
+import { RecentEntries } from '@/features/journal/RecentEntries';
 import { transcribeAudio, analyzeReflection, ApiError } from '@/lib/api';
 import { saveConfirmedEntry } from '@/lib/firestore';
 import { entryAnalysisSchema, type EntryAnalysis } from '@/types/entry';
@@ -136,23 +137,28 @@ export function JournalPage() {
         )}
 
         {flowStep === 'idle' && !hasBlob && recorder.status !== 'recording' && (
-          <div className="space-y-8 lg:space-y-0 lg:grid lg:grid-cols-[1fr_minmax(350px,400px)] lg:gap-10 lg:items-start animate-fade-in">
-            <div className="flex flex-col items-center pt-6 lg:pt-16 gap-6 lg:sticky lg:top-28">
-              <button 
-                onClick={() => setShowInstructions(true)}
-                className="flex items-center gap-2 text-xs font-semibold text-primary bg-primary/10 hover:bg-primary/20 transition-colors px-4 py-2 rounded-full border border-primary/20 shadow-sm"
-              >
-                <Sparkles className="h-3.5 w-3.5" />
-                Tips para grabar
-              </button>
-              <RecordButton
-                isRecording={false}
-                durationMs={recorder.durationMs}
-                onStart={recorder.startRecording}
-                onStop={handleStopRecording}
-              />
+          <div className="flex flex-col gap-10 lg:gap-14 animate-fade-in pb-8">
+            <div className="space-y-8 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-10 lg:items-start">
+              <div className="flex flex-col items-center pt-6 lg:pt-16 gap-6 lg:sticky lg:top-28">
+                <button 
+                  onClick={() => setShowInstructions(true)}
+                  className="flex items-center gap-2 text-xs font-semibold text-primary bg-primary/10 hover:bg-primary/20 transition-colors px-4 py-2 rounded-full border border-primary/20 shadow-sm"
+                >
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Tips para grabar
+                </button>
+                <RecordButton
+                  isRecording={false}
+                  durationMs={recorder.durationMs}
+                  onStart={recorder.startRecording}
+                  onStop={handleStopRecording}
+                />
+              </div>
+              <div className="flex-1 w-full max-w-md mx-auto">
+                <CalendarView />
+              </div>
             </div>
-            <CalendarView />
+            <RecentEntries />
           </div>
         )}
 

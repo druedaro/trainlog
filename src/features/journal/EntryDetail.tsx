@@ -142,7 +142,7 @@ export function EntryDetail() {
   const moodInfo = analysis.perceivedMood ? MOOD_CONFIG[analysis.perceivedMood] : null;
 
   return (
-    <div className="mx-auto min-h-screen w-full max-w-3xl bg-background">
+    <div className="flex min-h-screen w-full flex-col bg-background">
       <header className="glass sticky top-0 z-20 flex items-center justify-between border-b border-border/40 px-5 py-3 bg-background/80 backdrop-blur-md">
         <Button
           variant="ghost"
@@ -177,141 +177,143 @@ export function EntryDetail() {
         </div>
       </div>
 
-      <div className="space-y-4 px-5 pb-24 pt-6 animate-slide-up">
-        {isGeneratingResponse && (
-          <div className="flex items-center gap-3 rounded-2xl border border-primary/20 bg-primary/5 p-5 animate-pulse">
-            <Sparkles className="h-5 w-5 text-primary" />
-            <p className="text-sm text-primary/80">Reflexionando sobre tus sesiones recientes...</p>
-          </div>
-        )}
-
-        {!isGeneratingResponse && contextualResponse && (
-          <div className="rounded-2xl border border-primary/30 bg-primary/10 p-5 backdrop-blur-sm">
-            <div className="mb-2 flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-primary" />
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-primary">
-                Trainlog AI
-              </h3>
+      <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-6">
+        <div className="animate-slide-up space-y-6">
+          {isGeneratingResponse && (
+            <div className="flex items-center gap-3 rounded-2xl border border-primary/20 bg-primary/5 p-5 animate-pulse">
+              <Sparkles className="h-5 w-5 text-primary" />
+              <p className="text-sm text-primary/80">Reflexionando sobre tus sesiones recientes...</p>
             </div>
-            <div className="text-sm font-medium leading-relaxed text-foreground">
-              <ReactMarkdown
-                components={{
-                  p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
-                  ul: ({ node, ...props }) => (
-                    <ul className="mb-2 list-disc pl-5 last:mb-0 space-y-1" {...props} />
-                  ),
-                  strong: ({ node, ...props }) => (
-                    <strong className="font-bold text-primary" {...props} />
-                  ),
-                  img: ({ node, ...props }) => (
-                    <img className="mt-3 w-full max-w-sm rounded-xl border border-primary/20 shadow-sm" loading="lazy" {...props} />
-                  ),
-                }}
-              >
-                {contextualResponse}
-              </ReactMarkdown>
+          )}
+
+          {!isGeneratingResponse && contextualResponse && (
+            <div className="rounded-2xl border border-primary/30 bg-primary/10 p-5 backdrop-blur-sm">
+              <div className="mb-2 flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-primary" />
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-primary">
+                  Trainlog AI
+                </h3>
+              </div>
+              <div className="text-sm font-medium leading-relaxed text-foreground">
+                <ReactMarkdown
+                  components={{
+                    p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
+                    ul: ({ node, ...props }) => (
+                      <ul className="mb-2 list-disc pl-5 last:mb-0 space-y-1" {...props} />
+                    ),
+                    strong: ({ node, ...props }) => (
+                      <strong className="font-bold text-primary" {...props} />
+                    ),
+                    img: ({ node, ...props }) => (
+                      <img className="mt-3 w-full max-w-sm rounded-xl border border-primary/20 shadow-sm" loading="lazy" {...props} />
+                    ),
+                  }}
+                >
+                  {contextualResponse}
+                </ReactMarkdown>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        <div className="rounded-2xl border border-border/40 bg-card/50 p-5 backdrop-blur-sm">
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Resumen
-          </h3>
-          <p className="text-sm leading-relaxed text-foreground">{analysis.summary}</p>
-        </div>
-
-        {((analysis.themes?.length ?? 0) > 0 || (analysis.activities?.length ?? 0) > 0) && (
           <div className="rounded-2xl border border-border/40 bg-card/50 p-5 backdrop-blur-sm">
-            {(analysis.themes?.length ?? 0) > 0 && (
-              <div className="mb-4">
-                <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Temas
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {analysis.themes?.map((theme) => (
-                    <span
-                      key={theme}
-                      className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary"
-                    >
-                      {theme}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {(analysis.activities?.length ?? 0) > 0 && (
-              <div>
-                <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Actividades
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {analysis.activities?.map((activity) => (
-                    <span
-                      key={activity}
-                      className="rounded-full border border-border/50 bg-secondary/50 px-3 py-1.5 text-xs font-medium text-secondary-foreground"
-                    >
-                      {activity}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {(energyInfo || moodInfo) && (
-          <div className="grid grid-cols-2 gap-3">
-            {energyInfo && (
-              <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
-                <div className="mb-2 flex items-center gap-2">
-                  <Zap className={`h-4 w-4 ${energyInfo.color}`} />
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Energía
-                  </h3>
-                </div>
-                <p className={`text-sm font-semibold ${energyInfo.color}`}>
-                  {energyInfo.emoji} {energyInfo.label}
-                </p>
-              </div>
-            )}
-            {moodInfo && (
-              <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
-                <div className="mb-2 flex items-center gap-2">
-                  <Smile className={`h-4 w-4 ${moodInfo.color}`} />
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Estado de ánimo
-                  </h3>
-                </div>
-                <p className={`text-sm font-semibold ${moodInfo.color}`}>
-                  {moodInfo.emoji} {moodInfo.label}
-                </p>
-              </div>
-            )}
-          </div>
-        )}
-
-        {analysis.reflectionPrompt && (
-          <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
-            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary/70">
-              Para reflexionar
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Resumen
             </h3>
-            <p className="text-sm italic leading-relaxed text-foreground/80">
-              {analysis.reflectionPrompt}
+            <p className="text-sm leading-relaxed text-foreground">{analysis.summary}</p>
+          </div>
+
+          {((analysis.themes?.length ?? 0) > 0 || (analysis.activities?.length ?? 0) > 0) && (
+            <div className="rounded-2xl border border-border/40 bg-card/50 p-5 backdrop-blur-sm">
+              {(analysis.themes?.length ?? 0) > 0 && (
+                <div className="mb-4">
+                  <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Temas
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {analysis.themes?.map((theme) => (
+                      <span
+                        key={theme}
+                        className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary"
+                      >
+                        {theme}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {(analysis.activities?.length ?? 0) > 0 && (
+                <div>
+                  <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Actividades
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {analysis.activities?.map((activity) => (
+                      <span
+                        key={activity}
+                        className="rounded-full border border-border/50 bg-secondary/50 px-3 py-1.5 text-xs font-medium text-secondary-foreground"
+                      >
+                        {activity}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {(energyInfo || moodInfo) && (
+            <div className="grid grid-cols-2 gap-3">
+              {energyInfo && (
+                <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
+                  <div className="mb-2 flex items-center gap-2">
+                    <Zap className={`h-4 w-4 ${energyInfo.color}`} />
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Energía
+                    </h3>
+                  </div>
+                  <p className={`text-sm font-semibold ${energyInfo.color}`}>
+                    {energyInfo.emoji} {energyInfo.label}
+                  </p>
+                </div>
+              )}
+              {moodInfo && (
+                <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
+                  <div className="mb-2 flex items-center gap-2">
+                    <Smile className={`h-4 w-4 ${moodInfo.color}`} />
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Estado de ánimo
+                    </h3>
+                  </div>
+                  <p className={`text-sm font-semibold ${moodInfo.color}`}>
+                    {moodInfo.emoji} {moodInfo.label}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {analysis.reflectionPrompt && (
+            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
+              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary/70">
+                Para reflexionar
+              </h3>
+              <p className="text-sm italic leading-relaxed text-foreground/80">
+                {analysis.reflectionPrompt}
+              </p>
+            </div>
+          )}
+
+          <div className="rounded-2xl border border-border/40 bg-card/50 p-5 backdrop-blur-sm">
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Transcripción original
+            </h3>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              {entry.transcript}
             </p>
           </div>
-        )}
-
-        <div className="rounded-2xl border border-border/40 bg-card/50 p-5 backdrop-blur-sm">
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Transcripción original
-          </h3>
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            {entry.transcript}
-          </p>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

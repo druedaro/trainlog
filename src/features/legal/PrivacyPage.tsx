@@ -6,7 +6,7 @@ export function PrivacyPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-3xl flex-col bg-background">
+    <div className="flex min-h-screen w-full flex-col bg-background">
       <header className="glass sticky top-0 z-20 flex items-center gap-3 border-b border-border/40 px-5 py-3.5">
         <Button
           variant="ghost"
@@ -22,7 +22,7 @@ export function PrivacyPage() {
         </div>
       </header>
 
-      <main className="flex-1 px-5 py-8 pb-24 md:pb-8">
+      <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-8 pb-24 md:pb-8">
         <div className="prose prose-sm dark:prose-invert prose-headings:text-foreground prose-p:text-foreground/80 max-w-none">
           <p className="text-xs text-muted-foreground mb-6">Última actualización: 12 de agosto de 2026</p>
 
