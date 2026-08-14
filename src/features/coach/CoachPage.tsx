@@ -84,8 +84,13 @@ export function CoachPage() {
   }, [isListening]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    if (messagesEndRef.current) {
+      const mainElement = messagesEndRef.current.closest('main');
+      if (mainElement) {
+        mainElement.scrollTop = mainElement.scrollHeight;
+      }
+    }
+  }, [messages, isLoading]);
 
   useEffect(() => {
     return () => {
