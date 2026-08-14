@@ -58,7 +58,10 @@ export function CalendarView() {
   const last7Days = Array.from({ length: 7 }).map((_, i) => subDays(today, 6 - i));
 
   return (
-    <div className="flex flex-col items-center animate-fade-in">
+    <div className="flex flex-col animate-fade-in w-full">
+      <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground pl-1">
+        {showFullMonth ? 'Vista mensual' : 'Vista semanal'}
+      </h2>
       {showFullMonth ? (
         <div className="flex flex-col w-full items-center rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm animate-fade-in">
           <DayPicker

@@ -160,12 +160,12 @@ export function CoachPage() {
   };
 
   return (
-    <div className="flex h-[100dvh] w-full flex-col bg-background pb-[120px] md:pb-[80px]">
+    <div className="flex h-[calc(100dvh-64px)] md:h-[100dvh] w-full flex-col bg-background">
       <header className="glass sticky top-0 z-20 flex items-center justify-between border-b border-border/40 px-5 py-3.5">
         <h1 className="text-lg font-bold text-gradient">Personal Coach</h1>
       </header>
 
-      <main className="mx-auto w-full max-w-3xl flex-1 overflow-y-auto px-5 py-6 space-y-4">
+      <main className="mx-auto w-full max-w-3xl flex-1 overflow-y-auto px-5 pt-6 pb-[120px] md:pb-[80px] space-y-4">
         {error && (
           <div className="flex items-center gap-3 rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
             <AlertCircle className="h-5 w-5 shrink-0" />
