@@ -160,12 +160,12 @@ export function CoachPage() {
   };
 
   return (
-    <div className="mx-auto flex h-[100dvh] w-full max-w-3xl flex-col bg-background pb-[120px] md:pb-[80px]">
+    <div className="flex h-[100dvh] w-full flex-col bg-background pb-[120px] md:pb-[80px]">
       <header className="glass sticky top-0 z-20 flex items-center justify-between border-b border-border/40 px-5 py-3.5">
         <h1 className="text-lg font-bold text-gradient">Personal Coach</h1>
       </header>
 
-      <main className="flex-1 overflow-y-auto px-5 py-6 space-y-4">
+      <main className="mx-auto w-full max-w-3xl flex-1 overflow-y-auto px-5 py-6 space-y-4">
         {error && (
           <div className="flex items-center gap-3 rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
             <AlertCircle className="h-5 w-5 shrink-0" />
@@ -228,42 +228,44 @@ export function CoachPage() {
         </div>
       </main>
 
-      <div className="fixed bottom-[64px] md:bottom-0 left-0 md:left-24 right-0 border-t border-border/40 bg-background/80 backdrop-blur-md p-4 z-20">
-        <div className="mx-auto flex w-full max-w-3xl gap-2">
-          {window.SpeechRecognition || window.webkitSpeechRecognition ? (
+      <div className="fixed bottom-[72px] left-0 right-0 z-20 border-t border-border/40 bg-background/80 px-4 py-3 backdrop-blur-md md:bottom-0 md:left-24 lg:left-64">
+        <div className="mx-auto w-full max-w-3xl">
+          <div className="flex w-full gap-2">
+            {window.SpeechRecognition || window.webkitSpeechRecognition ? (
+              <Button
+                onClick={toggleListening}
+                variant={isListening ? "default" : "outline"}
+                size="icon"
+                className={`rounded-full shrink-0 h-[42px] w-[42px] ${isListening ? 'bg-red-500 hover:bg-red-600' : ''}`}
+                title={isListening ? "Detener grabación" : "Dictar por voz"}
+              >
+                {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+              </Button>
+            ) : null}
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Pregunta a tu coach..."
+              disabled={isLoading || entries.length === 0}
+              className="flex-1 rounded-full border border-border/40 bg-card/50 px-4 py-2.5 text-sm outline-none transition-colors focus:border-primary disabled:opacity-50"
+            />
             <Button
-              onClick={toggleListening}
-              variant={isListening ? "default" : "outline"}
+              onClick={handleSend}
+              disabled={!input.trim() || isLoading || entries.length === 0}
               size="icon"
-              className={`rounded-full shrink-0 h-[42px] w-[42px] ${isListening ? 'bg-red-500 hover:bg-red-600' : ''}`}
-              title={isListening ? "Detener grabación" : "Dictar por voz"}
+              className="rounded-full shrink-0 h-[42px] w-[42px]"
             >
-              {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+              <Send className="h-4 w-4" />
             </Button>
-          ) : null}
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Pregunta a tu coach..."
-            disabled={isLoading || entries.length === 0}
-            className="flex-1 rounded-full border border-border/40 bg-card/50 px-4 py-2.5 text-sm outline-none transition-colors focus:border-primary disabled:opacity-50"
-          />
-          <Button
-            onClick={handleSend}
-            disabled={!input.trim() || isLoading || entries.length === 0}
-            size="icon"
-            className="rounded-full shrink-0 h-[42px] w-[42px]"
-          >
-            <Send className="h-4 w-4" />
-          </Button>
+          </div>
+          {entries.length === 0 && (
+            <p className="text-center text-[10px] text-muted-foreground mt-2">
+              Cargando historial de entrenamiento...
+            </p>
+          )}
         </div>
-        {entries.length === 0 && (
-          <p className="mx-auto max-w-3xl text-center text-[10px] text-muted-foreground mt-2">
-            Cargando historial de entrenamiento...
-          </p>
-        )}
       </div>
     </div>
   );
