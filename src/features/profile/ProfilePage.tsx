@@ -183,6 +183,7 @@ export function ProfilePage() {
             >
               <option value="masculino">Masculino</option>
               <option value="femenino">Femenino</option>
+              <option value="otro">Otro</option>
               <option value="prefiero no decirlo">Prefiero no decirlo</option>
             </select>
           </div>

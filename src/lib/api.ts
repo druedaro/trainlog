@@ -191,7 +191,7 @@ export async function sendMessageToCoach(
 
 export { ApiError };
 
-export async function generateExplore(category?: string): Promise<DiscoverDocument> {
+export async function generateExplore(category?: string, gender?: string): Promise<DiscoverDocument> {
   const headers = await getAuthHeaders();
 
   const response = await fetch(`${API_BASE_URL}/generateExplore`, {
@@ -200,7 +200,7 @@ export async function generateExplore(category?: string): Promise<DiscoverDocume
       ...headers,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ category }),
+    body: JSON.stringify({ category, gender }),
   });
 
   if (!response.ok) {
@@ -209,4 +209,28 @@ export async function generateExplore(category?: string): Promise<DiscoverDocume
   }
 
   return (await response.json()) as DiscoverDocument;
+}
+
+export async function generateMonthlySummary(
+  entries: unknown[],
+  month: string,
+  userProfile?: { name: string; gender: string } | null,
+): Promise<{ narrative: string; topThemes: string[]; updatedAt: number }> {
+  const headers = await getAuthHeaders();
+
+  const response = await fetch(`${API_BASE_URL}/generateMonthlySummary`, {
+    method: 'POST',
+    headers: {
+      ...headers,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ entries, month, userProfile }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => 'Unknown error');
+    throw new ApiError(`Monthly summary generation failed: ${errorText}`, response.status);
+  }
+
+  return response.json();
 }

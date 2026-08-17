@@ -2,7 +2,7 @@ import { Navigate, Outlet } from 'react-router';
 import { useAuth } from '@/features/auth/useAuth';
 
 export function AuthGuard() {
-  const { user, isLoading } = useAuth();
+  const { user, profile, isLoading } = useAuth();
 
   if (isLoading) {
     return (
@@ -14,6 +14,10 @@ export function AuthGuard() {
 
   if (!user) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (profile !== null && !profile?.onboardingCompleted) {
+    return <Navigate to="/onboarding" replace />;
   }
 
   return <Outlet />;

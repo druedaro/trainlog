@@ -90,7 +90,7 @@ export default async function handler(
     return response.status(500).json({ error: 'Analysis service is not configured.' });
   }
 
-  const { category } = request.body || {};
+  const { category, gender } = request.body || {};
 
   try {
     const groq = new Groq({ apiKey: GROQ_API_KEY });
@@ -134,7 +134,9 @@ export default async function handler(
       validated.data.articles.map(async (article) => {
         let imageUrl = `https://loremflickr.com/800/600/fitness,${encodeURIComponent(article.imageKeyword)}/all`;
         try {
-          const res = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(article.imageKeyword + ' fitness')}&per_page=10&orientation=landscape&client_id=${UNSPLASH_ACCESS_KEY}`);
+          const genderTerm = gender === 'masculino' ? 'man' : gender === 'femenino' ? 'woman' : '';
+          const query = [genderTerm, article.imageKeyword, 'fitness'].filter(Boolean).join(' ');
+          const res = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=10&orientation=landscape&client_id=${UNSPLASH_ACCESS_KEY}`);
           if (res.ok) {
             const data = await res.json() as any;
             if (data.results && data.results.length > 0) {

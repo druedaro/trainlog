@@ -1,4 +1,4 @@
-export type Gender = 'masculino' | 'femenino' | 'prefiero no decirlo';
+export type Gender = 'masculino' | 'femenino' | 'otro' | 'prefiero no decirlo';
 
 export interface UserProfile {
   uid: string;
@@ -6,4 +6,6 @@ export interface UserProfile {
   gender: Gender;
   birthDate?: string;
   createdAt: number;
+  onboardingCompleted?: boolean;
+  privacyAcceptedAt?: number;
 }

@@ -11,6 +11,7 @@ const articleSchema = z.object({
   category: z.enum(['recovery', 'training', 'mindset', 'nutrition']),
   content: z.string(),
   reason: z.string(),
+  imageKeyword: z.string().optional().default('fitness'),
   recommendedExercises: z.array(z.object({
     englishName: z.string(),
   })).default([]),
@@ -154,6 +155,9 @@ export default async function handler(
       return response.status(502).json({ error: 'The generated content did not meet validation standards.' });
     }
 
+    const UNSPLASH_ACCESS_KEY = process.env.UNSPLASH_ACCESS_KEY || 'JM_DldTer7pAVMlERjx5H-bbTP_EgBemd9XhfZl7-2s';
+    const gender = userProfile?.gender;
+
     const enrichedArticles = await Promise.all(
       validated.data.articles.map(async (article) => {
         let enrichedContent = article.content;
@@ -169,6 +173,21 @@ export default async function handler(
           }
         }
 
+        let imageUrl: string | undefined;
+        try {
+          const keyword = article.imageKeyword || 'fitness';
+          const genderTerm = gender === 'masculino' ? 'man' : gender === 'femenino' ? 'woman' : '';
+          const query = [genderTerm, keyword, 'fitness'].filter(Boolean).join(' ');
+          const imgRes = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=10&orientation=landscape&client_id=${UNSPLASH_ACCESS_KEY}`);
+          if (imgRes.ok) {
+            const data = await imgRes.json() as any;
+            if (data.results && data.results.length > 0) {
+              const randomIndex = Math.floor(Math.random() * data.results.length);
+              imageUrl = data.results[randomIndex].urls.regular;
+            }
+          }
+        } catch (_) {}
+
         return {
           id: article.id,
           title: article.title,
@@ -176,6 +195,7 @@ export default async function handler(
           category: article.category,
           content: enrichedContent,
           reason: article.reason,
+          ...(imageUrl ? { imageUrl } : {}),
         };
       }),
     );

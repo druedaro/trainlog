@@ -195,7 +195,7 @@ export function DiscoverPage() {
         setError(null);
       }
       try {
-        const result = await generateExplore(category);
+        const result = await generateExplore(category, profile?.gender);
         const docToSave: DiscoverDocument = {
           articles: result.articles as DiscoverArticle[],
           updatedAt: result.updatedAt,

@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Activity, Sparkles, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Activity, Sparkles, AlertCircle, ArrowLeft, CalendarDays } from 'lucide-react';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
@@ -7,8 +9,12 @@ import {
   fetchEntriesByDays,
   fetchInsights,
   saveInsights,
+  fetchMonthlyInsights,
+  saveMonthlyInsights,
+  fetchEntriesForMonth,
+  type MonthlyInsightsDocument,
 } from '@/lib/firestore';
-import { generateInsights } from '@/lib/api';
+import { generateInsights, generateMonthlySummary } from '@/lib/api';
 import type { JournalEntry } from '@/types/entry';
 import type { InsightsDocument } from '@/types/insights';
 
@@ -39,6 +45,22 @@ export function InsightsPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [showFullSynthesis, setShowFullSynthesis] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [monthlyDoc, setMonthlyDoc] = useState<MonthlyInsightsDocument | null>(null);
+  const [isGeneratingMonthly, setIsGeneratingMonthly] = useState(false);
+
+  const prevMonthKey = (() => {
+    const d = new Date();
+    d.setDate(1);
+    d.setMonth(d.getMonth() - 1);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  })();
+
+  const prevMonthLabel = (() => {
+    const d = new Date();
+    d.setDate(1);
+    d.setMonth(d.getMonth() - 1);
+    return format(d, 'MMMM yyyy', { locale: es });
+  })();
 
   const loadData = useCallback(async () => {
     if (!user) return;
@@ -46,14 +68,18 @@ export function InsightsPage() {
     setError(null);
 
     try {
-      const [recentEntries, cachedInsights] = await Promise.all([
-        fetchEntriesByDays(user.uid, 7), 
+      const [recentEntries, cachedInsights, cachedMonthly] = await Promise.all([
+        fetchEntriesByDays(user.uid, 7),
         fetchInsights(user.uid),
+        fetchMonthlyInsights(user.uid, prevMonthKey),
       ]);
 
       setEntries(recentEntries);
       if (cachedInsights) {
         setInsightsDoc(cachedInsights as InsightsDocument);
+      }
+      if (cachedMonthly) {
+        setMonthlyDoc(cachedMonthly);
       }
     } catch (e) {
       toast.error('No se pudieron cargar los insights.');
@@ -61,7 +87,7 @@ export function InsightsPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [user]);
+  }, [user, prevMonthKey]);
 
   useEffect(() => {
     loadData();
@@ -99,6 +125,62 @@ export function InsightsPage() {
       setIsGenerating(false);
     }
   }, [user, profile, entries]);
+
+  const handleGenerateMonthly = useCallback(async () => {
+    if (!user) return;
+    setIsGeneratingMonthly(true);
+    try {
+      const prevDate = new Date();
+      prevDate.setDate(1);
+      prevDate.setMonth(prevDate.getMonth() - 1);
+      const year = prevDate.getFullYear();
+      const month = prevDate.getMonth() + 1;
+      const monthEntries = await fetchEntriesForMonth(user.uid, year, month);
+
+      if (monthEntries.length === 0) {
+        toast.error('No hay entradas del mes anterior.');
+        setIsGeneratingMonthly(false);
+        return;
+      }
+
+      const simplified = monthEntries.map((e) => ({
+        transcript: e.transcript,
+        summary: e.analysis.summary,
+        themes: e.analysis.themes || [],
+        energy: e.analysis.perceivedEnergy,
+        mood: e.analysis.perceivedMood,
+        date: e.createdAt.toISOString(),
+      }));
+
+      const energyValues: Record<string, number> = { very_low: 1, low: 2, moderate: 3, high: 4, very_high: 5 };
+      const moodValues: Record<string, number> = { very_negative: 1, negative: 2, neutral: 3, positive: 4, very_positive: 5 };
+      let totalEnergy = 0; let energyCount = 0;
+      let totalMood = 0; let moodCount = 0;
+      monthEntries.forEach((e) => {
+        if (e.analysis.perceivedEnergy && energyValues[e.analysis.perceivedEnergy]) { totalEnergy += energyValues[e.analysis.perceivedEnergy]!; energyCount++; }
+        if (e.analysis.perceivedMood && moodValues[e.analysis.perceivedMood]) { totalMood += moodValues[e.analysis.perceivedMood]!; moodCount++; }
+      });
+
+      const result = await generateMonthlySummary(simplified, prevMonthLabel, profile);
+
+      const doc: MonthlyInsightsDocument = {
+        month: prevMonthKey,
+        totalEntries: monthEntries.length,
+        topThemes: result.topThemes,
+        avgEnergy: energyCount > 0 ? totalEnergy / energyCount : 0,
+        avgMood: moodCount > 0 ? totalMood / moodCount : 0,
+        narrative: result.narrative,
+        updatedAt: result.updatedAt,
+      };
+
+      await saveMonthlyInsights(user.uid, prevMonthKey, doc);
+      setMonthlyDoc(doc);
+    } catch (e) {
+      toast.error('Error al generar el resumen mensual.');
+    } finally {
+      setIsGeneratingMonthly(false);
+    }
+  }, [user, profile, prevMonthKey, prevMonthLabel]);
 
   const stats = useMemo(() => {
     const themeCounts: Record<string, number> = {};
@@ -337,6 +419,79 @@ export function InsightsPage() {
               )}
             </section>
           </div>
+        )}
+
+        {!isLoading && (
+          <section className="space-y-4 border-t border-border/30 pt-8">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CalendarDays className="h-4 w-4 text-primary" />
+                <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+                  Resumen de {prevMonthLabel}
+                </h2>
+              </div>
+              {monthlyDoc && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleGenerateMonthly}
+                  disabled={isGeneratingMonthly}
+                  className="h-8 rounded-lg px-2 text-xs text-muted-foreground hover:text-foreground"
+                >
+                  Regenerar
+                </Button>
+              )}
+            </div>
+
+            {!monthlyDoc && !isGeneratingMonthly && (
+              <div className="rounded-2xl border border-border/40 bg-card/50 p-6 text-center">
+                <CalendarDays className="mx-auto mb-3 h-6 w-6 text-muted-foreground" />
+                <p className="mb-4 text-sm text-foreground/80">
+                  Genera un resumen completo de tus entrenamientos del mes anterior.
+                </p>
+                <Button
+                  onClick={handleGenerateMonthly}
+                  variant="outline"
+                  className="rounded-xl font-semibold"
+                >
+                  Analizar {prevMonthLabel}
+                </Button>
+              </div>
+            )}
+
+            {isGeneratingMonthly && (
+              <div className="rounded-2xl border border-border/40 bg-card/50 p-6 text-center">
+                <div className="mx-auto mb-4 h-6 w-6 animate-spin rounded-full border-[2px] border-primary/30 border-t-primary" />
+                <p className="text-sm text-muted-foreground">Analizando el mes completo...</p>
+              </div>
+            )}
+
+            {monthlyDoc && !isGeneratingMonthly && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div className="lg:col-span-2 rounded-2xl border border-border/40 bg-card/50 p-5 backdrop-blur-sm space-y-3">
+                  {monthlyDoc.narrative.split('\n').filter(Boolean).map((para, i) => (
+                    <p key={i} className="text-sm leading-relaxed text-foreground/85">{para}</p>
+                  ))}
+                </div>
+                <div className="space-y-3">
+                  <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
+                    <p className="text-xs font-semibold text-muted-foreground mb-1">Entradas del mes</p>
+                    <p className="text-3xl font-bold text-primary">{monthlyDoc.totalEntries}</p>
+                  </div>
+                  {monthlyDoc.topThemes.length > 0 && (
+                    <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
+                      <p className="text-xs font-semibold text-muted-foreground mb-3">Temas del mes</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {monthlyDoc.topThemes.map((t) => (
+                          <span key={t} className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary capitalize">{t}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </section>
         )}
       </main>
     </div>

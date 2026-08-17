@@ -313,3 +313,49 @@ export async function saveUserProfile(userId: string, profile: Partial<UserProfi
   const docRef = doc(db, 'users', userId);
   await setDoc(docRef, profile, { merge: true });
 }
+
+export interface MonthlyInsightsDocument {
+  month: string;
+  totalEntries: number;
+  topThemes: string[];
+  avgEnergy: number;
+  avgMood: number;
+  narrative: string;
+  updatedAt: number;
+}
+
+export async function saveMonthlyInsights(userId: string, monthKey: string, data: MonthlyInsightsDocument): Promise<void> {
+  const docRef = doc(db, 'users', userId, 'monthlyInsights', monthKey);
+  await setDoc(docRef, data);
+}
+
+export async function fetchMonthlyInsights(userId: string, monthKey: string): Promise<MonthlyInsightsDocument | null> {
+  const docRef = doc(db, 'users', userId, 'monthlyInsights', monthKey);
+  const snap = await getDoc(docRef);
+  if (!snap.exists()) return null;
+  return snap.data() as MonthlyInsightsDocument;
+}
+
+export async function fetchEntriesForMonth(userId: string, year: number, month: number): Promise<JournalEntry[]> {
+  const start = new Date(year, month - 1, 1);
+  const end = new Date(year, month, 0, 23, 59, 59);
+  const q = query(
+    collection(db, ENTRIES_COLLECTION),
+    where('userId', '==', userId),
+    where('createdAt', '>=', Timestamp.fromDate(start)),
+    where('createdAt', '<=', Timestamp.fromDate(end)),
+    orderBy('createdAt', 'desc'),
+  );
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((docSnap) => {
+    const data = docSnap.data() as DocumentData;
+    return {
+      id: docSnap.id,
+      userId: data.userId,
+      transcript: data.transcript,
+      analysis: data.analysis,
+      createdAt: (data.createdAt as Timestamp).toDate(),
+      updatedAt: (data.updatedAt as Timestamp)?.toDate() ?? (data.createdAt as Timestamp).toDate(),
+    };
+  });
+}
