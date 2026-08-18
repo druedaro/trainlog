@@ -1,3 +1,4 @@
+import { extractAndParseJSON } from './lib/jsonParser.js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import Groq from 'groq-sdk';
 import { z } from 'zod';
@@ -128,8 +129,7 @@ export default async function handler(
 
     const payload = JSON.stringify({ entries }, null, 2);
 
-    const { extractAndParseJSON } = await import('./lib/jsonParser.js');
-
+    
     const chatCompletion = await groq.chat.completions.create({
       messages: [
         { role: 'system', content: dynamicSystemPrompt },
