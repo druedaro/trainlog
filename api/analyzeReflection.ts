@@ -1,9 +1,8 @@
-import { extractAndParseJSON } from './lib/jsonParser.js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import Groq from 'groq-sdk';
+import { GoogleGenAI } from '@google/genai';
 import { z } from 'zod';
 
-const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 const validEnergies = ['very_low', 'low', 'moderate', 'high', 'very_high'] as const;
 const validMoods = ['very_negative', 'negative', 'neutral', 'positive', 'very_positive'] as const;
@@ -102,7 +101,7 @@ export default async function handler(
     return response.status(401).json({ error: 'Invalid authentication token.' });
   }
 
-  if (!GROQ_API_KEY) {
+  if (!GEMINI_API_KEY) {
 
     return response.status(500).json({ error: 'Analysis service is not configured.' });
   }
@@ -114,20 +113,20 @@ export default async function handler(
   }
 
   try {
-    const groq = new Groq({ apiKey: GROQ_API_KEY });
+    const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
     
-    const chatCompletion = await groq.chat.completions.create({
-      messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
-        { role: 'user', content: transcript },
-      ],
-      model: 'openai/gpt-oss-20b',
-      max_tokens: 7000,
-      temperature: 0.3,
-          });
+    const aiResponse = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: transcript,
+      config: {
+        systemInstruction: SYSTEM_PROMPT,
+        temperature: 0.5,
+        responseMimeType: "application/json"
+      }
+    });
 
-    const rawContent = chatCompletion.choices[0]?.message?.content;
+    const rawContent = aiResponse.text;
 
     if (!rawContent) {
 

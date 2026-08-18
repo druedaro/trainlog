@@ -1,9 +1,8 @@
-import { extractAndParseJSON } from './lib/jsonParser.js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import Groq from 'groq-sdk';
+import { GoogleGenAI } from '@google/genai';
 import { z } from 'zod';
 
-const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 const chatResponseSchema = z.object({
   response: z.string().describe('The coach response in Markdown format'),
@@ -76,7 +75,7 @@ export default async function handler(
     return response.status(401).json({ error: 'Invalid authentication token.' });
   }
 
-  if (!GROQ_API_KEY) {
+  if (!GEMINI_API_KEY) {
     return response.status(500).json({ error: 'Analysis service is not configured.' });
   }
 
@@ -98,7 +97,7 @@ export default async function handler(
   const dynamicSystemPrompt = SYSTEM_PROMPT + userContext;
 
   try {
-    const groq = new Groq({ apiKey: GROQ_API_KEY });
+    const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
     
     const journalContext = JSON.stringify(
       (entries || []).map((e: any) => ({
@@ -110,30 +109,29 @@ export default async function handler(
       2
     );
 
-    const groqMessages = [
-      { role: 'system', content: dynamicSystemPrompt },
-      { role: 'system', content: `HISTORIAL DEL DIARIO DEL USUARIO (USAR COMO ÚNICA VERDAD):\n${journalContext}` },
-      ...messages.map((m: any) => ({
-        role: m.role,
-        content: m.content,
-      })),
-    ];
+    
 
     
-    const chatCompletion = await groq.chat.completions.create({
-      messages: groqMessages,
-      model: 'openai/gpt-oss-20b',
-      max_tokens: 7000,
-      temperature: 0.1, 
-          });
+    const aiResponse = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: messages.map((m: any) => ({
+        role: m.role === 'user' ? 'user' : 'model',
+        parts: [{ text: m.content }]
+      })),
+      config: {
+        systemInstruction: dynamicSystemPrompt,
+        temperature: 0.1,
+        responseMimeType: "application/json"
+      }
+    });
 
-    const rawContent = chatCompletion.choices[0]?.message?.content;
+    const rawContent = aiResponse.text;
 
     if (!rawContent) {
       return response.status(502).json({ error: 'The analysis service returned an empty response.' });
     }
 
-    const parsed = extractAndParseJSON(rawContent);
+    const parsed = JSON.parse(rawContent);
     const validated = chatResponseSchema.safeParse(parsed);
 
     if (!validated.success) {
