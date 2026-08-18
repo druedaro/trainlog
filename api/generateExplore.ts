@@ -165,6 +165,6 @@ export default async function handler(
     });
   } catch (error) {
 
-    return response.status(500).json({ error: error.message, stack: error.stack });
+    return response.status(500).json({ error: 'Explore content generation failed.' });
   }
 }
