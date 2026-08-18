@@ -69,15 +69,18 @@ export default async function handler(
     
     const aiResponse = await ai.models.generateContent({
       model: 'gemini-3.6-flash',
-      contents: [
-        {
-          inlineData: {
-            mimeType: 'audio/webm',
-            data: Buffer.from(audioBuffer).toString('base64'),
-          }
-        },
-        "Por favor, transcribe este audio con la mayor precisión posible. Es un diario de entrenamiento en español. Devuelve SOLO la transcripción, sin ningún otro comentario o formato."
-      ]
+      contents: [{
+        role: "user",
+        parts: [
+          {
+            inlineData: {
+              mimeType: 'audio/webm',
+              data: Buffer.from(audioBuffer).toString('base64'),
+            }
+          },
+          { text: "Por favor, transcribe este audio con la mayor precisión posible. Es un diario de entrenamiento en español. Devuelve SOLO la transcripción, sin ningún otro comentario o formato." }
+        ]
+      }]
     });
     const transcript = (aiResponse.text ?? '').trim();
 
