@@ -122,7 +122,7 @@ export default async function handler(
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: transcript },
       ],
-      model: 'qwen/qwen3.6-27b',
+      model: 'openai/gpt-oss-120b',
       temperature: 0.5,
       response_format: { type: 'json_object' }
     });
