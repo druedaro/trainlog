@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { GoogleGenAI } from '@google/genai';
+import Groq from 'groq-sdk';
 import { z } from 'zod';
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
 const responseSchema = z.object({
   response: z.string().nullable(),
@@ -50,7 +50,7 @@ export default async function handler(
     return response.status(401).json({ error: 'Invalid authentication token.' });
   }
 
-  if (!GEMINI_API_KEY) {
+  if (!GROQ_API_KEY) {
     return response.status(500).json({ error: 'Analysis service is not configured.' });
   }
 
@@ -72,7 +72,7 @@ export default async function handler(
   const dynamicSystemPrompt = SYSTEM_PROMPT + userContext;
 
   try {
-    const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+    const groq = new Groq({ apiKey: GROQ_API_KEY });
     
     const payload = JSON.stringify({
       currentEntry,
@@ -80,17 +80,18 @@ export default async function handler(
     }, null, 2);
 
     
-    const aiResponse = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
-      contents: payload,
-      config: {
-        systemInstruction: dynamicSystemPrompt,
-        temperature: 0.5,
-        responseMimeType: "application/json"
-      }
+    
+    const chatCompletion = await groq.chat.completions.create({
+      messages: [
+        { role: 'system', content: dynamicSystemPrompt },
+        { role: 'user', content: payload },
+      ],
+      model: 'qwen/qwen3.6-27b',
+      temperature: 0.5,
+      response_format: { type: 'json_object' }
     });
 
-    const rawContent = aiResponse.text;
+    const rawContent = chatCompletion.choices[0]?.message?.content;
 
     if (!rawContent) {
       return response.status(502).json({ error: 'The analysis service returned an empty response.' });

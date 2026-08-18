@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { GoogleGenAI } from '@google/genai';
+import Groq from 'groq-sdk';
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
 export default async function handler(
   request: VercelRequest,
@@ -24,7 +24,7 @@ export default async function handler(
     return response.status(401).json({ error: 'Invalid authentication token.' });
   }
 
-  if (!GEMINI_API_KEY) {
+  if (!GROQ_API_KEY) {
 
     return response.status(500).json({ error: 'Transcription service is not configured.' });
   }
@@ -62,27 +62,23 @@ export default async function handler(
       return response.status(400).json({ error: 'No audio file found in the request.' });
     }
 
-    const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+    const groq = new Groq({ apiKey: GROQ_API_KEY });
 
     
 
     
-    const aiResponse = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
-      contents: [{
-        role: "user",
-        parts: [
-          {
-            inlineData: {
-              mimeType: 'audio/webm',
-              data: Buffer.from(audioBuffer).toString('base64'),
-            }
-          },
-          { text: "Por favor, transcribe este audio con la mayor precisión posible. Es un diario de entrenamiento en español. Devuelve SOLO la transcripción, sin ningún otro comentario o formato." }
-        ]
-      }]
+    
+    const audioFile = new File([new Uint8Array(audioBuffer)], 'recording.webm', {
+      type: 'audio/webm',
     });
-    const transcript = (aiResponse.text ?? '').trim();
+
+    const transcription = await groq.audio.transcriptions.create({
+      file: audioFile,
+      model: 'whisper-large-v3-turbo',
+      language: 'es',
+      prompt: 'El usuario está grabando un diario de entrenamiento en español. Habla sobre deporte, gimnasio, pesas, ejercicios, repeticiones, series, nutrición, calorías, peso corporal, descanso, sueño y recuperación física.',
+    });
+    const transcript = (transcription.text ?? '').trim();
 
     if (transcript.length === 0) {
       return response.status(422).json({ error: 'The recording could not be transcribed. It may be too short or unclear.' });

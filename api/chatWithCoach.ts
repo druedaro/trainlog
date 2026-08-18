@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { GoogleGenAI } from '@google/genai';
+import Groq from 'groq-sdk';
 import { z } from 'zod';
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
 const chatResponseSchema = z.object({
   response: z.string().describe('The coach response in Markdown format'),
@@ -75,7 +75,7 @@ export default async function handler(
     return response.status(401).json({ error: 'Invalid authentication token.' });
   }
 
-  if (!GEMINI_API_KEY) {
+  if (!GROQ_API_KEY) {
     return response.status(500).json({ error: 'Analysis service is not configured.' });
   }
 
@@ -97,7 +97,7 @@ export default async function handler(
   const dynamicSystemPrompt = SYSTEM_PROMPT + userContext;
 
   try {
-    const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+    const groq = new Groq({ apiKey: GROQ_API_KEY });
     
     const journalContext = JSON.stringify(
       (entries || []).map((e: any) => ({
@@ -113,41 +113,23 @@ export default async function handler(
 
     
     
-    // Ensure contents starts with 'user' and alternates properly (Gemini requirement)
-    // Also inject journalContext into the system prompt since we removed it before
-    const finalSystemPrompt = dynamicSystemPrompt + "\n\nContexto del diario del usuario:\n" + journalContext;
+    
+    const groqMessages = [
+      { role: 'system', content: finalSystemPrompt },
+      ...messages.map((m: any) => ({
+        role: m.role,
+        content: m.content,
+      })),
+    ];
 
-    const formattedMessages = [];
-    for (const m of messages) {
-      if (!m.content) continue;
-      const role = m.role === 'user' ? 'user' : 'model';
-      
-      // Prevent consecutive same-role messages or starting with 'model'
-      if (formattedMessages.length === 0 && role === 'model') continue;
-      
-      if (formattedMessages.length > 0 && formattedMessages[formattedMessages.length - 1].role === role) {
-        formattedMessages[formattedMessages.length - 1].parts[0].text += "\n\n" + m.content;
-      } else {
-        formattedMessages.push({ role, parts: [{ text: m.content }] });
-      }
-    }
-
-    if (formattedMessages.length === 0) {
-      formattedMessages.push({ role: 'user', parts: [{ text: "Hola" }] });
-    }
-
-    const aiResponse = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
-      contents: formattedMessages,
-      config: {
-
-        systemInstruction: finalSystemPrompt,
-        temperature: 0.1,
-        responseMimeType: "application/json"
-      }
+    const chatCompletion = await groq.chat.completions.create({
+      messages: groqMessages,
+      model: 'qwen/qwen3.6-27b',
+      temperature: 0.1,
+      response_format: { type: 'json_object' }
     });
 
-    const rawContent = aiResponse.text;
+    const rawContent = chatCompletion.choices[0]?.message?.content;
 
     if (!rawContent) {
       return response.status(502).json({ error: 'The analysis service returned an empty response.' });
