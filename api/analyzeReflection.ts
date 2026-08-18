@@ -115,15 +115,17 @@ export default async function handler(
   try {
     const groq = new Groq({ apiKey: GROQ_API_KEY });
 
+    const { extractAndParseJSON } = await import('./lib/jsonParser.js');
+
     const chatCompletion = await groq.chat.completions.create({
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: transcript },
       ],
-      model: 'llama-3.3-70b-versatile',
+      model: 'openai/gpt-oss-20b',
+      max_tokens: 7000,
       temperature: 0.3,
-      response_format: { type: 'json_object' },
-    });
+          });
 
     const rawContent = chatCompletion.choices[0]?.message?.content;
 
@@ -132,12 +134,10 @@ export default async function handler(
       return response.status(502).json({ error: 'The analysis service returned an empty response.' });
     }
 
-    const cleanedContent = rawContent.replace(/```json\s*/gi, '').replace(/```\s*$/gi, '').trim();
-
     let parsed: any;
 
     try {
-      parsed = JSON.parse(cleanedContent);
+      parsed = extractAndParseJSON(rawContent);
     } catch (parseErr) {
 
       return response.status(502).json({ error: 'The analysis service returned an invalid JSON format.' });

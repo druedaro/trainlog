@@ -118,12 +118,14 @@ export default async function handler(
       })),
     ];
 
+    const { extractAndParseJSON } = await import('./lib/jsonParser.js');
+
     const chatCompletion = await groq.chat.completions.create({
       messages: groqMessages,
-      model: 'llama-3.3-70b-versatile',
+      model: 'openai/gpt-oss-20b',
+      max_tokens: 7000,
       temperature: 0.1, 
-      response_format: { type: 'json_object' },
-    });
+          });
 
     const rawContent = chatCompletion.choices[0]?.message?.content;
 
@@ -131,8 +133,7 @@ export default async function handler(
       return response.status(502).json({ error: 'The analysis service returned an empty response.' });
     }
 
-    const cleanedContent = rawContent.replace(/```json\s*/gi, '').replace(/```\s*$/gi, '').trim();
-    const parsed = JSON.parse(cleanedContent);
+    const parsed = extractAndParseJSON(rawContent);
     const validated = chatResponseSchema.safeParse(parsed);
 
     if (!validated.success) {

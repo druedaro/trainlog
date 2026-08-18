@@ -28,7 +28,7 @@ CRITICAL: Avoid generic, repetitive, or basic advice (e.g., "sleep 8 hours", "dr
 
 Quality Standards:
 1. ADVANCED INSIGHTS: Connect the user's specific struggles or achievements to advanced physiological, biomechanical, or psychological concepts (e.g., periodization tactics, CNS fatigue, hypertrophy mechanisms, psychological framing).
-2. DEPTH: Each article must be 400-600 words. Cover the topic thoroughly with actionable, non-obvious takeaways. NO superficial "5 tips" lists.
+2. DEPTH: Each article must be extensive. Cover the topic thoroughly with actionable, non-obvious takeaways. NO superficial "5 tips" lists.
 3. EVIDENCE-BASED: Reference real scientific studies, authors, or institutions whenever possible. Use formats like:
    - "Según un meta-análisis de Schoenfeld et al. (2017)..."
    - "Como explica Brad Schoenfeld en su investigación sobre hipertrofia..."
@@ -54,7 +54,7 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
       "title": "string",
       "emoji": "string",
       "category": "recovery" | "training" | "mindset" | "nutrition",
-      "content": "string (Markdown, 400-600 words, MUST include ## 📚 Fuentes y lectura recomendada section at the end)",
+      "content": "string (Markdown, extensive, MUST include ## 📚 Fuentes y lectura recomendada section at the end)",
       "reason": "string",
       "recommendedExercises": [{"englishName": "string"}]
     }
@@ -128,15 +128,17 @@ export default async function handler(
 
     const payload = JSON.stringify({ entries }, null, 2);
 
+    const { extractAndParseJSON } = await import('./lib/jsonParser.js');
+
     const chatCompletion = await groq.chat.completions.create({
       messages: [
         { role: 'system', content: dynamicSystemPrompt },
         { role: 'user', content: payload },
       ],
-      model: 'llama-3.3-70b-versatile',
+      model: 'openai/gpt-oss-20b',
+      max_tokens: 7000,
       temperature: 0.5,
-      response_format: { type: 'json_object' },
-    });
+          });
 
     const rawContent = chatCompletion.choices[0]?.message?.content;
 
@@ -144,8 +146,7 @@ export default async function handler(
       return response.status(502).json({ error: 'The analysis service returned an empty response.' });
     }
 
-    const cleanedContent = rawContent.replace(/```json\s*/gi, '').replace(/```\s*$/gi, '').trim();
-    const parsed = JSON.parse(cleanedContent);
+    const parsed = extractAndParseJSON(rawContent);
 
     const validated = discoverResponseSchema.safeParse(parsed);
 

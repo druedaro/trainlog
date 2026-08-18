@@ -34,7 +34,7 @@ Philosophical and Stylistic Guidelines (Fitness Revolucionario style):
 
 Quality Standards:
 1. ADVANCED INSIGHTS: Cover deep physiological, evolutionary, or psychological concepts. Explain the "why" at a cellular or evolutionary level.
-2. DEPTH: Each article must be 400-600 words. Thorough, actionable, and non-obvious takeaways. NO superficial "5 tips" lists.
+2. DEPTH: Each article must be extensive. Thorough, actionable, and non-obvious takeaways. NO superficial "5 tips" lists.
 3. EVIDENCE-BASED: Reference real scientific studies, meta-analyses, or anthropological evidence whenever possible. Use formats like: "Según un estudio reciente en Nature..." or "La evidencia antropológica sugiere..."
 4. SOURCES SECTION: Every article MUST end with a "## 📚 Fuentes y lectura recomendada" section listing 2-3 real, verifiable references (studies or books).
 5. STRUCTURE: Use Markdown with clear sections (## headers), bold key concepts, bullet points for protocols, and emojis for visual appeal.
@@ -57,7 +57,7 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
       "title": "string",
       "emoji": "string",
       "category": "recovery" | "training" | "mindset" | "nutrition",
-      "content": "string (Markdown, 400-600 words, MUST include ## 📚 Fuentes y lectura recomendada section at the end)",
+      "content": "string (Markdown, extensive, MUST include ## 📚 Fuentes y lectura recomendada section at the end)",
       "reason": "string",
       "imageKeyword": "string"
     }
@@ -102,15 +102,17 @@ export default async function handler(
 
     const finalPrompt = SYSTEM_PROMPT.replace('{{CATEGORY_RULE}}', categoryRule);
 
+    const { extractAndParseJSON } = await import('./lib/jsonParser.js');
+
     const chatCompletion = await groq.chat.completions.create({
       messages: [
         { role: 'system', content: finalPrompt },
         { role: 'user', content: 'Generate 4 general exploration articles now.' },
       ],
-      model: 'llama-3.3-70b-versatile',
+      model: 'openai/gpt-oss-20b',
+      max_tokens: 7000,
       temperature: 0.5,
-      response_format: { type: 'json_object' },
-    });
+          });
 
     const rawContent = chatCompletion.choices[0]?.message?.content;
 
@@ -118,8 +120,7 @@ export default async function handler(
       return response.status(502).json({ error: 'The analysis service returned an empty response.' });
     }
 
-    const cleanedContent = rawContent.replace(/```json\s*/gi, '').replace(/```\s*$/gi, '').trim();
-    const parsed = JSON.parse(cleanedContent);
+    const parsed = extractAndParseJSON(rawContent);
 
     const validated = exploreResponseSchema.safeParse(parsed);
 
