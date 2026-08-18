@@ -34,7 +34,7 @@ Philosophical and Stylistic Guidelines (Fitness Revolucionario style):
 
 Quality Standards:
 1. ADVANCED INSIGHTS: Cover deep physiological, evolutionary, or psychological concepts. Explain the "why" at a cellular or evolutionary level.
-2. DEPTH: Each article must be extensive. Thorough, actionable, and non-obvious takeaways. NO superficial "5 tips" lists.
+2. CONCISENESS: Articles must be highly impactful but concise (maximum 3-4 paragraphs each). Get straight to the science and actionable takeaways. It is absolutely CRITICAL that you generate ALL 4 articles without truncating the list.
 3. EVIDENCE-BASED: Reference real scientific studies, meta-analyses, or anthropological evidence whenever possible. Use formats like: "Según un estudio reciente en Nature..." or "La evidencia antropológica sugiere..."
 4. SOURCES SECTION: Every article MUST end with a "## 📚 Fuentes y lectura recomendada" section listing 2-3 real, verifiable references (studies or books).
 5. STRUCTURE: Use Markdown with clear sections (## headers), bold key concepts, bullet points for protocols, and emojis for visual appeal.

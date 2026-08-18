@@ -28,7 +28,7 @@ CRITICAL: Avoid generic, repetitive, or basic advice (e.g., "sleep 8 hours", "dr
 
 Quality Standards:
 1. ADVANCED INSIGHTS: Connect the user's specific struggles or achievements to advanced physiological, biomechanical, or psychological concepts (e.g., periodization tactics, CNS fatigue, hypertrophy mechanisms, psychological framing).
-2. DEPTH: Each article must be extensive. Cover the topic thoroughly with actionable, non-obvious takeaways. NO superficial "5 tips" lists.
+2. CONCISENESS: Articles must be highly impactful but concise (maximum 3-4 paragraphs each). Get straight to the science and actionable takeaways. It is absolutely CRITICAL that you generate ALL 4 categories without truncating the list.
 3. EVIDENCE-BASED: Reference real scientific studies, authors, or institutions whenever possible. Use formats like:
    - "Según un meta-análisis de Schoenfeld et al. (2017)..."
    - "Como explica Brad Schoenfeld en su investigación sobre hipertrofia..."
