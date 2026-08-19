@@ -184,30 +184,6 @@ export function DiscoverPage() {
     }
   }, [user]);
 
-  const loadExploreArticles = useCallback(async () => {
-    if (!user) return;
-    setIsLoadingExplore(true);
-    setError(null);
-    try {
-      const cached = await fetchExploreArticles(user.uid);
-      if (cached && cached.articles.length > 0) {
-        setExploreArticles(sortArticles(cached.articles));
-        setExploreUpdatedAt(cached.updatedAt);
-        const age = Date.now() - cached.updatedAt;
-        if (age > THREE_DAYS_MS) {
-          handleAutoUpdateExplore(); 
-        }
-      } else {
-        handleGenerateExplore(false);
-      }
-    } catch (e) {
-      toast.error('Error al cargar exploración.');
-      setError('Error al cargar exploración.');
-    } finally {
-      setIsLoadingExplore(false);
-    }
-  }, [user, handleAutoUpdateExplore, handleGenerateExplore]);
-
   const handleGenerateExplore = useCallback(
     async (silent = false, category?: string) => {
       if (!user) return;
@@ -229,10 +205,11 @@ export function DiscoverPage() {
           
           const grouped: Record<string, DiscoverArticle[]> = {};
           for (const article of mergedArticles) {
-            if (!grouped[article.category]) grouped[article.category] = [];
-            if (grouped[article.category].length < 4) {
-              grouped[article.category].push(article);
+            const catArr = grouped[article.category] || [];
+            if (catArr.length < 4) {
+              catArr.push(article);
             }
+            grouped[article.category] = catArr;
           }
           mergedArticles = Object.values(grouped).flat();
         }
@@ -256,6 +233,30 @@ export function DiscoverPage() {
     },
     [user, exploreArticles],
   );
+
+  const loadExploreArticles = useCallback(async () => {
+    if (!user) return;
+    setIsLoadingExplore(true);
+    setError(null);
+    try {
+      const cached = await fetchExploreArticles(user.uid);
+      if (cached && cached.articles.length > 0) {
+        setExploreArticles(sortArticles(cached.articles));
+        setExploreUpdatedAt(cached.updatedAt);
+        const age = Date.now() - cached.updatedAt;
+        if (age > THREE_DAYS_MS) {
+          handleAutoUpdateExplore(); 
+        }
+      } else {
+        handleGenerateExplore(false);
+      }
+    } catch (e) {
+      toast.error('Error al cargar exploración.');
+      setError('Error al cargar exploración.');
+    } finally {
+      setIsLoadingExplore(false);
+    }
+  }, [user, handleAutoUpdateExplore, handleGenerateExplore]);
 
   useEffect(() => {
     if (activeTab === 'explore' && exploreArticles.length === 0) {
