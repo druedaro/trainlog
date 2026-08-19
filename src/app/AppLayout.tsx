@@ -4,6 +4,7 @@ import { BottomNav } from '@/components/BottomNav';
 import { SideNav } from '@/components/SideNav';
 import { Toaster } from 'sonner';
 import { InstallPWA } from '@/components/InstallPWA';
+import { setupMessageListener } from '@/lib/push';
 
 export function AppLayout() {
   const { pathname } = useLocation();
@@ -11,6 +12,8 @@ export function AppLayout() {
   
   useEffect(() => {
     window.scrollTo(0, 0);
+    // Initialize FCM foreground message listener if supported
+    setupMessageListener();
   }, [pathname]);
 
   return (
