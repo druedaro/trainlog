@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
 import { useAuth } from '@/features/auth/useAuth';
 import { countUserEntries, fetchRecentEntries, saveUserProfile } from '@/lib/firestore';
+import { calculateStreak } from '@/lib/gamification';
 import type { JournalEntry } from '@/types/entry';
 import type { Gender } from '@/types/user';
 
@@ -46,44 +47,9 @@ export function ProfilePage() {
   const stats = useMemo(() => {
     if (recentEntries.length === 0) return null;
 
-    
-    let streak = 0;
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const dates = recentEntries.map(e => {
-      const d = new Date(e.createdAt);
-      d.setHours(0, 0, 0, 0);
-      return d.getTime();
-    });
-
-    const uniqueDates = [...new Set(dates)].sort((a, b) => b - a);
-    
-    let currentDate = today.getTime();
-    if (uniqueDates[0] === currentDate) {
-      streak = 1;
-      currentDate -= 86400000;
-      for (let i = 1; i < uniqueDates.length; i++) {
-        if (uniqueDates[i] === currentDate) {
-          streak++;
-          currentDate -= 86400000;
-        } else {
-          break;
-        }
-      }
-    } else if (uniqueDates[0] === currentDate - 86400000) {
-      
-      streak = 1;
-      currentDate -= 172800000;
-      for (let i = 1; i < uniqueDates.length; i++) {
-        if (uniqueDates[i] === currentDate) {
-          streak++;
-          currentDate -= 86400000;
-        } else {
-          break;
-        }
-      }
-    }
+    const dates = recentEntries.map(e => e.createdAt.getTime());
+    const streak = calculateStreak(dates);
 
     
     const activityCounts: Record<string, number> = {};

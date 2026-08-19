@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { ArrowLeft, Bookmark } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ReactMarkdown from 'react-markdown';
+import { vibrate } from '@/lib/vibrate';
 import type { DiscoverArticle } from '@/types/discover';
 
 const CATEGORY_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
@@ -44,7 +45,10 @@ export function ArticleView({ article, isSaved = false, onToggleSave, onBack }: 
           <Button
             variant="ghost"
             size="icon"
-            onClick={onToggleSave}
+            onClick={() => {
+              vibrate(50);
+              onToggleSave();
+            }}
             className={`relative rounded-xl ${isSaved ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
             aria-label={isSaved ? "Quitar de guardados" : "Guardar artículo"}
           >

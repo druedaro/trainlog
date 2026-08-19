@@ -1,4 +1,5 @@
 import { Mic, Square } from 'lucide-react';
+import { vibrate } from '@/lib/vibrate';
 
 interface RecordButtonProps {
   isRecording: boolean;
@@ -32,9 +33,12 @@ export function RecordButton({
           <div className="absolute h-24 w-24 rounded-full border border-destructive/10 animate-recording-ring-3" />
 
           <button
-            onClick={onStop}
+            onClick={() => {
+              vibrate([50, 100, 50]);
+              onStop();
+            }}
             className="relative z-10 flex h-24 w-24 items-center justify-center rounded-full bg-destructive glow-destructive transition-transform active:scale-95"
-            aria-label="Stop recording"
+            aria-label="Detener grabación"
           >
             <Square className="h-8 w-8 fill-destructive-foreground text-destructive-foreground" />
           </button>
@@ -53,10 +57,13 @@ export function RecordButton({
   return (
     <div className="flex flex-col items-center gap-5 animate-fade-in">
       <button
-        onClick={onStart}
+        onClick={() => {
+          vibrate(50);
+          onStart();
+        }}
         disabled={disabled}
         className="relative flex h-24 w-24 items-center justify-center rounded-full bg-primary glow-primary transition-all hover:brightness-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-        aria-label="Start recording"
+        aria-label="Empezar a grabar"
       >
         <Mic className="h-9 w-9 text-primary-foreground" />
       </button>

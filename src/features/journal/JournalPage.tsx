@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { Activity, Sparkles } from 'lucide-react';
 
@@ -12,7 +12,7 @@ import { CalendarView } from '@/features/journal/CalendarView';
 import { JournalInstructionsModal } from '@/features/journal/JournalInstructionsModal';
 import { RecentEntries } from '@/features/journal/RecentEntries';
 import { transcribeAudio, analyzeReflection, ApiError } from '@/lib/api';
-import { saveConfirmedEntry } from '@/lib/firestore';
+import { saveConfirmedEntry, fetchUserStreak } from '@/lib/firestore';
 import { entryAnalysisSchema, type EntryAnalysis } from '@/types/entry';
 
 type FlowStep = 'idle' | 'transcribing' | 'editing' | 'analyzing' | 'reviewing' | 'saving';
@@ -27,6 +27,15 @@ export function JournalPage() {
   const [analysis, setAnalysis] = useState<EntryAnalysis | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showInstructions, setShowInstructions] = useState(false);
+  const [streak, setStreak] = useState<number>(0);
+
+  useEffect(() => {
+    if (user) {
+      fetchUserStreak(user.uid)
+        .then(setStreak)
+        .catch(console.error);
+    }
+  }, [user]);
 
   const resetFlow = useCallback(() => {
     setFlowStep('idle');
@@ -118,12 +127,18 @@ export function JournalPage() {
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col bg-background">
-      <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5">
-        <div className="flex items-center justify-center h-9 gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Activity className="h-4 w-4" />
-          </div>
+      <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5 flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <Activity className="h-5 w-5 text-primary" />
           <h1 className="text-lg font-bold text-gradient">Trainlog</h1>
+        </div>
+        <div className="flex items-center gap-3">
+          {streak > 0 && (
+            <div className="flex items-center gap-1.5 rounded-full bg-orange-500/10 px-3 py-1 border border-orange-500/20">
+              <span className="text-sm font-bold text-orange-500">{streak}</span>
+              <span className="text-sm">🔥</span>
+            </div>
+          )}
         </div>
       </header>
 

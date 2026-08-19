@@ -23,7 +23,26 @@ export function RecentEntries() {
       .finally(() => setIsLoading(false));
   }, [user]);
 
-  if (isLoading) return null;
+  if (isLoading) {
+    return (
+      <div className="mt-5 w-full animate-pulse">
+        <div className="mb-4 h-4 w-32 rounded bg-border/50"></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-32 rounded-xl border border-border/40 bg-card/30 p-4">
+              <div className="h-3 w-24 rounded bg-border/40 mb-3"></div>
+              <div className="h-4 w-full rounded bg-border/30 mb-2"></div>
+              <div className="h-4 w-3/4 rounded bg-border/30 mb-4"></div>
+              <div className="flex gap-2">
+                <div className="h-4 w-16 rounded-full bg-border/20"></div>
+                <div className="h-4 w-16 rounded-full bg-border/20"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   if (recentEntries.length === 0) {
     return (

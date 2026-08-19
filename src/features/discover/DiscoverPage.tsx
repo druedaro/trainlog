@@ -17,6 +17,7 @@ import {
 } from '@/lib/firestore';
 import { generateDiscover, generateExplore } from '@/lib/api';
 import { ArticleView } from '@/features/discover/ArticleView';
+import { vibrate } from '@/lib/vibrate';
 import type { DiscoverArticle, DiscoverDocument } from '@/types/discover';
 
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
@@ -397,7 +398,10 @@ export function DiscoverPage() {
               </p>
             </div>
             <Button
-              onClick={() => handleGenerate(false)}
+              onClick={() => {
+                vibrate(50);
+                handleGenerate(false);
+              }}
               className="rounded-xl bg-primary px-6 py-5 font-semibold text-primary-foreground"
             >
               <Sparkles className="mr-2 h-4 w-4" />
@@ -419,6 +423,7 @@ export function DiscoverPage() {
                 <button
                   key={cat.id}
                   onClick={() => {
+                    vibrate(50);
                     const hasArticles = exploreArticles.some(a => a.category === cat.id);
                     setExploreCategoryFilter(cat.id);
                     if (hasArticles) {
@@ -444,6 +449,7 @@ export function DiscoverPage() {
             <Button
               variant="outline"
               onClick={() => {
+                vibrate([50, 50]);
                 const hasArticles = exploreArticles.some(a => a.category === 'general');
                 setExploreCategoryFilter('general');
                 if (hasArticles) {

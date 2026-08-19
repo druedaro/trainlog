@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from 'react-router';
 import { BookOpen, Compass, Activity, User, Bot, Dumbbell } from 'lucide-react';
+import { vibrate } from '@/lib/vibrate';
 
 const NAV_ITEMS = [
   { path: '/', label: 'Journal', icon: BookOpen },
@@ -19,6 +20,7 @@ export function SideNav() {
   }
 
   const handleNavClick = (path: string) => {
+    vibrate(50);
     navigate(path, { state: { navReset: Date.now() } });
   };
 

@@ -148,7 +148,7 @@ export async function deleteEntry(entryId: string): Promise<void> {
 
 export async function fetchRecentEntries(
   userId: string,
-  limitCount: number = 5,
+  limitCount: number = 50,
 ): Promise<JournalEntry[]> {
   const entriesQuery = query(
     collection(db, ENTRIES_COLLECTION),
@@ -162,6 +162,13 @@ export async function fetchRecentEntries(
   return snapshot.docs.map((docSnap) =>
     mapDocumentToEntry(docSnap.id, docSnap.data()),
   );
+}
+
+export async function fetchUserStreak(userId: string): Promise<number> {
+  const { calculateStreak } = await import('@/lib/gamification');
+  const entries = await fetchRecentEntries(userId, 100);
+  const dates = entries.map(e => e.createdAt.getTime());
+  return calculateStreak(dates);
 }
 
 export async function countUserEntries(userId: string): Promise<number> {
