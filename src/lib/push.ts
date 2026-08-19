@@ -1,0 +1,60 @@
+import { getToken, onMessage } from 'firebase/messaging';
+import { messaging, db } from './firebase';
+import { doc, setDoc } from 'firebase/firestore';
+
+// @ts-ignore
+const VAPID_KEY = import.meta.env.VITE_FIREBASE_VAPID_KEY;
+
+export async function requestPushPermissions(userId: string): Promise<boolean> {
+  if (!messaging) return false;
+
+  try {
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      const token = await getToken(messaging, { vapidKey: VAPID_KEY });
+      if (token) {
+        await saveFCMToken(userId, token);
+        return true;
+      }
+    }
+    return false;
+  } catch (error) {
+    console.error('An error occurred while retrieving token. ', error);
+    return false;
+  }
+}
+
+async function saveFCMToken(userId: string, token: string) {
+  try {
+    const tokenDoc = doc(db, 'users', userId, 'fcmTokens', token);
+    await setDoc(tokenDoc, {
+      token,
+      device: navigator.userAgent,
+      updatedAt: Date.now()
+    });
+  } catch (err) {
+    console.error('Failed to save FCM token: ', err);
+  }
+}
+
+export function setupMessageListener() {
+  if (!messaging) return;
+  
+  onMessage(messaging, (payload) => {
+    console.log('Message received. ', payload);
+    // Here we can show an in-app toast for foreground notifications
+    if (payload.notification) {
+      // You could integrate toast/sonner here if you want foreground alerts
+      const title = payload.notification.title;
+      const options = {
+        body: payload.notification.body,
+        icon: '/icon-192.png'
+      };
+      
+      // If we want native notification while in foreground (optional)
+      if (Notification.permission === 'granted') {
+         new Notification(title || 'Trainlog', options);
+      }
+    }
+  });
+}

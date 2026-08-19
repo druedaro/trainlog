@@ -1,12 +1,13 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router';
-import { LogOut, Download, Activity, Calendar, Flame, Edit2, User, AlertTriangle, Shield, FileText } from 'lucide-react';
+import { LogOut, Download, Activity, Calendar, Flame, Edit2, User, AlertTriangle, Shield, FileText, Bell } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
 import { useAuth } from '@/features/auth/useAuth';
 import { countUserEntries, fetchRecentEntries, saveUserProfile } from '@/lib/firestore';
 import { calculateStreak } from '@/lib/gamification';
+import { requestPushPermissions } from '@/lib/push';
 import type { JournalEntry } from '@/types/entry';
 import type { Gender } from '@/types/user';
 
@@ -274,7 +275,21 @@ export function ProfilePage() {
           </section>
 
             <section className="pt-4 md:pt-0 border-t md:border-t-0 border-border/40 space-y-4">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-2">Cuenta</h3>
+          <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-2 pt-6">Cuenta</h3>
+          <Button
+            variant="ghost"
+            onClick={async () => {
+              if (!user) return;
+              toast.loading('Solicitando permisos...', { id: 'push' });
+              const success = await requestPushPermissions(user.uid);
+              if (success) toast.success('Notificaciones activadas', { id: 'push' });
+              else toast.error('Permiso denegado', { id: 'push' });
+            }}
+            className="w-full justify-start gap-3 rounded-xl bg-primary/5 text-foreground hover:bg-primary/10 px-4 py-6 mb-2"
+          >
+            <Bell className="h-5 w-5" />
+            <span className="text-base font-semibold">Activar Notificaciones Push</span>
+          </Button>
           <Button
             variant="ghost"
             onClick={handleExport}

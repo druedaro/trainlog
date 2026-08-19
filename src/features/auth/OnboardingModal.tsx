@@ -3,6 +3,7 @@ import { ChevronRight, Bell, Shield, User as UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
 import { saveUserProfile } from '@/lib/firestore';
+import { requestPushPermissions } from '@/lib/push';
 import { toast } from 'sonner';
 import type { Gender } from '@/types/user';
 
@@ -28,15 +29,20 @@ export function OnboardingModal() {
       return;
     }
     try {
-      const permission = await Notification.requestPermission();
-      if (permission === 'granted') {
+      if (!user) {
+        toast.error('Debes iniciar sesión primero');
+        return;
+      }
+      toast.loading('Solicitando permisos...', { id: 'push' });
+      const success = await requestPushPermissions(user.uid);
+      if (success) {
         setNotificationsEnabled(true);
-        toast.success('Notificaciones activadas');
+        toast.success('Notificaciones activadas', { id: 'push' });
       } else {
-        toast.error('Permiso denegado');
+        toast.error('Permiso denegado', { id: 'push' });
       }
     } catch (e) {
-      toast.error('No se pudo solicitar permiso');
+      toast.error('No se pudo solicitar permiso', { id: 'push' });
     }
   };
 
