@@ -164,6 +164,26 @@ export function DiscoverPage() {
     [user, profile],
   );
 
+  const handleAutoUpdateExplore = useCallback(async () => {
+    if (!user) return;
+    try {
+      const cats = ['training', 'nutrition', 'mindset', 'recovery'];
+      const promises = cats.map(cat => generateExplore(cat));
+      const results = await Promise.all(promises);
+      const newArticles = results.flatMap(r => r.articles) as DiscoverArticle[];
+      
+      const docToSave: DiscoverDocument = {
+        articles: newArticles,
+        updatedAt: Date.now(),
+      };
+      await saveExploreArticles(user.uid, docToSave);
+      setExploreArticles(sortArticles(docToSave.articles));
+      setExploreUpdatedAt(docToSave.updatedAt);
+    } catch (e) {
+      console.error('Auto-update explore failed', e);
+    }
+  }, [user]);
+
   const loadExploreArticles = useCallback(async () => {
     if (!user) return;
     setIsLoadingExplore(true);
@@ -175,7 +195,7 @@ export function DiscoverPage() {
         setExploreUpdatedAt(cached.updatedAt);
         const age = Date.now() - cached.updatedAt;
         if (age > THREE_DAYS_MS) {
-          handleGenerateExplore(true); 
+          handleAutoUpdateExplore(); 
         }
       } else {
         handleGenerateExplore(false);
@@ -186,7 +206,7 @@ export function DiscoverPage() {
     } finally {
       setIsLoadingExplore(false);
     }
-  }, [user]);
+  }, [user, handleAutoUpdateExplore, handleGenerateExplore]);
 
   const handleGenerateExplore = useCallback(
     async (silent = false, category?: string) => {
