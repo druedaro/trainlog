@@ -153,7 +153,7 @@ export default async function handler(
           id: article.id,
           title: article.title,
           emoji: article.emoji,
-          category: article.category,
+          category: category || article.category,
           content: article.content,
           reason: article.reason,
           imageUrl,
