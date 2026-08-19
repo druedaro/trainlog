@@ -203,12 +203,19 @@ export function DiscoverPage() {
         
         if (category) {
           mergedArticles = mergedArticles.filter(a => a.category !== category);
+          mergedArticles = [...newArticles, ...mergedArticles];
         } else {
-          const newCategories = new Set(newArticles.map(a => a.category));
-          mergedArticles = mergedArticles.filter(a => !newCategories.has(a.category));
+          mergedArticles = [...newArticles, ...mergedArticles];
+          
+          const grouped: Record<string, DiscoverArticle[]> = {};
+          for (const article of mergedArticles) {
+            if (!grouped[article.category]) grouped[article.category] = [];
+            if (grouped[article.category].length < 4) {
+              grouped[article.category].push(article);
+            }
+          }
+          mergedArticles = Object.values(grouped).flat();
         }
-        
-        mergedArticles = [...mergedArticles, ...newArticles];
 
         const docToSave: DiscoverDocument = {
           articles: mergedArticles,
