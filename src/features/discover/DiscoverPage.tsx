@@ -471,17 +471,32 @@ export function DiscoverPage() {
           (activeTab === 'saved' && !isLoadingSaved && savedArticles.length > 0)) && (
           <div className="space-y-4 animate-slide-up">
             {activeTab === 'explore' && !showExploreGrid && (
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  setShowExploreGrid(true);
-                  setExploreCategoryFilter(null);
-                }}
-                className="mb-2 -ml-2 text-muted-foreground hover:bg-[#2bd4bd] hover:text-black transition-colors"
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Volver a categorías
-              </Button>
+              <div className="flex flex-col gap-4 mb-2">
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setShowExploreGrid(true);
+                    setExploreCategoryFilter(null);
+                  }}
+                  className="-ml-2 w-fit text-muted-foreground hover:bg-[#2bd4bd] hover:text-black transition-colors"
+                >
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Volver a categorías
+                </Button>
+                {exploreCategoryFilter && (
+                  <Button
+                    variant="outline"
+                    onClick={() => handleGenerateExplore(false, exploreCategoryFilter)}
+                    disabled={isGeneratingExplore}
+                    className="group w-full justify-center gap-2 rounded-xl py-6 font-semibold shadow-sm transition-all hover:border-primary/50 hover:shadow-md"
+                  >
+                    <RefreshCw className={`h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary ${isGeneratingExplore ? 'animate-spin text-primary' : ''}`} />
+                    <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                      Actualizar artículos de {CATEGORY_CONFIG[exploreCategoryFilter]?.label.toLowerCase() || 'esta categoría'}
+                    </span>
+                  </Button>
+                )}
+              </div>
             )}
             
             {activeTab === 'foryou' && updatedAt && (
