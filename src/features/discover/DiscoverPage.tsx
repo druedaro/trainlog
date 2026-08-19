@@ -54,6 +54,7 @@ export function DiscoverPage() {
   const [isGeneratingExplore, setIsGeneratingExplore] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState<DiscoverArticle | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [exploreCategoryFilter, setExploreCategoryFilter] = useState<string | null>(null);
 
   
   useEffect(() => {
@@ -394,11 +395,12 @@ export function DiscoverPage() {
                 <button
                   key={cat.id}
                   onClick={() => {
-                    const categoryCount = exploreArticles.filter(a => a.category === cat.id).length;
-                    if (categoryCount > 1) {
+                    const hasArticles = exploreArticles.some(a => a.category === cat.id);
+                    if (hasArticles) {
+                      setExploreCategoryFilter(cat.id);
                       setShowExploreGrid(false);
                     } else {
-                      handleGenerateExplore(false, cat.id);
+                      toast.error(`No hay artículos guardados en la categoría ${cat.label}. Usa el botón "Sorpréndeme" abajo.`);
                     }
                   }}
                   className={`flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/40 p-4 text-center transition-all hover:border-primary/50 active:scale-95 aspect-square ${cat.bg}`}
@@ -458,7 +460,10 @@ export function DiscoverPage() {
             {activeTab === 'explore' && !showExploreGrid && (
               <Button
                 variant="ghost"
-                onClick={() => setShowExploreGrid(true)}
+                onClick={() => {
+                  setShowExploreGrid(true);
+                  setExploreCategoryFilter(null);
+                }}
                 className="mb-2 -ml-2 text-muted-foreground hover:bg-[#2bd4bd] hover:text-black transition-colors"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
@@ -478,7 +483,7 @@ export function DiscoverPage() {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {(activeTab === 'foryou' ? articles : activeTab === 'explore' && !showExploreGrid ? exploreArticles : savedArticles).map((article) => {
+              {(activeTab === 'foryou' ? articles : activeTab === 'explore' && !showExploreGrid ? (exploreCategoryFilter ? exploreArticles.filter(a => a.category === exploreCategoryFilter) : exploreArticles) : savedArticles).map((article) => {
               const catConfig = CATEGORY_CONFIG[article.category] ?? {
                 label: article.category,
                 color: 'text-muted-foreground',
