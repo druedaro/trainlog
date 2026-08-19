@@ -137,7 +137,7 @@ export default async function handler(
     let parsed: any;
 
     try {
-      parsed = extractAndParseJSON(rawContent);
+      parsed = JSON.parse(rawContent);
     } catch (parseErr) {
 
       return response.status(502).json({ error: 'The analysis service returned an invalid JSON format.' });

@@ -68,9 +68,8 @@ export default async function handler(
 
     
     
-    const audioFile = new File([new Uint8Array(audioBuffer)], 'recording.webm', {
-      type: 'audio/webm',
-    });
+    const { toFile } = await import('groq-sdk');
+    const audioFile = await toFile(audioBuffer, 'recording.webm', { type: 'audio/webm' });
 
     const transcription = await groq.audio.transcriptions.create({
       file: audioFile,
