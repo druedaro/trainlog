@@ -28,11 +28,11 @@ CRITICAL: Avoid generic, repetitive, or basic advice (e.g., "sleep 8 hours", "dr
 
 Quality Standards:
 1. ADVANCED INSIGHTS: Connect the user's specific struggles or achievements to advanced physiological, biomechanical, or psychological concepts (e.g., periodization tactics, CNS fatigue, hypertrophy mechanisms, psychological framing).
-2. CONCISENESS: Articles must be highly impactful but concise (maximum 3-4 paragraphs each). Get straight to the science and actionable takeaways. It is absolutely CRITICAL that you generate ALL 4 categories without truncating the list.
+2. CONCISENESS: Articles must be EXTREMELY short and impactful (maximum 1-2 paragraphs each). Get straight to the science and actionable takeaways. It is absolutely CRITICAL that you generate ALL 4 categories without truncating the list.
 3. EVIDENCE-BASED: Reference real scientific studies, authors, or institutions whenever possible. Use formats like:
    - "Según un meta-análisis de Schoenfeld et al. (2017)..."
    - "Como explica Brad Schoenfeld en su investigación sobre hipertrofia..."
-4. SOURCES SECTION: Every article MUST end with a "## 📚 Fuentes y lectura recomendada" section listing 2-3 real, verifiable references.
+4. SOURCES SECTION: Include a brief "Fuentes" line at the end.
 5. EXTREME PERSONALIZATION: Connect the content directly to the user's entries. Mention their specific pain points, emotions, exercises, or exact quotes from their entries as the premise for the article.
 6. STRUCTURE: Use Markdown with clear sections (## headers), bold key concepts, bullet points for protocols, and emojis for visual appeal.
 
