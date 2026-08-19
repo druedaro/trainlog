@@ -18,9 +18,10 @@ export function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   
   const [isEditing, setIsEditing] = useState(false);
-  const [editName, setEditName] = useState('');
-  const [editGender, setEditGender] = useState<Gender>('prefiero no decirlo');
-  const [editBirthDate, setEditBirthDate] = useState('');
+  const [editName, setEditName] = useState(profile?.name || '');
+  const [editGender, setEditGender] = useState<Gender>(profile?.gender || 'prefiero no decirlo');
+  const [editAge, setEditAge] = useState<string>(profile?.age?.toString() || '');
+  const [editBirthDate, setEditBirthDate] = useState(profile?.birthDate || '');
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -137,6 +138,7 @@ export function ProfilePage() {
         uid: user.uid,
         name: editName.trim() || 'Atleta',
         gender: editGender,
+        age: editAge ? parseInt(editAge, 10) : undefined,
         birthDate: editBirthDate || undefined,
         createdAt: profile?.createdAt || Date.now()
       });
@@ -181,10 +183,21 @@ export function ProfilePage() {
               onChange={e => setEditGender(e.target.value as Gender)}
               className="mt-1 block w-full rounded-xl border border-border/40 bg-card/50 p-3 text-foreground"
             >
-              <option value="masculino">Masculino</option>
-              <option value="femenino">Femenino</option>
+              <option value="masculino">Hombre</option>
+              <option value="femenino">Mujer</option>
+              <option value="otro">Otro</option>
               <option value="prefiero no decirlo">Prefiero no decirlo</option>
             </select>
+          </div>
+          <div>
+            <label className="text-sm font-semibold text-muted-foreground">Edad</label>
+            <input 
+              type="number" 
+              value={editAge}
+              onChange={e => setEditAge(e.target.value)}
+              className="mt-1 block w-full rounded-xl border border-border/40 bg-card/50 p-3 text-foreground"
+              placeholder="Ej. 28"
+            />
           </div>
           <div>
             <label className="text-sm font-semibold text-muted-foreground">Fecha de Nacimiento</label>

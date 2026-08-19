@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from 'react-router';
 import { useAuth } from '@/features/auth/useAuth';
+import { OnboardingModal } from '@/features/auth/OnboardingModal';
 
 export function AuthGuard() {
   const { user, isLoading } = useAuth();
@@ -16,5 +17,10 @@ export function AuthGuard() {
     return <Navigate to="/login" replace />;
   }
 
-  return <Outlet />;
+  return (
+    <>
+      <OnboardingModal />
+      <Outlet />
+    </>
+  );
 }
