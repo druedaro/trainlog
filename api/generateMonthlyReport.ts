@@ -11,6 +11,18 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const { verifyFirebaseToken } = await import('./lib/verifyToken.js');
+  const decodedToken = await verifyFirebaseToken(authHeader.split('Bearer ')[1] ?? '');
+
+  if (!decodedToken) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
   if (!GROQ_API_KEY) {
     return res.status(500).json({ error: 'Server configuration error' });
   }
