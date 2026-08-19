@@ -34,6 +34,7 @@ const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
   training: { label: 'Entrenamiento', color: 'text-blue-400' },
   mindset: { label: 'Mentalidad', color: 'text-purple-400' },
   nutrition: { label: 'Nutrición', color: 'text-orange-400' },
+  general: { label: 'Curiosidades', color: 'text-pink-400' },
 };
 
 export function DiscoverPage() {
@@ -167,7 +168,7 @@ export function DiscoverPage() {
   const handleAutoUpdateExplore = useCallback(async () => {
     if (!user) return;
     try {
-      const cats = ['training', 'nutrition', 'mindset', 'recovery'];
+      const cats = ['training', 'nutrition', 'mindset', 'recovery', 'general'];
       const promises = cats.map(cat => generateExplore(cat));
       const results = await Promise.all(promises);
       const newArticles = results.flatMap(r => r.articles) as DiscoverArticle[];
@@ -320,24 +321,6 @@ export function DiscoverPage() {
       <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 pt-3.5 pb-2">
         <div className="flex items-center justify-between mb-3">
           <h1 className="text-lg font-bold text-gradient">Discover</h1>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => {
-              if (activeTab === 'foryou') {
-                handleGenerate(false);
-              } else if (activeTab === 'explore') {
-                handleGenerateExplore(false);
-              } else {
-                loadSavedArticles();
-              }
-            }}
-            disabled={isGenerating || isGeneratingExplore || isLoadingSaved}
-            aria-label="Refresh"
-            className="h-9 w-9 rounded-xl text-muted-foreground hover:text-foreground"
-          >
-            <RefreshCw className={`h-4 w-4 ${(isGenerating || isGeneratingExplore || isLoadingSaved) ? 'animate-spin' : ''}`} />
-          </Button>
         </div>
 
         <div className="flex gap-2">
@@ -461,13 +444,19 @@ export function DiscoverPage() {
             <Button
               variant="outline"
               onClick={() => {
-                handleGenerateExplore(false);
+                const hasArticles = exploreArticles.some(a => a.category === 'general');
+                setExploreCategoryFilter('general');
+                if (hasArticles) {
+                  setShowExploreGrid(false);
+                } else {
+                  handleGenerateExplore(false, 'general');
+                }
               }}
               disabled={isGeneratingExplore}
               className="group w-full justify-center gap-2 rounded-xl py-6 font-semibold"
             >
               <Sparkles className="h-5 w-5 text-primary transition-colors group-hover:text-black dark:group-hover:text-white" />
-              Sorpréndeme con temas nuevos
+              Sorpréndeme con curiosidades y ciencia
             </Button>
           </div>
         )}

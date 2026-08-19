@@ -56,7 +56,7 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
       "id": "string",
       "title": "string",
       "emoji": "string",
-      "category": "recovery" | "training" | "mindset" | "nutrition",
+      "category": "recovery" | "training" | "mindset" | "nutrition" | "general",
       "content": "string (Markdown, extensive, MUST include ## 📚 Fuentes y lectura recomendada section at the end)",
       "reason": "string",
       "imageKeyword": "string"
@@ -98,6 +98,8 @@ export default async function handler(
     let categoryRule = "One for each category: recovery, training, mindset, nutrition.";
     if (category && ['recovery', 'training', 'mindset', 'nutrition'].includes(category)) {
       categoryRule = `ALL 4 articles MUST be strictly for the '${category}' category, but exploring 4 DIFFERENT specific topics within it.`;
+    } else if (category === 'general') {
+      categoryRule = `ALL 4 articles MUST be about general fitness curiosities, scientific evidence, or unique insights, NOT strictly tied to the core themes.`;
     }
 
     const finalPrompt = SYSTEM_PROMPT.replace('{{CATEGORY_RULE}}', categoryRule);
