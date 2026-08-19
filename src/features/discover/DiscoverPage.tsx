@@ -197,8 +197,21 @@ export function DiscoverPage() {
       }
       try {
         const result = await generateExplore(category);
+        const newArticles = result.articles as DiscoverArticle[];
+        
+        let mergedArticles = [...exploreArticles];
+        
+        if (category) {
+          mergedArticles = mergedArticles.filter(a => a.category !== category);
+        } else {
+          const newCategories = new Set(newArticles.map(a => a.category));
+          mergedArticles = mergedArticles.filter(a => !newCategories.has(a.category));
+        }
+        
+        mergedArticles = [...mergedArticles, ...newArticles];
+
         const docToSave: DiscoverDocument = {
-          articles: result.articles as DiscoverArticle[],
+          articles: mergedArticles,
           updatedAt: result.updatedAt,
         };
         await saveExploreArticles(user.uid, docToSave);
@@ -214,7 +227,7 @@ export function DiscoverPage() {
         setIsGeneratingExplore(false);
       }
     },
-    [user],
+    [user, exploreArticles],
   );
 
   useEffect(() => {
@@ -396,11 +409,11 @@ export function DiscoverPage() {
                   key={cat.id}
                   onClick={() => {
                     const hasArticles = exploreArticles.some(a => a.category === cat.id);
+                    setExploreCategoryFilter(cat.id);
                     if (hasArticles) {
-                      setExploreCategoryFilter(cat.id);
                       setShowExploreGrid(false);
                     } else {
-                      toast.error(`No hay artículos guardados en la categoría ${cat.label}. Usa el botón "Sorpréndeme" abajo.`);
+                      handleGenerateExplore(false, cat.id);
                     }
                   }}
                   className={`flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/40 p-4 text-center transition-all hover:border-primary/50 active:scale-95 aspect-square ${cat.bg}`}
