@@ -210,3 +210,37 @@ export async function generateExplore(category?: string): Promise<DiscoverDocume
 
   return (await response.json()) as DiscoverDocument;
 }
+
+export async function generateMonthlyReport(
+  month: string, 
+  entriesCount: number, 
+  maxStreak: number, 
+  topActivity: string, 
+  userProfile?: any
+): Promise<string> {
+  const headers = await getAuthHeaders();
+
+  const response = await fetch(`${API_BASE_URL}/generateMonthlyReport`, {
+    method: 'POST',
+    headers: {
+      ...headers,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      month,
+      entriesCount,
+      maxStreak,
+      topActivity,
+      gender: userProfile?.gender,
+      age: userProfile?.age
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => 'Unknown error');
+    throw new ApiError(`Monthly report generation failed: ${errorText}`, response.status);
+  }
+
+  const data = await response.json();
+  return data.summary;
+}

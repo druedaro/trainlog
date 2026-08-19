@@ -16,9 +16,11 @@ import {
   type DocumentData,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { generateMonthlyReport } from '@/lib/api';
 import type { JournalEntry, EntryAnalysis } from '@/types/entry';
 import type { DiscoverDocument, DiscoverArticle } from '@/types/discover';
 import type { UserProfile } from '@/types/user';
+import type { MonthlyReport } from '@/features/insights/MonthlyReportModal';
 
 const ENTRIES_COLLECTION = 'entries';
 
@@ -169,6 +171,89 @@ export async function fetchUserStreak(userId: string): Promise<number> {
   const entries = await fetchRecentEntries(userId, 100);
   const dates = entries.map(e => e.createdAt.getTime());
   return calculateStreak(dates);
+}
+
+export async function checkAndGenerateMonthlyReport(userId: string, userProfile: UserProfile): Promise<MonthlyReport | null> {
+  // Report is generated for the previous month
+  const now = new Date();
+  const firstDayOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const lastDayOfPrevMonth = new Date(firstDayOfCurrentMonth.getTime() - 1);
+  const prevMonthStr = `${lastDayOfPrevMonth.getFullYear()}-${String(lastDayOfPrevMonth.getMonth() + 1).padStart(2, '0')}`;
+  
+  const reportRef = doc(db, 'users', userId, 'monthlyReports', prevMonthStr);
+  const reportSnap = await getDoc(reportRef);
+  
+  if (reportSnap.exists()) {
+    return { id: reportSnap.id, ...reportSnap.data() } as MonthlyReport;
+  }
+  
+  // If no report, we need to generate one.
+  const firstDayOfPrevMonth = new Date(lastDayOfPrevMonth.getFullYear(), lastDayOfPrevMonth.getMonth(), 1);
+  
+  const q = query(
+    collection(db, ENTRIES_COLLECTION),
+    where('userId', '==', userId),
+    where('createdAt', '>=', Timestamp.fromDate(firstDayOfPrevMonth)),
+    where('createdAt', '<=', Timestamp.fromDate(lastDayOfPrevMonth))
+  );
+  
+  const snap = await getDocs(q);
+  if (snap.empty) {
+    // If no entries last month, save empty report so we don't try again
+    const emptyReport: MonthlyReport = {
+      id: prevMonthStr,
+      month: prevMonthStr,
+      summary: 'No registraste ningún entrenamiento el mes pasado. ¡Este mes es una nueva oportunidad para empezar a tope!',
+      totalEntries: 0,
+      maxStreak: 0,
+      topActivity: 'Ninguna',
+      createdAt: Date.now()
+    };
+    await setDoc(reportRef, emptyReport);
+    return emptyReport;
+  }
+  
+  const entries = snap.docs.map(docSnap => mapDocumentToEntry(docSnap.id, docSnap.data()));
+  const { calculateStreak } = await import('@/lib/gamification');
+  const maxStreak = calculateStreak(entries.map(e => e.createdAt.getTime()));
+  
+  const activityCounts: Record<string, number> = {};
+  entries.forEach(entry => {
+    entry.analysis.activities?.forEach(act => {
+      const lower = act.toLowerCase();
+      activityCounts[lower] = (activityCounts[lower] || 0) + 1;
+    });
+  });
+  
+  let topActivity = 'Ninguna';
+  let maxCount = 0;
+  Object.entries(activityCounts).forEach(([act, count]) => {
+    if (count > maxCount) {
+      maxCount = count;
+      topActivity = act;
+    }
+  });
+
+  const summary = await generateMonthlyReport(
+    prevMonthStr, 
+    entries.length, 
+    maxStreak, 
+    topActivity, 
+    userProfile
+  );
+
+  const report: MonthlyReport = {
+    id: prevMonthStr,
+    month: prevMonthStr,
+    summary,
+    totalEntries: entries.length,
+    maxStreak,
+    topActivity,
+    createdAt: Date.now()
+  };
+
+  await setDoc(reportRef, report);
+  return report;
 }
 
 export async function countUserEntries(userId: string): Promise<number> {

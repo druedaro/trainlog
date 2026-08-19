@@ -11,8 +11,9 @@ import { AnalysisView } from '@/features/journal/AnalysisView';
 import { CalendarView } from '@/features/journal/CalendarView';
 import { JournalInstructionsModal } from '@/features/journal/JournalInstructionsModal';
 import { RecentEntries } from '@/features/journal/RecentEntries';
+import { MonthlyReportModal, type MonthlyReport } from '@/features/insights/MonthlyReportModal';
 import { transcribeAudio, analyzeReflection, ApiError } from '@/lib/api';
-import { saveConfirmedEntry, fetchUserStreak } from '@/lib/firestore';
+import { saveConfirmedEntry, fetchUserStreak, checkAndGenerateMonthlyReport } from '@/lib/firestore';
 import { entryAnalysisSchema, type EntryAnalysis } from '@/types/entry';
 
 type FlowStep = 'idle' | 'transcribing' | 'editing' | 'analyzing' | 'reviewing' | 'saving';
@@ -28,12 +29,37 @@ export function JournalPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showInstructions, setShowInstructions] = useState(false);
   const [streak, setStreak] = useState<number>(0);
+  const [monthlyReport, setMonthlyReport] = useState<MonthlyReport | null>(null);
+  const [checkingReport, setCheckingReport] = useState(false);
 
   useEffect(() => {
     if (user) {
       fetchUserStreak(user.uid)
         .then(setStreak)
         .catch(console.error);
+        
+      if (!checkingReport) {
+        setCheckingReport(true);
+        import('@/lib/firestore').then(({ fetchUserProfile }) => {
+          fetchUserProfile(user.uid).then(profile => {
+            if (profile) {
+              checkAndGenerateMonthlyReport(user.uid, profile)
+                .then(report => {
+                  // Only show if the report was generated recently (e.g. today)
+                  // Or we can just use a local storage flag to only show it once
+                  if (report) {
+                    const shownKey = `report_shown_${report.id}`;
+                    if (!localStorage.getItem(shownKey)) {
+                      setMonthlyReport(report);
+                      localStorage.setItem(shownKey, 'true');
+                    }
+                  }
+                })
+                .catch(console.error);
+            }
+          });
+        });
+      }
     }
   }, [user]);
 
@@ -261,9 +287,13 @@ export function JournalPage() {
         )}
       </main>
 
-      <JournalInstructionsModal 
-        isOpen={showInstructions} 
-        onClose={() => setShowInstructions(false)} 
+      <JournalInstructionsModal
+        isOpen={showInstructions}
+        onClose={() => setShowInstructions(false)}
+      />
+      <MonthlyReportModal 
+        report={monthlyReport} 
+        onClose={() => setMonthlyReport(null)} 
       />
     </div>
   );

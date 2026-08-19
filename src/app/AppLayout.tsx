@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router';
 import { BottomNav } from '@/components/BottomNav';
 import { SideNav } from '@/components/SideNav';
 import { Toaster } from 'sonner';
+import { InstallPWA } from '@/components/InstallPWA';
 
 export function AppLayout() {
   const { pathname } = useLocation();
@@ -21,6 +22,7 @@ export function AppLayout() {
       <div className="md:hidden">
         <BottomNav />
       </div>
+      <InstallPWA />
       <Toaster position="top-center" theme="dark" />
     </div>
   );

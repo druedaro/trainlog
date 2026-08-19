@@ -72,7 +72,7 @@ export function ProfilePage() {
     
     const lastEntryDate = recentEntries[0]?.createdAt;
     const daysAgo = lastEntryDate 
-      ? Math.floor((today.getTime() - lastEntryDate.getTime()) / 86400000)
+      ? Math.max(0, Math.floor((today.getTime() - lastEntryDate.getTime()) / 86400000))
       : -1;
 
     return { streak, topActivity, daysAgo };
