@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router';
-import { LogOut, Download, Activity, Calendar, Flame, Edit2, User, AlertTriangle, Shield, FileText, RefreshCw } from 'lucide-react';
+import { LogOut, Download, Activity, Calendar, Flame, Edit2, User, AlertTriangle, Shield, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
@@ -149,17 +149,6 @@ export function ProfilePage() {
       toast.error('Error al guardar el perfil.');
     } finally {
       setIsSaving(false);
-    }
-  };
-
-  const handleResetOnboarding = async () => {
-    if (!user) return;
-    try {
-      await saveUserProfile(user.uid, { onboardingCompleted: false });
-      await refreshProfile();
-      toast.success('Onboarding reseteado. Recarga la página.');
-    } catch (e) {
-      toast.error('Error al resetear onboarding.');
     }
   };
 
@@ -328,14 +317,6 @@ export function ProfilePage() {
           >
             <Download className="h-5 w-5" />
             <span className="text-base font-semibold">Exportar mis datos (JSON)</span>
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={handleResetOnboarding}
-            className="w-full justify-start gap-3 rounded-xl bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 px-4 py-6"
-          >
-            <RefreshCw className="h-5 w-5" />
-            <span className="text-base font-semibold">Testear Onboarding (Reset)</span>
           </Button>
 
           <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-2 pt-6">Legal</h3>

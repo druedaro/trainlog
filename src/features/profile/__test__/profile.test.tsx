@@ -83,12 +83,20 @@ describe('Feature: User Profile Dashboard', () => {
       const nameInput = screen.getByDisplayValue('David');
       fireEvent.change(nameInput, { target: { value: 'Alex' } });
 
+      const ageInput = screen.getByPlaceholderText('Ej. 28');
+      fireEvent.change(ageInput, { target: { value: '30' } });
+
+      const genderSelect = screen.getByDisplayValue('Hombre');
+      fireEvent.change(genderSelect, { target: { value: 'otro' } });
+
       
       fireEvent.click(screen.getByText('Guardar'));
 
       await waitFor(() => {
         expect(saveUserProfile).toHaveBeenCalledWith('user123', expect.objectContaining({
           name: 'Alex',
+          age: 30,
+          gender: 'otro'
         }));
         expect(mockRefreshProfile).toHaveBeenCalled();
       });

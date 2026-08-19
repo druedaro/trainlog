@@ -11,18 +11,22 @@ export function OnboardingModal() {
   const [step, setStep] = useState(1);
   const [name, setName] = useState(profile?.name || user?.displayName || '');
   const [age, setAge] = useState<string>(profile?.age?.toString() || '');
-  const [gender, setGender] = useState<Gender>(profile?.gender || 'prefiero no decirlo');
+  const [gender, setGender] = useState<Gender | ''>(profile?.gender || '');
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    if (Notification.permission === 'granted') {
+    if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
       setNotificationsEnabled(true);
     }
   }, []);
 
   const handleRequestNotifications = async () => {
+    if (typeof window === 'undefined' || !('Notification' in window)) {
+      toast.error('Las notificaciones no están soportadas en este navegador.');
+      return;
+    }
     try {
       const permission = await Notification.requestPermission();
       if (permission === 'granted') {
@@ -38,7 +42,7 @@ export function OnboardingModal() {
 
   const handleComplete = async () => {
     if (!user) return;
-    if (!name.trim() || !age || !privacyAccepted) {
+    if (!name.trim() || !age || !gender || !privacyAccepted) {
       toast.error('Por favor completa todos los campos requeridos.');
       return;
     }
@@ -49,7 +53,7 @@ export function OnboardingModal() {
         uid: user.uid,
         name: name.trim(),
         age: parseInt(age, 10),
-        gender,
+        gender: gender as Gender,
         onboardingCompleted: true,
       });
       await refreshProfile();
@@ -115,12 +119,13 @@ export function OnboardingModal() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Sexo</label>
+                  <label className="text-sm font-medium text-foreground">Género</label>
                   <select
                     value={gender}
                     onChange={(e) => setGender(e.target.value as Gender)}
                     className="w-full rounded-xl border border-border/50 bg-background/50 p-3 text-sm text-foreground outline-none transition-colors focus:border-primary focus:bg-background"
                   >
+                    <option value="" disabled hidden>¿Cuál es tu género?</option>
                     <option value="masculino">Hombre</option>
                     <option value="femenino">Mujer</option>
                     <option value="otro">Otro</option>
@@ -130,7 +135,7 @@ export function OnboardingModal() {
 
                 <Button
                   onClick={() => setStep(2)}
-                  disabled={!name.trim() || !age}
+                  disabled={!name.trim() || !age || !gender}
                   className="mt-6 w-full rounded-xl py-6 font-semibold"
                 >
                   Continuar
