@@ -17,7 +17,6 @@ const ratelimit = new Ratelimit({
 export async function checkRateLimit(userId: string): Promise<boolean> {
 
   if (!process.env.UPSTASH_REDIS_REST_URL) {
-    ');
     return true;
   }
 
