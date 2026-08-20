@@ -128,7 +128,13 @@ export default async function handler(
       return response.status(502).json({ error: 'The analysis service returned an empty response.' });
     }
 
-    const parsed = JSON.parse(rawContent);
+    let parsed;
+    try {
+      parsed = JSON.parse(rawContent);
+    } catch (e) {
+      const cleanContent = rawContent.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '');
+      parsed = JSON.parse(cleanContent);
+    }
 
     const validated = exploreResponseSchema.safeParse(parsed);
 
@@ -172,7 +178,7 @@ export default async function handler(
       updatedAt: Date.now(),
     });
   } catch (error) {
-
-    return response.status(500).json({ error: 'Explore content generation failed.' });
+    console.error('Error generating explore:', error);
+    return response.status(500).json({ error: 'Explore content generation failed.', details: String(error) });
   }
 }
