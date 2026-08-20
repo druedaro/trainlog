@@ -140,7 +140,9 @@ The user reviews and edits the transcript
           ↓
 The user confirms the content
           ↓
-Gemini generates structured insights
+Gemini generates structured insights for the entry
+          ↓
+The Discover section uses Llama 3 (via Groq) for article generation
           ↓
 Zod validates the AI response
           ↓

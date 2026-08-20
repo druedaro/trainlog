@@ -117,7 +117,7 @@ export default async function handler(
         { role: 'system', content: finalPrompt },
         { role: 'user', content: 'Generate 4 general exploration articles now.' },
       ],
-      model: 'openai/gpt-oss-120b',
+      model: 'llama3-70b-8192',
       temperature: 0.5,
       response_format: { type: 'json_object' }
     });
