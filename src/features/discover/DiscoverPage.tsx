@@ -548,7 +548,7 @@ export function DiscoverPage() {
               </p>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {(activeTab === 'foryou' ? articles : activeTab === 'explore' && !showExploreGrid ? (exploreCategoryFilter ? exploreArticles.filter(a => a.category === exploreCategoryFilter) : exploreArticles) : savedArticles).map((article) => {
               const catConfig = CATEGORY_CONFIG[article.category] ?? {
                 label: article.category,
@@ -571,10 +571,10 @@ export function DiscoverPage() {
                           {catConfig.label}
                         </span>
                       </div>
-                      <h3 className="text-sm font-semibold text-foreground line-clamp-2 leading-tight">
+                      <h3 className="text-sm font-semibold text-foreground line-clamp-3 leading-tight">
                         {article.title}
                       </h3>
-                      <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground line-clamp-2">
+                      <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground line-clamp-4">
                         {article.reason}
                       </p>
                     </div>
@@ -610,10 +610,10 @@ export function DiscoverPage() {
                           </span>
                         )}
                       </div>
-                      <h3 className="mt-1 text-sm font-semibold text-foreground line-clamp-2">
+                      <h3 className="mt-1 text-sm font-semibold text-foreground line-clamp-3">
                         {article.title}
                       </h3>
-                      <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground line-clamp-2">
+                      <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground line-clamp-4">
                         {article.reason}
                       </p>
                     </div>

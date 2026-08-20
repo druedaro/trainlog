@@ -314,12 +314,12 @@ export function InsightsPage() {
 
               {insightsDoc?.synthesis && !isGenerating && (
                 <div className="space-y-4">
-                  <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5 text-sm leading-relaxed text-foreground/90 backdrop-blur-sm cursor-pointer hover:bg-primary/10 transition-colors"
-                       onClick={() => setShowFullSynthesis(true)}>
-                    <div className="line-clamp-3 mb-2">
+                  <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5 text-sm leading-relaxed text-foreground/90 backdrop-blur-sm cursor-pointer md:cursor-auto hover:bg-primary/10 transition-colors"
+                       onClick={() => window.innerWidth < 768 && setShowFullSynthesis(true)}>
+                    <div className="line-clamp-3 md:line-clamp-none mb-2 md:mb-0">
                       {insightsDoc.synthesis.summary}
                     </div>
-                    <span className="text-xs font-semibold text-primary">Leer resumen completo...</span>
+                    <span className="text-xs font-semibold text-primary md:hidden">Leer resumen completo...</span>
                   </div>
 
                   <div className="rounded-2xl border border-border/40 bg-card/50 p-5 backdrop-blur-sm">
