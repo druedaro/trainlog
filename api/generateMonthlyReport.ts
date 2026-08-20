@@ -51,7 +51,7 @@ Datos del mes (${month}):
 Escribe UN SOLO PÁRRAFO de máximo 40-50 palabras felicitándole, destacando sus logros de este mes, y animándole a superarse el próximo mes. Usa emojis. No incluyas saludos genéricos como "Hola", ve directo al grano. Adapta el lenguaje a su género (${gender}).`;
 
     const response = await groq.chat.completions.create({
-      model: "llama-3.1-70b-versatile",
+      model: "openai/gpt-oss-120b",
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: 'Genera el párrafo motivacional.' }
