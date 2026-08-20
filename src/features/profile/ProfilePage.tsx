@@ -27,6 +27,7 @@ export function ProfilePage() {
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isAchievementsModalOpen, setIsAchievementsModalOpen] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -276,33 +277,29 @@ export function ProfilePage() {
           </section>
 
           <section className="pt-8 border-t border-border/40 space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-2">Mis Logros</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {Object.values(ACHIEVEMENTS).map((ach) => {
-                const isUnlocked = profile?.achievements?.includes(ach.id);
-                return (
-                  <div 
-                    key={ach.id} 
-                    className={`relative flex flex-col items-center justify-center p-4 rounded-2xl border text-center transition-all ${
-                      isUnlocked 
-                        ? 'border-primary/30 bg-primary/5 shadow-sm' 
-                        : 'border-border/30 bg-card/20 opacity-60 grayscale'
-                    }`}
-                  >
-                    <span className="text-3xl mb-2">{ach.icon}</span>
-                    <p className="text-sm font-bold text-foreground leading-tight mb-1">{ach.title}</p>
-                    <p className="text-[10px] text-muted-foreground leading-tight">{ach.description}</p>
-                    {!isUnlocked && (
-                      <div className="absolute top-2 right-2 bg-background/80 rounded-full p-1 shadow-sm border border-border/50">
-                        <AlertTriangle className="h-3 w-3 text-muted-foreground" />
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+            <div className="flex items-center justify-between px-2">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Mis Logros</h3>
+              <Button variant="ghost" size="sm" onClick={() => setIsAchievementsModalOpen(true)} className="text-xs text-primary h-auto py-1">
+                Ver todos
+              </Button>
             </div>
-            </section>
+            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 flex items-center justify-between cursor-pointer active:scale-95 transition-transform" onClick={() => setIsAchievementsModalOpen(true)}>
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">🏆</span>
+                <div>
+                  <p className="text-sm font-bold text-foreground">Logros Desbloqueados</p>
+                  <p className="text-xs text-muted-foreground">{profile?.achievements?.length || 0} de {Object.keys(ACHIEVEMENTS).length}</p>
+                </div>
+              </div>
+              <div className="flex -space-x-2">
+                {profile?.achievements?.slice(0, 3).map(id => {
+                  const ach = Object.values(ACHIEVEMENTS).find(a => a.id === id);
+                  return ach ? <div key={id} className="h-8 w-8 rounded-full bg-background border flex items-center justify-center text-sm shadow-sm z-10">{ach.icon}</div> : null;
+                })}
+              </div>
             </div>
+          </section>
+
 
           <section className="space-y-4 pt-8 md:pt-0 md:border-l md:border-border/40 md:pl-8">
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-2">Cuenta</h3>
@@ -414,6 +411,40 @@ export function ProfilePage() {
               >
                 {isDeleting ? 'Eliminando...' : 'Eliminar'}
               </Button>
+            </div>
+          </div>
+        </div>
+      )}
+      {isAchievementsModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-5 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-2xl rounded-3xl bg-card border border-border/40 p-6 shadow-2xl max-h-[85vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold text-foreground">Todos mis logros</h2>
+              <Button variant="ghost" size="sm" onClick={() => setIsAchievementsModalOpen(false)} className="rounded-xl">Cerrar</Button>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {Object.values(ACHIEVEMENTS).map((ach) => {
+                const isUnlocked = profile?.achievements?.includes(ach.id);
+                return (
+                  <div 
+                    key={ach.id} 
+                    className={`relative flex flex-col items-center justify-center p-4 rounded-2xl border text-center transition-all ${
+                      isUnlocked 
+                        ? 'border-primary/30 bg-primary/5 shadow-sm' 
+                        : 'border-border/30 bg-card/20 opacity-60 grayscale'
+                    }`}
+                  >
+                    <span className="text-3xl mb-2">{ach.icon}</span>
+                    <p className="text-sm font-bold text-foreground leading-tight mb-1">{ach.title}</p>
+                    <p className="text-[10px] text-muted-foreground leading-tight">{ach.description}</p>
+                    {!isUnlocked && (
+                      <div className="absolute top-2 right-2 bg-background/80 rounded-full p-1 shadow-sm border border-border/50">
+                        <AlertTriangle className="h-3 w-3 text-muted-foreground" />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
