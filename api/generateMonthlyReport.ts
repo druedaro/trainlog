@@ -23,6 +23,12 @@ export default async function handler(
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
+  const { checkRateLimit } = await import('./lib/ratelimit.js');
+  const isAllowed = await checkRateLimit(decodedToken.uid);
+  if (!isAllowed) {
+    return res.status(429).json({ error: 'Too many requests. Please try again later.' });
+  }
+
   if (!GROQ_API_KEY) {
     return res.status(500).json({ error: 'Server configuration error' });
   }

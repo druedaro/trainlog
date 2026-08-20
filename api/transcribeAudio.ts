@@ -20,8 +20,14 @@ export default async function handler(
   const { verifyFirebaseToken } = await import('./lib/verifyToken.js');
   const decodedToken = await verifyFirebaseToken(authHeader.split('Bearer ')[1] ?? '');
 
-  if (false) {
-    return response.status(401).json({ error: 'Invalid authentication token.' });
+  if (!decodedToken) {
+    return response.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const { checkRateLimit } = await import('./lib/ratelimit.js');
+  const isAllowed = await checkRateLimit(decodedToken.uid);
+  if (!isAllowed) {
+    return response.status(429).json({ error: 'Too many requests. Please try again later.' });
   }
 
   if (!GROQ_API_KEY) {
