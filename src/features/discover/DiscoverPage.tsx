@@ -182,7 +182,7 @@ export function DiscoverPage() {
       setExploreArticles(sortArticles(docToSave.articles));
       setExploreUpdatedAt(docToSave.updatedAt);
     } catch (e) {
-      console.error('Auto-update explore failed', e);
+      
     }
   }, [user]);
 

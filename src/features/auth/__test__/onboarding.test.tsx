@@ -30,7 +30,6 @@ describe('Feature: Onboarding Flow', () => {
         </BrowserRouter>
       );
 
-      // Step 1: Base data
       expect(screen.getByText('¿Cómo te llamas?')).toBeInTheDocument();
       
       const nameInput = screen.getByPlaceholderText('Tu nombre o apodo');
@@ -44,7 +43,6 @@ describe('Feature: Onboarding Flow', () => {
 
       fireEvent.click(screen.getByText('Continuar'));
 
-      // Step 2: Privacy and notifications
       await waitFor(() => {
         expect(screen.getByText('Acepto la política de privacidad')).toBeInTheDocument();
       });

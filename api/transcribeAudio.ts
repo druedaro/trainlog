@@ -91,7 +91,7 @@ export default async function handler(
 
     return response.status(200).json({ transcript });
   } catch (error) {
-    console.error("TranscribeAudio Error:", error);
+    
     return response.status(500).json({ error: 'Transcription failed. Please try again.' });
   }
 }

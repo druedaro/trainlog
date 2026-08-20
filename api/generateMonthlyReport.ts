@@ -64,7 +64,7 @@ Escribe UN SOLO PÁRRAFO de máximo 40-50 palabras felicitándole, destacando su
 
     return res.status(200).json({ summary });
   } catch (error: any) {
-    console.error('Error generating monthly report:', error);
+    
     return res.status(500).json({ error: error.message || 'Internal server error' });
   }
 }

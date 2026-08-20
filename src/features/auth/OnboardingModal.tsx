@@ -70,7 +70,7 @@ export function OnboardingModal() {
     }
   };
 
-  console.log("PROFILE IS", profile, "ONBOARDING COMPLETED:", profile?.onboardingCompleted);
+  
   if (profile?.onboardingCompleted) return null;
 
   return (

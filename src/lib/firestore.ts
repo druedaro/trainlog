@@ -174,7 +174,7 @@ export async function fetchUserStreak(userId: string): Promise<number> {
 }
 
 export async function checkAndGenerateMonthlyReport(userId: string, userProfile: UserProfile): Promise<MonthlyReport | null> {
-  // Report is generated for the previous month
+
   const now = new Date();
   const firstDayOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const lastDayOfPrevMonth = new Date(firstDayOfCurrentMonth.getTime() - 1);
@@ -186,8 +186,7 @@ export async function checkAndGenerateMonthlyReport(userId: string, userProfile:
   if (reportSnap.exists()) {
     return { id: reportSnap.id, ...reportSnap.data() } as MonthlyReport;
   }
-  
-  // If no report, we need to generate one.
+
   const firstDayOfPrevMonth = new Date(lastDayOfPrevMonth.getFullYear(), lastDayOfPrevMonth.getMonth(), 1);
   
   const q = query(
@@ -199,7 +198,7 @@ export async function checkAndGenerateMonthlyReport(userId: string, userProfile:
   
   const snap = await getDocs(q);
   if (snap.empty) {
-    // If no entries last month, save empty report so we don't try again
+
     const emptyReport: MonthlyReport = {
       id: prevMonthStr,
       month: prevMonthStr,

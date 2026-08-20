@@ -12,7 +12,7 @@ export function AppLayout() {
   
   useEffect(() => {
     window.scrollTo(0, 0);
-    // Initialize FCM foreground message listener if supported
+
     setupMessageListener();
   }, [pathname]);
 

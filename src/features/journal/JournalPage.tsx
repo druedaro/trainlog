@@ -45,8 +45,8 @@ export function JournalPage() {
             if (profile) {
               checkAndGenerateMonthlyReport(user.uid, profile)
                 .then(report => {
-                  // Only show if the report was generated recently (e.g. today)
-                  // Or we can just use a local storage flag to only show it once
+
+
                   if (report) {
                     const shownKey = `report_shown_${report.id}`;
                     if (!localStorage.getItem(shownKey)) {

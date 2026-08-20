@@ -17,7 +17,6 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-// Messaging may not be supported in all environments (e.g. Safari incognito, some old browsers)
 export let messaging: any = null;
 isSupported().then((supported) => {
   if (supported) {
