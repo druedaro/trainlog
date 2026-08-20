@@ -299,7 +299,7 @@ export function ProfilePage() {
               </div>
             </div>
           </section>
-
+            </div>
 
           <section className="space-y-4 pt-8 md:pt-0 md:border-l md:border-border/40 md:pl-8">
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-2">Cuenta</h3>
