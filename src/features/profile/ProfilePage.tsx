@@ -232,7 +232,8 @@ export function ProfilePage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-            <section className="grid grid-cols-2 gap-4">
+            <div className="space-y-8">
+              <section className="grid grid-cols-2 gap-4">
             <div className="rounded-2xl border border-border/40 bg-card/50 p-5 text-center backdrop-blur-sm">
               <Activity className="mx-auto mb-2 h-6 w-6 text-emerald-400" />
               <p className="text-3xl font-bold text-foreground">
@@ -300,10 +301,11 @@ export function ProfilePage() {
                 );
               })}
             </div>
-          </section>
+            </section>
+            </div>
 
-          <section className="pt-8 border-t border-border/40 space-y-4">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-2 pt-6">Cuenta</h3>
+          <section className="space-y-4 pt-8 md:pt-0 md:border-l md:border-border/40 md:pl-8">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-2">Cuenta</h3>
           <Button
             variant="ghost"
             onClick={async () => {
