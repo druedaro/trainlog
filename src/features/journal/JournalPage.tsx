@@ -13,7 +13,8 @@ import { JournalInstructionsModal } from '@/features/journal/JournalInstructions
 import { RecentEntries } from '@/features/journal/RecentEntries';
 import { MonthlyReportModal, type MonthlyReport } from '@/features/insights/MonthlyReportModal';
 import { transcribeAudio, analyzeReflection, ApiError } from '@/lib/api';
-import { saveConfirmedEntry, fetchUserStreak, checkAndGenerateMonthlyReport } from '@/lib/firestore';
+import { saveConfirmedEntry, fetchUserStreak, checkAndGenerateMonthlyReport, unlockAchievements } from '@/lib/firestore';
+import { checkAchievements, ACHIEVEMENTS } from '@/lib/gamification';
 import { entryAnalysisSchema, type EntryAnalysis } from '@/types/entry';
 
 type FlowStep = 'idle' | 'transcribing' | 'editing' | 'analyzing' | 'reviewing' | 'saving';
@@ -139,6 +140,23 @@ export function JournalPage() {
         transcript,
         analysis,
       });
+
+      if (profile) {
+        const currentStreak = await fetchUserStreak(user.uid);
+        const newUnlocks = checkAchievements(profile.achievements || [], {
+          entryCount: 1,
+          streak: currentStreak,
+          transcript
+        });
+
+        if (newUnlocks.length > 0) {
+          await unlockAchievements(user.uid, newUnlocks);
+          newUnlocks.forEach(id => {
+            const ach = ACHIEVEMENTS[id];
+            toast.success(`🏆 ¡Logro desbloqueado: ${ach?.title}!`, { duration: 5000 });
+          });
+        }
+      }
 
       resetFlow();
       navigate(`/entry/${entryId}`);

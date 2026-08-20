@@ -14,7 +14,10 @@ import {
   markArticleAsRead,
   fetchExploreArticles,
   saveExploreArticles,
+  unlockAchievements,
 } from '@/lib/firestore';
+import { DISCOVER_CATEGORIES, generateDiscoverArticles } from '@/lib/api';
+import { checkAchievements, ACHIEVEMENTS } from '@/lib/gamification';
 import { generateDiscover, generateExplore } from '@/lib/api';
 import { ArticleView } from '@/features/discover/ArticleView';
 import { vibrate } from '@/lib/vibrate';
@@ -286,6 +289,19 @@ export function DiscoverPage() {
         try {
           await saveArticle(user.uid, article);
           toast.success('Artículo guardado correctamente');
+          
+          if (profile) {
+            const newUnlocks = checkAchievements(profile.achievements || [], {
+              savedArticlesCount: savedArticles.length + 1
+            });
+            if (newUnlocks.length > 0) {
+              await unlockAchievements(user.uid, newUnlocks);
+              newUnlocks.forEach(id => {
+                const ach = ACHIEVEMENTS[id];
+                toast.success(`🏆 ¡Logro desbloqueado: ${ach?.title}!`, { duration: 5000 });
+              });
+            }
+          }
         } catch (e) {
           toast.error('Error al guardar artículo.');
           setSavedArticles((prev) => prev.filter((a) => a.id !== article.id)); 
@@ -459,10 +475,10 @@ export function DiscoverPage() {
                 }
               }}
               disabled={isGeneratingExplore}
-              className="group w-full justify-center gap-2 rounded-xl py-6 font-semibold"
+              className="group w-full justify-center gap-2 rounded-xl py-6 font-semibold whitespace-normal h-auto break-words leading-tight"
             >
-              <Sparkles className="h-5 w-5 text-primary transition-colors group-hover:text-black dark:group-hover:text-white" />
-              Sorpréndeme con curiosidades y ciencia
+              <Sparkles className="h-5 w-5 text-primary transition-colors group-hover:text-black dark:group-hover:text-white shrink-0" />
+              <span>Sorpréndeme con curiosidades y ciencia</span>
             </Button>
           </div>
         )}

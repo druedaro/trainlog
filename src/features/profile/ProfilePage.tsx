@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
 import { useAuth } from '@/features/auth/useAuth';
 import { countUserEntries, fetchRecentEntries, saveUserProfile } from '@/lib/firestore';
-import { calculateStreak } from '@/lib/gamification';
+import { calculateStreak, ACHIEVEMENTS } from '@/lib/gamification';
 import { requestPushPermissions } from '@/lib/push';
 import type { JournalEntry } from '@/types/entry';
 import type { Gender } from '@/types/user';
@@ -255,7 +255,7 @@ export function ProfilePage() {
 
             <div className="rounded-2xl border border-border/40 bg-card/50 p-5 text-center backdrop-blur-sm">
               <span className="mx-auto mb-2 block text-2xl">🏃‍♂️</span>
-              <p className="text-xl font-bold text-foreground capitalize truncate px-1">
+              <p className="text-sm sm:text-lg font-bold text-foreground capitalize leading-tight line-clamp-2 px-1 break-words">
                 {stats ? stats.topActivity : '-'}
               </p>
               <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -274,7 +274,35 @@ export function ProfilePage() {
             </div>
           </section>
 
-            <section className="pt-4 md:pt-0 border-t md:border-t-0 border-border/40 space-y-4">
+          <section className="pt-8 border-t border-border/40 space-y-4">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-2">Mis Logros</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {Object.values(ACHIEVEMENTS).map((ach) => {
+                const isUnlocked = profile?.achievements?.includes(ach.id);
+                return (
+                  <div 
+                    key={ach.id} 
+                    className={`relative flex flex-col items-center justify-center p-4 rounded-2xl border text-center transition-all ${
+                      isUnlocked 
+                        ? 'border-primary/30 bg-primary/5 shadow-sm' 
+                        : 'border-border/30 bg-card/20 opacity-60 grayscale'
+                    }`}
+                  >
+                    <span className="text-3xl mb-2">{ach.icon}</span>
+                    <p className="text-sm font-bold text-foreground leading-tight mb-1">{ach.title}</p>
+                    <p className="text-[10px] text-muted-foreground leading-tight">{ach.description}</p>
+                    {!isUnlocked && (
+                      <div className="absolute top-2 right-2 bg-background/80 rounded-full p-1 shadow-sm border border-border/50">
+                        <AlertTriangle className="h-3 w-3 text-muted-foreground" />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          <section className="pt-8 border-t border-border/40 space-y-4">
           <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-2 pt-6">Cuenta</h3>
           <Button
             variant="ghost"

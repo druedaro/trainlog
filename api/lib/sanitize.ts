@@ -1,7 +1,7 @@
 
 
 const EMAIL_REGEX = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
-const DNI_NIE_REGEX = /[XYZxyz]?\d{7,8}[A-Za-z]/g;
+const DNI_NIE_REGEX = /[XYZxyz]?\s?-?\s?\d{7,8}\s?-?\s?[A-Za-z]/g;
 
 const PHONE_REGEX = /(?:\+?34\s?)?(?:6|7|8|9)\d{2}(?:\s?\d{2}){3}/g; 
 

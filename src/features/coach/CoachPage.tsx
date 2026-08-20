@@ -5,7 +5,9 @@ import ReactMarkdown from 'react-markdown';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
 import { fetchEntriesByDays } from '@/lib/firestore';
-import { sendMessageToCoach } from '@/lib/api';
+import { generateCoachResponse } from '@/lib/api';
+import { unlockAchievements } from '@/lib/firestore';
+import { checkAchievements, ACHIEVEMENTS } from '@/lib/gamification';
 
 type Message = {
   role: 'user' | 'assistant';
@@ -148,6 +150,19 @@ export function CoachPage() {
       const chatHistory = newMessages.slice(-10);
       const res = await sendMessageToCoach(chatHistory, entries, profile);
       
+      if (profile) {
+        const newUnlocks = checkAchievements(profile.achievements || [], {
+          hasChatted: true
+        });
+        if (newUnlocks.length > 0) {
+          await unlockAchievements(user.uid, newUnlocks);
+          newUnlocks.forEach(id => {
+            const ach = ACHIEVEMENTS[id];
+            toast.success(`🏆 ¡Logro desbloqueado: ${ach?.title}!`, { duration: 5000 });
+          });
+        }
+      }
+
       setMessages([...newMessages, { role: 'assistant', content: res.response }]);
     } catch (err) {
       setError('Hubo un error al comunicarse con el coach. Intenta de nuevo.');

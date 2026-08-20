@@ -14,6 +14,7 @@ import {
   deleteDoc,
   getCountFromServer,
   type DocumentData,
+  arrayUnion,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { generateMonthlyReport } from '@/lib/api';
@@ -44,6 +45,14 @@ export async function saveConfirmedEntry(
   });
 
   return docRef.id;
+}
+
+export async function unlockAchievements(userId: string, newAchievements: string[]): Promise<void> {
+  if (newAchievements.length === 0) return;
+  const profileRef = doc(db, PROFILES_COLLECTION, userId);
+  await updateDoc(profileRef, {
+    achievements: arrayUnion(...newAchievements)
+  });
 }
 
 export async function fetchEntryById(

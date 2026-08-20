@@ -40,3 +40,104 @@ export function calculateStreak(entryDates: number[]): number {
 
   return streak;
 }
+
+export type AchievementCategory = 'consistency' | 'learning' | 'insight' | 'social';
+export type AchievementTier = 'bronze' | 'silver' | 'gold' | 'diamond';
+
+export interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  category: AchievementCategory;
+  tier: AchievementTier;
+  icon: string;
+}
+
+export const ACHIEVEMENTS: Record<string, Achievement> = {
+  first_entry: {
+    id: 'first_entry',
+    title: 'Rompiendo el hielo',
+    description: 'Has registrado tu primer entrenamiento.',
+    category: 'consistency',
+    tier: 'bronze',
+    icon: '🧊'
+  },
+  streak_3: {
+    id: 'streak_3',
+    title: 'Constancia',
+    description: 'Has registrado entrenamientos 3 días seguidos.',
+    category: 'consistency',
+    tier: 'silver',
+    icon: '🔥'
+  },
+  streak_7: {
+    id: 'streak_7',
+    title: 'Imparable',
+    description: 'Has registrado entrenamientos 7 días seguidos.',
+    category: 'consistency',
+    tier: 'gold',
+    icon: '⚡'
+  },
+  first_article: {
+    id: 'first_article',
+    title: 'Estudiante',
+    description: 'Has guardado tu primer artículo.',
+    category: 'learning',
+    tier: 'bronze',
+    icon: '📚'
+  },
+  coach_chat: {
+    id: 'coach_chat',
+    title: 'Buscando consejo',
+    description: 'Has hablado por primera vez con Anna.',
+    category: 'learning',
+    tier: 'bronze',
+    icon: '🤖'
+  },
+  social_training: {
+    id: 'social_training',
+    title: 'Mejor en compañía',
+    description: 'Has entrenado con alguien más.',
+    category: 'social',
+    tier: 'silver',
+    icon: '🤝'
+  }
+};
+
+export function checkAchievements(
+  currentAchievements: string[],
+  context: {
+    entryCount?: number;
+    streak?: number;
+    savedArticlesCount?: number;
+    hasChatted?: boolean;
+    transcript?: string;
+  }
+): string[] {
+  const newUnlocks: string[] = [];
+  const alreadyUnlocked = new Set(currentAchievements || []);
+
+  const unlock = (id: string) => {
+    if (!alreadyUnlocked.has(id)) {
+      newUnlocks.push(id);
+      alreadyUnlocked.add(id);
+    }
+  };
+
+  if (context.entryCount && context.entryCount >= 1) unlock('first_entry');
+  if (context.streak && context.streak >= 3) unlock('streak_3');
+  if (context.streak && context.streak >= 7) unlock('streak_7');
+  if (context.savedArticlesCount && context.savedArticlesCount >= 1) unlock('first_article');
+  if (context.hasChatted) unlock('coach_chat');
+
+  // Check social training (mentioned someone in transcript)
+  if (context.transcript) {
+    const transcriptLower = context.transcript.toLowerCase();
+    const socialKeywords = ['con ', 'junto a ', 'acompañado'];
+    if (socialKeywords.some(kw => transcriptLower.includes(kw))) {
+      unlock('social_training');
+    }
+  }
+
+  return newUnlocks;
+}

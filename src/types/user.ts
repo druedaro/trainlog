@@ -8,4 +8,5 @@ export interface UserProfile {
   birthDate?: string;
   createdAt: number;
   onboardingCompleted?: boolean;
+  achievements?: string[];
 }
