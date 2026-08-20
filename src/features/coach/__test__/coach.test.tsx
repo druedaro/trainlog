@@ -14,6 +14,7 @@ vi.mock('@/lib/api', () => ({
 
 vi.mock('@/lib/firestore', () => ({
   fetchEntriesByDays: vi.fn(),
+  unlockAchievements: vi.fn(),
 }));
 
 Object.defineProperty(window, 'speechSynthesis', {

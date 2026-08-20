@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { Activity, Sparkles } from 'lucide-react';
 
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
 import { useVoiceRecorder } from '@/features/journal/useVoiceRecorder';
@@ -20,7 +21,7 @@ import { entryAnalysisSchema, type EntryAnalysis } from '@/types/entry';
 type FlowStep = 'idle' | 'transcribing' | 'editing' | 'analyzing' | 'reviewing' | 'saving';
 
 export function JournalPage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const navigate = useNavigate();
   const recorder = useVoiceRecorder();
 

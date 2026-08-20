@@ -16,7 +16,6 @@ import {
   saveExploreArticles,
   unlockAchievements,
 } from '@/lib/firestore';
-import { DISCOVER_CATEGORIES, generateDiscoverArticles } from '@/lib/api';
 import { checkAchievements, ACHIEVEMENTS } from '@/lib/gamification';
 import { generateDiscover, generateExplore } from '@/lib/api';
 import { ArticleView } from '@/features/discover/ArticleView';

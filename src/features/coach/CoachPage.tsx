@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
 import { fetchEntriesByDays } from '@/lib/firestore';
-import { generateCoachResponse } from '@/lib/api';
+import { sendMessageToCoach } from '@/lib/api';
 import { unlockAchievements } from '@/lib/firestore';
 import { checkAchievements, ACHIEVEMENTS } from '@/lib/gamification';
 

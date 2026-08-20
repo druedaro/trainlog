@@ -49,7 +49,7 @@ export async function saveConfirmedEntry(
 
 export async function unlockAchievements(userId: string, newAchievements: string[]): Promise<void> {
   if (newAchievements.length === 0) return;
-  const profileRef = doc(db, PROFILES_COLLECTION, userId);
+  const profileRef = doc(db, 'users', userId);
   await updateDoc(profileRef, {
     achievements: arrayUnion(...newAchievements)
   });

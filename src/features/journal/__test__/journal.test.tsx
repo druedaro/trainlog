@@ -36,7 +36,7 @@ describe('Feature: Journal and Analysis Validation', () => {
       const onStop = vi.fn();
       render(<RecordButton isRecording={true} durationMs={5000} onStart={vi.fn()} onStop={onStop} />);
       
-      fireEvent.click(screen.getByLabelText('Stop recording'));
+      fireEvent.click(screen.getByLabelText('Detener grabación'));
       expect(onStop).toHaveBeenCalledOnce();
     });
   });
