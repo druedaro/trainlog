@@ -81,10 +81,26 @@ export const ACHIEVEMENTS: Record<string, Achievement> = {
   first_article: {
     id: 'first_article',
     title: 'Estudiante',
-    description: 'Has guardado tu primer artículo.',
+    description: 'Has guardado tu primer artículo de Discover.',
     category: 'learning',
     tier: 'bronze',
     icon: '📚'
+  },
+  articles_10: {
+    id: 'articles_10',
+    title: 'Lector Ávido',
+    description: 'Has guardado 10 artículos en tu colección.',
+    category: 'learning',
+    tier: 'silver',
+    icon: '📖'
+  },
+  articles_50: {
+    id: 'articles_50',
+    title: 'Erudito',
+    description: 'Has guardado 50 artículos en tu colección.',
+    category: 'learning',
+    tier: 'gold',
+    icon: '🧠'
   },
   coach_chat: {
     id: 'coach_chat',
@@ -128,6 +144,8 @@ export function checkAchievements(
   if (context.streak && context.streak >= 3) unlock('streak_3');
   if (context.streak && context.streak >= 7) unlock('streak_7');
   if (context.savedArticlesCount && context.savedArticlesCount >= 1) unlock('first_article');
+  if (context.savedArticlesCount && context.savedArticlesCount >= 10) unlock('articles_10');
+  if (context.savedArticlesCount && context.savedArticlesCount >= 50) unlock('articles_50');
   if (context.hasChatted) unlock('coach_chat');
 
   // Check social training (mentioned someone in transcript)

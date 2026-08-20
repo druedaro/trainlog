@@ -28,7 +28,7 @@ CRITICAL: Avoid generic, repetitive, or basic advice (e.g., "sleep 8 hours", "dr
 
 Quality Standards:
 1. ADVANCED INSIGHTS: Connect the user's specific struggles or achievements to advanced physiological, biomechanical, or psychological concepts (e.g., periodization tactics, CNS fatigue, hypertrophy mechanisms, psychological framing).
-2. CONCISENESS: Articles must be EXTREMELY short and impactful (maximum 1-2 paragraphs each). Get straight to the science and actionable takeaways. It is absolutely CRITICAL that you generate ALL 4 categories without truncating the list.
+2. CONCISENESS: Articles must be short and impactful. Each article's 'content' MUST be strictly between 250 and 270 characters in length. This is a critical constraint. Get straight to the science and actionable takeaways. It is absolutely CRITICAL that you generate ALL 4 categories without truncating the list.
 3. EVIDENCE-BASED: Reference real scientific studies, authors, or institutions whenever possible. Use formats like:
    - "Según un meta-análisis de Schoenfeld et al. (2017)..."
    - "Como explica Brad Schoenfeld en su investigación sobre hipertrofia..."
