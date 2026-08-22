@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@/test-utils';
 import { MemoryRouter, Routes, Route } from 'react-router';
 import { EntryDetail } from '@/features/journal/EntryDetail';
 import { useAuth } from '@/features/auth/useAuth';
@@ -10,6 +10,7 @@ vi.mock('@/features/auth/useAuth', () => ({
 }));
 
 vi.mock('@/lib/firestore', () => ({
+  fetchUserProfile: vi.fn().mockResolvedValue({ name: 'David', gender: 'masculino', createdAt: 123456 }),
   fetchEntryById: vi.fn(),
   fetchRecentEntries: vi.fn(),
 }));

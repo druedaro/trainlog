@@ -48,7 +48,6 @@ export function JournalPage() {
             }
           }
         })
-        .catch(console.error);
     }
   }, [user, profile, checkingReport]);
 

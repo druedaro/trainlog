@@ -101,6 +101,7 @@ Trainlog does not diagnose injuries, medical conditions, or psychological condit
 * Vite
 * Tailwind CSS + shadcn/ui
 * React Router v7
+* TanStack Query (React Query)
 * React Day Picker
 * React Markdown
 
@@ -174,7 +175,7 @@ npm run test
 npm run test:watch
 ```
 
-**29 tests across 17 test files** covering:
+**41 tests across 22 test files** covering:
 - Authentication flows and route guards
 - Journal recording, transcription, and analysis flows
 - Calendar navigation and entry detail views

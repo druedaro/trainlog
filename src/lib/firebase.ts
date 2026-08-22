@@ -22,4 +22,3 @@ isSupported().then((supported) => {
   if (supported) {
     messaging = getMessaging(app);
   }
-}).catch(console.error);

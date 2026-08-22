@@ -38,13 +38,11 @@ export const router = createBrowserRouter([
     Component: AuthGuard,
     HydrateFallback,
     loader: async () => {
-      // Global auth check for protected routes
       const user = await requireAuth();
       if (!user) {
         return redirect('/login');
       }
       
-      // Prefetch profile so it's ready across the app
       await queryClient.ensureQueryData({
         queryKey: ['profile', user.uid],
         queryFn: () => fetchUserProfile(user.uid)

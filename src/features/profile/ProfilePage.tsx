@@ -97,7 +97,7 @@ export function ProfilePage() {
         <h1 className="text-lg font-bold text-gradient">Tu Perfil</h1>
         <div className="flex gap-2">
           <ThemeToggle />
-          <Button variant="ghost" size="icon" onClick={() => setIsEditing(true)} className="h-9 w-9 rounded-xl hover:bg-accent hover:text-accent-foreground text-foreground">
+          <Button variant="ghost" size="icon" onClick={() => setIsEditing(true)} aria-label="Edit Profile" className="h-9 w-9 rounded-xl hover:bg-accent hover:text-accent-foreground text-foreground">
             <Edit2 className="h-4 w-4" />
           </Button>
           <Button variant="ghost" size="icon" onClick={handleLogout} className="h-9 w-9 rounded-xl text-destructive hover:bg-destructive/10 hover:text-destructive">

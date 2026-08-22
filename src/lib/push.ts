@@ -2,7 +2,6 @@ import { getToken, onMessage } from 'firebase/messaging';
 import { messaging, db } from './firebase';
 import { doc, setDoc } from 'firebase/firestore';
 
-// @ts-ignore
 const VAPID_KEY = import.meta.env.VITE_FIREBASE_VAPID_KEY;
 
 export async function requestPushPermissions(userId: string): Promise<boolean> {

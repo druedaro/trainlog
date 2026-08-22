@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@/test-utils';
 import { RecordButton } from '@/features/journal/RecordButton';
 import { TranscriptEditor } from '@/features/journal/TranscriptEditor';
 import { entryAnalysisSchema } from '@/types/entry';

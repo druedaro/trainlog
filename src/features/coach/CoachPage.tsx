@@ -119,7 +119,6 @@ export function CoachPage() {
   };
 
   
-  // Removed manual loadEntries effect
 
   const handleSend = async () => {
     if (!input.trim() || !user) return;

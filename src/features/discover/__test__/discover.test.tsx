@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@/test-utils';
 import { DiscoverPage } from '@/features/discover/DiscoverPage';
 import { useAuth } from '@/features/auth/useAuth';
 import { fetchDiscoverArticles, fetchRecentEntries, fetchSavedArticles } from '@/lib/firestore';
@@ -12,6 +12,7 @@ vi.mock('@/features/auth/useAuth', () => ({
 
 
 vi.mock('@/lib/firestore', () => ({
+  fetchUserProfile: vi.fn().mockResolvedValue({ name: 'David', gender: 'masculino', createdAt: 123456 }),
   fetchDiscoverArticles: vi.fn(),
   fetchSavedArticles: vi.fn(),
   fetchRecentEntries: vi.fn(),
