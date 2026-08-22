@@ -171,7 +171,7 @@ export function InsightsPage() {
                 p: ({node, ...props}) => <p className="mb-4 leading-relaxed last:mb-0" {...props} />
               }}
             >
-              {insightsDoc.synthesis.summary.replace(/##/g, '\n\n##').replace(/\*\*\s+/g, '**').replace(/\s+\*\*/g, '**')}
+              {insightsDoc.synthesis.summary.replace(/##/g, '\n\n##').replace(/\*\*\s*(.*?)\s*\*\*/g, '**$1**')}
             </ReactMarkdown>
           </div>
 
@@ -338,7 +338,7 @@ export function InsightsPage() {
                           p: ({node, ...props}) => <p className="mb-3 leading-relaxed last:mb-0" {...props} />
                         }}
                       >
-                        {insightsDoc.synthesis.summary.replace(/##/g, '\n\n##').replace(/\*\*\s+/g, '**').replace(/\s+\*\*/g, '**')}
+                        {insightsDoc.synthesis.summary.replace(/##/g, '\n\n##').replace(/\*\*\s*(.*?)\s*\*\*/g, '**$1**')}
                       </ReactMarkdown>
                     </div>
                     <span className="text-xs font-semibold text-primary md:hidden">Leer resumen completo...</span>
