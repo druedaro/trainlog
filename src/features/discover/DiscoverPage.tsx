@@ -476,7 +476,7 @@ export function DiscoverPage() {
               disabled={isGeneratingExplore}
               className="group w-full justify-center gap-2 rounded-xl py-6 font-semibold whitespace-normal h-auto break-words leading-tight"
             >
-              <Sparkles className="h-5 w-5 text-primary transition-colors group-hover:text-black dark:group-hover:text-white shrink-0" />
+              <Sparkles className="h-5 w-5 text-primary transition-colors group-hover:text-white dark:group-hover:text-white shrink-0" />
               <span>Sorpréndeme con curiosidades y ciencia</span>
             </Button>
           </div>
@@ -516,7 +516,7 @@ export function DiscoverPage() {
                     setShowExploreGrid(true);
                     setExploreCategoryFilter(null);
                   }}
-                  className="-ml-2 w-fit text-muted-foreground hover:bg-[#2bd4bd] hover:text-black transition-colors"
+                  className="-ml-2 w-fit text-muted-foreground hover:bg-[#2bd4bd] hover:text-white transition-colors"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Volver a categorías

@@ -12,7 +12,7 @@ export function TermsPage() {
           variant="ghost"
           size="icon"
           onClick={() => navigate(-1)}
-          className="h-9 w-9 rounded-xl text-muted-foreground hover:bg-[#2bd4bd] hover:text-black transition-colors"
+          className="h-9 w-9 rounded-xl text-muted-foreground hover:bg-[#2bd4bd] hover:text-white transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
