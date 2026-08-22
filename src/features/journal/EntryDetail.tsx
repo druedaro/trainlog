@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { ArrowLeft, Zap, Smile, Sparkles, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
+import { useProfileQuery } from '@/hooks/useQueries';
 import {
   fetchEntryById,
   fetchRecentEntries,
@@ -33,8 +34,9 @@ const MOOD_CONFIG: Record<string, { label: string; color: string; emoji: string 
 };
 
 export function EntryDetail() {
+  const { user } = useAuth();
+  const { data: profile } = useProfileQuery();
   const { id } = useParams<{ id: string }>();
-  const { user, profile } = useAuth();
   const navigate = useNavigate();
   const [entry, setEntry] = useState<JournalEntry | null>(null);
   const [isLoading, setIsLoading] = useState(true);

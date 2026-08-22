@@ -1,56 +1,33 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router';
-import { LogOut, Download, Activity, Calendar, Flame, Edit2, User, AlertTriangle, Shield, FileText, Bell, Mic, BookOpen } from 'lucide-react';
+import { LogOut, Download, Activity, Calendar, Flame, Edit2, User, AlertTriangle, Shield, FileText, Bell, BookOpen } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
 import { useAuth } from '@/features/auth/useAuth';
-import { countUserEntries, fetchRecentEntries, saveUserProfile } from '@/lib/firestore';
 import { calculateStreak, ACHIEVEMENTS } from '@/lib/gamification';
 import { requestPushPermissions } from '@/lib/push';
-import type { JournalEntry } from '@/types/entry';
-import { type Gender, userProfileSchema } from '@/types/user';
 import { OnboardingModal } from '@/features/auth/OnboardingModal';
+import { ProfileForm } from './ProfileForm';
+import { useProfileQuery, useRecentEntriesQuery, useEntriesCountQuery } from '@/hooks/useQueries';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function ProfilePage() {
-  const { user, profile, signOut, refreshProfile, deleteAccount } = useAuth();
+  const { user, signOut, deleteAccount } = useAuth();
   const navigate = useNavigate();
   
-  const [entryCount, setEntryCount] = useState<number | null>(null);
-  const [recentEntries, setRecentEntries] = useState<JournalEntry[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: profile, isLoading: isProfileLoading } = useProfileQuery();
+  const { data: recentEntries = [], isLoading: isEntriesLoading } = useRecentEntriesQuery(user?.uid, 100);
+  const { data: entryCount = 0 } = useEntriesCountQuery();
   
+  const isLoading = isProfileLoading || isEntriesLoading;
+
   const [isEditing, setIsEditing] = useState(false);
-  const [editName, setEditName] = useState(profile?.name || '');
-  const [editGender, setEditGender] = useState<Gender>(profile?.gender || 'prefiero no decirlo');
-  const [editAge, setEditAge] = useState<string>(profile?.age?.toString() || '');
-  const [editBirthDate, setEditBirthDate] = useState(profile?.birthDate || '');
-  const [editPersonalContext, setEditPersonalContext] = useState(profile?.personalContext || '');
-  const [isSaving, setIsSaving] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
-  const recognitionRef = useRef<any>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isAchievementsModalOpen, setIsAchievementsModalOpen] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
 
-  useEffect(() => {
-    if (user) {
-      setIsLoading(true);
-      Promise.all([
-        countUserEntries(user.uid),
-        fetchRecentEntries(user.uid, 100)
-      ])
-        .then(([count, entries]) => {
-          setEntryCount(count);
-          setRecentEntries(entries);
-        })
-        .catch(() => toast.error('Error al cargar datos del perfil.'))
-        .finally(() => setIsLoading(false));
-    }
-  }, [user]);
-
-  
   const stats = useMemo(() => {
     if (recentEntries.length === 0) return null;
 
@@ -58,7 +35,6 @@ export function ProfilePage() {
     const dates = recentEntries.map(e => e.createdAt.getTime());
     const streak = calculateStreak(dates);
 
-    
     const activityCounts: Record<string, number> = {};
     recentEntries.forEach(entry => {
       entry.analysis.activities?.forEach(act => {
@@ -76,7 +52,6 @@ export function ProfilePage() {
       }
     });
 
-    
     const lastEntryDate = recentEntries[0]?.createdAt;
     const daysAgo = lastEntryDate 
       ? Math.max(0, Math.floor((today.getTime() - lastEntryDate.getTime()) / 86400000))
@@ -84,52 +59,6 @@ export function ProfilePage() {
 
     return { streak, topActivity, daysAgo };
   }, [recentEntries]);
-
-  const startRecording = () => {
-    const win = window as any;
-    const SpeechRecognition = win.SpeechRecognition || win.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      toast.error('Tu navegador no soporta reconocimiento de voz.');
-      return;
-    }
-
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'es-ES';
-    recognition.continuous = true;
-    recognition.interimResults = true;
-
-    recognition.onresult = (event: any) => {
-      let finalTranscript = '';
-      for (let i = event.resultIndex; i < event.results.length; ++i) {
-        if (event.results[i].isFinal) {
-          finalTranscript += event.results[i][0].transcript;
-        }
-      }
-      if (finalTranscript) {
-        setEditPersonalContext(prev => (prev ? prev + ' ' + finalTranscript : finalTranscript));
-      }
-    };
-
-    recognition.onerror = () => {
-      setIsRecording(false);
-      toast.error('Error al escuchar.');
-    };
-
-    recognition.onend = () => {
-      setIsRecording(false);
-    };
-
-    recognitionRef.current = recognition;
-    recognition.start();
-    setIsRecording(true);
-  };
-
-  const stopRecording = () => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-    }
-    setIsRecording(false);
-  };
 
   const handleLogout = async () => {
     await signOut();
@@ -149,38 +78,6 @@ export function ProfilePage() {
     document.body.removeChild(link);
   };
 
-  const handleSaveProfile = async () => {
-    if (!user) return;
-    setIsSaving(true);
-    try {
-      const profileData = {
-        uid: user.uid,
-        name: editName.trim() || 'Atleta',
-        gender: editGender,
-        age: editAge ? parseInt(editAge, 10) : undefined,
-        birthDate: editBirthDate || undefined,
-        personalContext: editPersonalContext.trim() || undefined,
-        createdAt: profile?.createdAt || Date.now()
-      };
-
-      const parsed = userProfileSchema.partial().safeParse(profileData);
-      if (!parsed.success) {
-        toast.error(parsed.error?.errors[0]?.message || 'Error de validación');
-        setIsSaving(false);
-        return;
-      }
-
-      await saveUserProfile(user.uid, parsed.data);
-      await refreshProfile();
-      setIsEditing(false);
-      toast.success('Perfil guardado con éxito.');
-    } catch (e) {
-      toast.error('Error al guardar el perfil.');
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   const greeting = (() => {
     const hour = new Date().getHours();
     if (hour < 12) return '¡Buenos días';
@@ -191,377 +88,268 @@ export function ProfilePage() {
   const displayName = profile?.name || 'Atleta';
 
   if (isEditing) {
-    return (
-      <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col bg-background p-6">
-        <h1 className="text-2xl font-bold mb-6 text-foreground">Editar Perfil</h1>
-        <div className="space-y-4">
-          <div className="relative">
-            <label className="text-sm font-semibold text-muted-foreground">Nombre</label>
-            <input 
-              type="text" 
-              maxLength={50}
-              value={editName}
-              onChange={e => setEditName(e.target.value)}
-              className="mt-1 block w-full rounded-xl border border-border/40 bg-card/50 p-3 pr-12 text-foreground"
-              placeholder="Ej. David"
-            />
-            <div className="absolute right-2 top-[34px] text-xs text-muted-foreground">
-              {editName.length}/50
-            </div>
-          </div>
-          <div>
-            <label className="text-sm font-semibold text-muted-foreground">Sexo</label>
-            <select 
-              value={editGender}
-              onChange={e => setEditGender(e.target.value as Gender)}
-              className="mt-1 block w-full rounded-xl border border-border/40 bg-card/50 p-3 text-foreground"
-            >
-              <option value="masculino">Hombre</option>
-              <option value="femenino">Mujer</option>
-              <option value="otro">Otro</option>
-              <option value="prefiero no decirlo">Prefiero no decirlo</option>
-            </select>
-          </div>
-          <div>
-            <label className="text-sm font-semibold text-muted-foreground">Edad</label>
-            <input 
-              type="number" 
-              value={editAge}
-              onChange={e => setEditAge(e.target.value)}
-              className="mt-1 block w-full rounded-xl border border-border/40 bg-card/50 p-3 text-foreground"
-              placeholder="Ej. 28"
-            />
-          </div>
-          <div>
-            <label className="text-sm font-semibold text-muted-foreground">Fecha de Nacimiento</label>
-            <input 
-              type="date" 
-              value={editBirthDate}
-              onChange={e => setEditBirthDate(e.target.value)}
-              className="mt-1 block w-full rounded-xl border border-border/40 bg-card/50 p-3 text-foreground"
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground flex justify-between items-center">
-              <span>Contexto Vital (Privado)</span>
-            </label>
-            <p className="text-xs text-muted-foreground mb-2">
-              Explícale a Anna tu situación actual (ej: lesiones, duelo, metas). Lo usará para adaptar su empatía a ti.
-            </p>
-            <div className="relative">
-              <textarea
-                value={editPersonalContext}
-                maxLength={400}
-                onChange={(e) => setEditPersonalContext(e.target.value)}
-                placeholder="Ej: Estoy preparándome para una maratón o recuperándome de una lesión de rodilla..."
-                className="w-full min-h-[120px] rounded-xl border border-border/50 bg-background/50 p-4 text-sm text-foreground outline-none transition-colors focus:border-primary focus:bg-background resize-y"
-              />
-              <div className="flex justify-between items-center mt-2">
-                <div className="text-xs text-muted-foreground">
-                  <span className={editPersonalContext.length >= 400 ? 'text-destructive font-bold' : ''}>
-                    {editPersonalContext.length}
-                  </span>
-                  /400
-                </div>
-                {((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition) && (
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    size="sm"
-                    onClick={isRecording ? stopRecording : startRecording}
-                    className={`h-8 rounded-full ${isRecording ? 'bg-red-500/20 text-red-500 hover:bg-red-500/30' : 'bg-primary/10 text-primary hover:bg-primary/20'}`}
-                  >
-                    <Mic className={`h-4 w-4 mr-2 ${isRecording ? 'animate-pulse' : ''}`} />
-                    {isRecording ? 'Detener' : 'Dictar'}
-                  </Button>
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="pt-4 flex gap-3">
-            <Button 
-              variant="outline" 
-              onClick={() => setIsEditing(false)}
-              className="flex-1 rounded-xl"
-            >
-              Cancelar
-            </Button>
-            <Button 
-              onClick={handleSaveProfile}
-              disabled={isSaving}
-              className="flex-1 rounded-xl bg-primary text-primary-foreground"
-            >
-              {isSaving ? 'Guardando...' : 'Guardar'}
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
+    return <ProfileForm profile={profile || null} onCancel={() => setIsEditing(false)} />;
   }
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col bg-background">
-      <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5 flex justify-between items-center">
-        <h1 className="text-lg font-bold text-gradient">Perfil</h1>
-        <div className="flex items-center gap-2">
+      <header className="glass sticky top-0 z-20 flex items-center justify-between border-b border-border/40 px-5 py-3.5">
+        <h1 className="text-lg font-bold text-gradient">Tu Perfil</h1>
+        <div className="flex gap-2">
           <ThemeToggle />
-          <button 
-            aria-label="Edit Profile"
-            onClick={() => {
-              setEditName(profile?.name || '');
-              setEditGender(profile?.gender || 'prefiero no decirlo');
-              setEditBirthDate(profile?.birthDate || '');
-              setIsEditing(true);
-            }} 
-            className="text-primary p-2"
-          >
-            <Edit2 className="h-5 w-5" />
-          </button>
+          <Button variant="ghost" size="icon" onClick={() => setIsEditing(true)} className="h-9 w-9 rounded-xl hover:bg-accent hover:text-accent-foreground text-foreground">
+            <Edit2 className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={handleLogout} className="h-9 w-9 rounded-xl text-destructive hover:bg-destructive/10 hover:text-destructive">
+            <LogOut className="h-4 w-4" />
+          </Button>
         </div>
       </header>
 
-      <main className="flex-1 px-5 py-8 space-y-8 animate-slide-up pb-24 md:pb-8">
-        <section className="flex flex-col items-center justify-center text-center">
-          <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 border border-primary/20 shadow-inner">
+      {showOnboarding && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 animate-in fade-in">
+          <div className="bg-card w-full max-w-lg rounded-2xl shadow-xl border border-border/40 max-h-[90vh] overflow-y-auto">
+            <OnboardingModal forceShow={true} onClose={() => setShowOnboarding(false)} />
+          </div>
+        </div>
+      )}
+
+      <main className="flex-1 px-5 py-6 pb-24 space-y-8 animate-slide-up">
+        {/* Header Section */}
+        <section className="text-center space-y-2">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 shadow-inner">
             <User className="h-10 w-10 text-primary" />
           </div>
-          <h2 className="text-xl font-bold text-foreground">{greeting}, {displayName}!</h2>
-          <p className="mt-1 text-sm text-muted-foreground">{user?.email}</p>
+          <h2 className="text-2xl font-bold tracking-tight text-foreground">{greeting}, {displayName}</h2>
+          <p className="text-sm text-muted-foreground">Aquí está el resumen de tu progreso</p>
         </section>
 
-        {isLoading ? (
-          <div className="flex justify-center py-10">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-            <div className="space-y-8">
-              <section className="grid grid-cols-2 gap-4">
-            <div className="rounded-2xl border border-border/40 bg-card/50 p-5 text-center backdrop-blur-sm">
-              <Activity className="mx-auto mb-2 h-6 w-6 text-emerald-400" />
-              <p className="text-3xl font-bold text-foreground">
-                {entryCount !== null ? entryCount : '-'}
-              </p>
-              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Entradas
-              </p>
+        {/* Stats Grid */}
+        <section>
+          <h3 className="mb-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Métricas Globales</h3>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-accent/50">
+              <div className="flex items-center gap-2 text-muted-foreground mb-2">
+                <Activity className="h-4 w-4" />
+                <span className="text-xs font-medium">Entradas</span>
+              </div>
+              {isLoading ? <Skeleton className="h-7 w-12" /> : <div className="text-2xl font-bold text-foreground">{entryCount || 0}</div>}
             </div>
             
-            <div className="rounded-2xl border border-border/40 bg-card/50 p-5 text-center backdrop-blur-sm">
-              <Flame className="mx-auto mb-2 h-6 w-6 text-amber-400" />
-              <p className="text-3xl font-bold text-foreground">
-                {stats ? stats.streak : '-'}
-              </p>
-              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Días seguidos
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-border/40 bg-card/50 p-5 text-center backdrop-blur-sm">
-              <span className="mx-auto mb-2 block text-2xl">🏃‍♂️</span>
-              <p className="text-sm sm:text-lg font-bold text-foreground capitalize leading-tight line-clamp-2 px-1 break-words">
-                {stats ? stats.topActivity : '-'}
-              </p>
-              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Favorita
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-border/40 bg-card/50 p-5 text-center backdrop-blur-sm">
-              <Calendar className="mx-auto mb-2 h-6 w-6 text-blue-400" />
-              <p className="text-xl font-bold text-foreground">
-                {stats ? (stats.daysAgo === 0 ? 'Hoy' : stats.daysAgo === 1 ? 'Ayer' : `Hace ${stats.daysAgo} d.`) : '-'}
-              </p>
-              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Última vez
-              </p>
-            </div>
-          </section>
-
-          <section className="pt-8 border-t border-border/40 space-y-4">
-            <div className="flex items-center justify-between px-2">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Mis Logros</h3>
-              <Button variant="ghost" size="sm" onClick={() => setIsAchievementsModalOpen(true)} className="text-xs text-primary h-auto py-1">
-                Ver todos
-              </Button>
-            </div>
-            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 flex items-center justify-between cursor-pointer active:scale-95 transition-transform" onClick={() => setIsAchievementsModalOpen(true)}>
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">🏆</span>
-                <div>
-                  <p className="text-sm font-bold text-foreground">Logros Desbloqueados</p>
-                  <p className="text-xs text-muted-foreground">{profile?.achievements?.length || 0} de {Object.keys(ACHIEVEMENTS).length}</p>
-                </div>
+            <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-accent/50">
+              <div className="flex items-center gap-2 text-muted-foreground mb-2">
+                <Flame className="h-4 w-4 text-orange-500" />
+                <span className="text-xs font-medium">Racha Activa</span>
               </div>
-              <div className="flex -space-x-2">
-                {profile?.achievements?.slice(0, 3).map(id => {
-                  const ach = Object.values(ACHIEVEMENTS).find(a => a.id === id);
-                  return ach ? <div key={id} className="h-8 w-8 rounded-full bg-background border flex items-center justify-center text-sm shadow-sm z-10">{ach.icon}</div> : null;
-                })}
+              {isLoading ? <Skeleton className="h-7 w-12" /> : <div className="text-2xl font-bold text-foreground">{stats?.streak || 0} <span className="text-sm font-normal text-muted-foreground">días</span></div>}
+            </div>
+
+            <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-accent/50">
+              <div className="flex items-center gap-2 text-muted-foreground mb-2">
+                <Calendar className="h-4 w-4 text-blue-500" />
+                <span className="text-xs font-medium">Última Sesión</span>
+              </div>
+              {isLoading ? <Skeleton className="h-7 w-12" /> : <div className="text-2xl font-bold text-foreground">
+                {stats?.daysAgo === 0 ? 'Hoy' : stats?.daysAgo === 1 ? 'Ayer' : stats?.daysAgo !== undefined && stats.daysAgo > 1 ? `Hace ${stats.daysAgo}d` : '--'}
+              </div>}
+            </div>
+
+            <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-accent/50">
+              <div className="flex items-center gap-2 text-muted-foreground mb-2">
+                <Activity className="h-4 w-4 text-green-500" />
+                <span className="text-xs font-medium">Top Actividad</span>
+              </div>
+              {isLoading ? <Skeleton className="h-7 w-12" /> : <div className="text-lg font-bold truncate text-foreground" title={stats?.topActivity}>{stats?.topActivity || '--'}</div>}
+            </div>
+          </div>
+        </section>
+
+        {/* Gamification / Achievements */}
+        <section className="rounded-2xl border border-border/40 bg-card/50 p-1">
+          <button 
+            onClick={() => setIsAchievementsModalOpen(true)}
+            className="w-full flex items-center justify-between p-4 hover:bg-accent/50 rounded-xl transition-colors text-left"
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-500">
+                <Flame className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-foreground">Mis Logros y Trofeos</h3>
+                <p className="text-xs text-muted-foreground">
+                  {isLoading ? 'Cargando...' : `${profile?.achievements?.length || 0} desbloqueados`}
+                </p>
               </div>
             </div>
-          </section>
+            <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">Ver todos</span>
+          </button>
+        </section>
+
+        {/* Legal & App Links */}
+        <section className="rounded-2xl border border-border/40 bg-card/50 p-1">
+          <Link to="/privacy" className="flex items-center gap-3 p-4 hover:bg-accent/50 rounded-xl transition-colors">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <Shield className="h-5 w-5" />
             </div>
-
-          <section className="space-y-4 pt-8 md:pt-0 md:border-l md:border-border/40 md:pl-8">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-2">Cuenta</h3>
-          <Button
-            variant="ghost"
-            onClick={async () => {
-              if (!user) return;
-              toast.loading('Solicitando permisos...', { id: 'push' });
-              const success = await requestPushPermissions(user.uid);
-              if (success) toast.success('Notificaciones activadas', { id: 'push' });
-              else toast.error('Permiso denegado', { id: 'push' });
-            }}
-            className="w-full justify-start gap-3 rounded-xl bg-primary/5 text-foreground hover:bg-primary/10 px-4 py-6 mb-2"
-          >
-            <Bell className="h-5 w-5" />
-            <span className="text-base font-semibold">Activar Notificaciones Push</span>
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={handleExport}
-            disabled={recentEntries.length === 0}
-            className="w-full justify-start gap-3 rounded-xl bg-primary/5 text-foreground hover:bg-primary/10 px-4 py-6"
-          >
-            <Download className="h-5 w-5" />
-            <span className="text-base font-semibold">Exportar mis datos (JSON)</span>
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={() => setShowOnboarding(true)}
-            className="w-full justify-start gap-3 rounded-xl bg-primary/5 text-foreground hover:bg-primary/10 px-4 py-6 mt-2"
-          >
-            <BookOpen className="h-5 w-5" />
-            <span className="text-base font-semibold">Repetir Tutorial Inicial</span>
-          </Button>
-
-          <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-2 pt-6">Legal</h3>
-          <Link
-            to="/privacy"
-            className="flex w-full items-center gap-3 rounded-xl bg-card/50 border border-border/40 text-foreground hover:bg-primary/5 px-4 py-4 transition-colors"
-          >
-            <Shield className="h-5 w-5 text-muted-foreground" />
-            <span className="text-sm font-semibold">Política de Privacidad</span>
+            <div>
+              <h3 className="text-sm font-medium text-foreground">Política de Privacidad</h3>
+              <p className="text-xs text-muted-foreground">Cómo protegemos tus datos</p>
+            </div>
           </Link>
-          <Link
-            to="/terms"
-            className="flex w-full items-center gap-3 rounded-xl bg-card/50 border border-border/40 text-foreground hover:bg-primary/5 px-4 py-4 transition-colors"
-          >
-            <FileText className="h-5 w-5 text-muted-foreground" />
-            <span className="text-sm font-semibold">Términos de Uso</span>
+          <div className="h-[1px] bg-border/40 mx-4" />
+          <Link to="/terms" className="flex items-center gap-3 p-4 hover:bg-accent/50 rounded-xl transition-colors">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <FileText className="h-5 w-5" />
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-foreground">Términos del Servicio</h3>
+              <p className="text-xs text-muted-foreground">Condiciones de uso</p>
+            </div>
           </Link>
+          <div className="h-[1px] bg-border/40 mx-4" />
+          <button onClick={() => setShowOnboarding(true)} className="w-full text-left flex items-center gap-3 p-4 hover:bg-accent/50 rounded-xl transition-colors">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <BookOpen className="h-5 w-5" />
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-foreground">Ver Tutorial</h3>
+              <p className="text-xs text-muted-foreground">Revisita el onboarding inicial</p>
+            </div>
+          </button>
+        </section>
+
+        {/* System Options */}
+        <section className="space-y-3">
+          <h3 className="mb-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Sistema</h3>
           
-          <Button
-            variant="ghost"
-            onClick={handleLogout}
-            className="w-full justify-start gap-3 rounded-xl bg-destructive/10 text-destructive hover:bg-destructive/20 hover:text-destructive px-4 py-6"
+          <Button 
+            variant="outline" 
+            className="w-full justify-start h-12 rounded-xl text-foreground bg-card hover:bg-accent border-border/40"
+            onClick={async () => {
+              if (user) {
+                const granted = await requestPushPermissions(user.uid);
+                if (granted) {
+                  toast.success('Notificaciones activadas. Recibirás recordatorios diarios.');
+                } else {
+                  toast.error('No se pudieron activar las notificaciones. Comprueba los permisos del navegador.');
+                }
+              }
+            }}
           >
-            <LogOut className="h-5 w-5" />
-            <span className="text-base font-semibold">Cerrar sesión</span>
+            <Bell className="mr-3 h-4 w-4 text-blue-500" />
+            Activar Notificaciones
           </Button>
 
-          <div className="pt-8">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-destructive/80 px-2 mb-4">Zona Peligrosa</h3>
-            <Button
-              variant="ghost"
-              onClick={() => setIsDeleteModalOpen(true)}
-              className="w-full justify-start gap-3 rounded-xl bg-destructive/10 text-destructive hover:bg-destructive/20 hover:text-destructive px-4 py-6"
-            >
-              <AlertTriangle className="h-5 w-5" />
-              <span className="text-base font-semibold">Eliminar cuenta</span>
-            </Button>
-          </div>
-            </section>
-          </div>
-        )}
+          <Button 
+            variant="outline" 
+            className="w-full justify-start h-12 rounded-xl text-foreground bg-card hover:bg-accent border-border/40"
+            onClick={handleExport}
+            disabled={!recentEntries.length}
+          >
+            <Download className="mr-3 h-4 w-4 text-green-500" />
+            Exportar mis datos (JSON)
+          </Button>
+
+          <Button 
+            variant="outline" 
+            className="w-full justify-start h-12 rounded-xl text-destructive bg-destructive/5 hover:bg-destructive/10 border-destructive/20"
+            onClick={() => setIsDeleteModalOpen(true)}
+          >
+            <AlertTriangle className="mr-3 h-4 w-4" />
+            Borrar cuenta y datos
+          </Button>
+        </section>
+
       </main>
 
+      {/* Delete Account Modal */}
       {isDeleteModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-fade-in">
-          <div className="bg-card w-full max-w-sm rounded-2xl p-6 shadow-2xl border border-border/40">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
-              <AlertTriangle className="h-6 w-6 text-destructive" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 animate-in fade-in">
+          <div className="w-full max-w-sm space-y-6 rounded-3xl bg-card p-6 shadow-2xl border border-destructive/20">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-destructive/10 text-destructive mx-auto">
+              <AlertTriangle className="h-6 w-6" />
             </div>
-            <h2 className="text-xl font-bold text-foreground mb-2">Eliminar cuenta</h2>
-            <p className="text-sm text-muted-foreground mb-6">
-              ¿Estás seguro de que quieres eliminar tu cuenta y todos tus datos? Esta acción es irreversible.
-            </p>
+            
+            <div className="text-center space-y-2">
+              <h3 className="text-xl font-bold text-foreground">¿Estás seguro?</h3>
+              <p className="text-sm text-muted-foreground">
+                Esta acción eliminará permanentemente tu cuenta, perfil y todas tus entradas. No se puede deshacer.
+              </p>
+            </div>
+
             <div className="flex gap-3">
-              <Button
-                variant="outline"
+              <Button 
+                variant="outline" 
+                className="flex-1 rounded-xl"
                 onClick={() => setIsDeleteModalOpen(false)}
                 disabled={isDeleting}
-                className="flex-1 rounded-xl"
               >
                 Cancelar
               </Button>
-              <Button
-                variant="destructive"
+              <Button 
+                variant="destructive" 
+                className="flex-1 rounded-xl"
+                disabled={isDeleting}
                 onClick={async () => {
                   setIsDeleting(true);
                   try {
                     await deleteAccount();
-                    toast.success('Cuenta eliminada con éxito.');
-                    setIsDeleteModalOpen(false);
-                  } catch (e: any) {
-                    if (e.code === 'auth/requires-recent-login') {
-                      toast.error('Por seguridad, cierra sesión y vuelve a entrar antes de eliminar tu cuenta.');
-                    } else {
-                      toast.error('Error al eliminar la cuenta. Inténtalo de nuevo.');
-                    }
+                    navigate('/login');
+                  } catch (e) {
+                    toast.error('No se pudo borrar la cuenta. Por seguridad, debes iniciar sesión de nuevo antes de borrarla.');
                     setIsDeleteModalOpen(false);
                   } finally {
                     setIsDeleting(false);
                   }
                 }}
-                disabled={isDeleting}
-                className="flex-1 rounded-xl"
               >
-                {isDeleting ? 'Eliminando...' : 'Eliminar'}
+                {isDeleting ? 'Borrando...' : 'Sí, borrar'}
               </Button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Achievements Modal */}
       {isAchievementsModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-5 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-full max-w-2xl rounded-3xl bg-card border border-border/40 p-6 shadow-2xl max-h-[85vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold text-foreground">Todos mis logros</h2>
-              <Button variant="ghost" size="sm" onClick={() => setIsAchievementsModalOpen(false)} className="rounded-xl">Cerrar</Button>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-background/80 backdrop-blur-sm sm:p-4 animate-in fade-in">
+          <div className="w-full sm:max-w-md bg-card sm:rounded-3xl rounded-t-3xl shadow-2xl border border-border/40 max-h-[85vh] flex flex-col slide-in-from-bottom-full sm:slide-in-from-bottom-0">
+            <div className="p-5 border-b border-border/40 flex items-center justify-between sticky top-0 bg-card z-10 rounded-t-3xl">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 text-amber-500">
+                  <Flame className="h-5 w-5" />
+                </div>
+                <h3 className="font-bold text-lg text-foreground">Tus Logros</h3>
+              </div>
+              <Button variant="ghost" size="sm" onClick={() => setIsAchievementsModalOpen(false)} className="rounded-full h-8 w-8 p-0">
+                ✕
+              </Button>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {Object.values(ACHIEVEMENTS).map((ach) => {
-                const isUnlocked = profile?.achievements?.includes(ach.id);
+            
+            <div className="overflow-y-auto p-5 space-y-4">
+              {Object.entries(ACHIEVEMENTS).map(([id, ach]) => {
+                const isUnlocked = profile?.achievements?.includes(id);
                 return (
-                  <div 
-                    key={ach.id} 
-                    className={`relative flex flex-col items-center justify-center p-4 rounded-2xl border text-center transition-all ${
-                      isUnlocked 
-                        ? 'border-primary/30 bg-primary/5 shadow-sm' 
-                        : 'border-border/30 bg-card/20 opacity-60 grayscale'
-                    }`}
-                  >
-                    <span className="text-3xl mb-2">{ach.icon}</span>
-                    <p className="text-sm font-bold text-foreground leading-tight mb-1">{ach.title}</p>
-                    <p className="text-[10px] text-muted-foreground leading-tight">{ach.description}</p>
-                    {!isUnlocked && (
-                      <div className="absolute top-2 right-2 bg-background/80 rounded-full p-1 shadow-sm border border-border/50">
-                        <AlertTriangle className="h-3 w-3 text-muted-foreground" />
-                      </div>
-                    )}
+                  <div key={id} className={`flex gap-4 p-4 rounded-2xl border transition-colors ${
+                    isUnlocked 
+                      ? 'bg-primary/5 border-primary/20 shadow-sm' 
+                      : 'bg-card/50 border-border/30 opacity-60 grayscale'
+                  }`}>
+                    <div className="text-3xl mt-1">{ach.icon}</div>
+                    <div>
+                      <h4 className={`font-bold text-sm ${isUnlocked ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        {ach.title}
+                      </h4>
+                      <p className="text-xs text-muted-foreground mt-1 leading-snug">
+                        {ach.description}
+                      </p>
+                    </div>
                   </div>
                 );
               })}
             </div>
           </div>
         </div>
-      )}
-
-      {showOnboarding && (
-        <OnboardingModal forceShow={true} onClose={() => setShowOnboarding(false)} />
       )}
     </div>
   );

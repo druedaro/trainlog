@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
-import { fetchEntriesByDays } from '@/lib/firestore';
+import { useProfileQuery, useEntriesByDaysQuery } from '@/hooks/useQueries';
 import { sendMessageToCoach } from '@/lib/api';
 import { unlockAchievements } from '@/lib/firestore';
 import { checkAchievements, ACHIEVEMENTS } from '@/lib/gamification';
@@ -23,7 +23,9 @@ declare global {
 }
 
 export function CoachPage() {
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
+  const { data: profile } = useProfileQuery();
+  const { data: entries = [] } = useEntriesByDaysQuery(user?.uid, 90);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
@@ -34,7 +36,6 @@ export function CoachPage() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [entries, setEntries] = useState<any[]>([]);
   const [isListening, setIsListening] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -118,18 +119,7 @@ export function CoachPage() {
   };
 
   
-  useEffect(() => {
-    if (!user) return;
-    async function loadEntries() {
-      try {
-        const data = await fetchEntriesByDays(user!.uid, 90);
-        setEntries(data);
-      } catch (err) {
-        toast.error('Error al cargar historial para el Coach.');
-      }
-    }
-    loadEntries();
-  }, [user]);
+  // Removed manual loadEntries effect
 
   const handleSend = async () => {
     if (!input.trim() || !user) return;

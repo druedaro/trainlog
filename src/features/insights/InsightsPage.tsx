@@ -3,7 +3,9 @@ import { Activity, Sparkles, AlertCircle, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/features/auth/useAuth';
+import { useProfileQuery } from '@/hooks/useQueries';
 import {
   fetchEntriesByDays,
   fetchInsights,
@@ -32,7 +34,8 @@ const MOOD_VALUES: Record<string, number> = {
 };
 
 export function InsightsPage() {
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
+  const { data: profile } = useProfileQuery();
 
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [insightsDoc, setInsightsDoc] = useState<InsightsDocument | null>(null);
@@ -194,9 +197,9 @@ export function InsightsPage() {
         )}
 
         {isLoading ? (
-          <div className="flex flex-col items-center gap-5 pt-16">
-            <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-primary/30 border-t-primary" />
-            <p className="text-sm text-muted-foreground">Calculando patrones...</p>
+          <div className="flex flex-col gap-4 mt-8">
+            <Skeleton className="h-48 w-full rounded-2xl" />
+            <Skeleton className="h-48 w-full rounded-2xl" />
           </div>
         ) : entries.length === 0 ? (
           <div className="flex flex-col items-center gap-4 pt-12 text-center">
@@ -306,14 +309,12 @@ export function InsightsPage() {
                 </div>
               )}
 
-              {isGenerating && (
-                <div className="rounded-2xl border border-border/40 bg-card/50 p-6 text-center">
-                  <div className="mx-auto mb-4 h-6 w-6 animate-spin rounded-full border-[2px] border-primary/30 border-t-primary" />
-                  <p className="text-sm text-muted-foreground">Conectando los puntos...</p>
-                </div>
-              )}
-
-              {insightsDoc?.synthesis && !isGenerating && (
+              {isGenerating ? (
+                  <div className="py-12 text-center text-muted-foreground">
+                    <Skeleton className="mx-auto mb-4 h-6 w-1/3 rounded-full" />
+                    <Skeleton className="mx-auto h-4 w-2/3 rounded-full" />
+                  </div>
+                ) : insightsDoc?.synthesis ? (
                 <div className="space-y-4">
                   <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5 text-sm leading-relaxed text-foreground/90 backdrop-blur-sm cursor-pointer md:cursor-auto hover:bg-primary/10 transition-colors"
                        onClick={() => window.innerWidth < 768 && setShowFullSynthesis(true)}>
@@ -335,7 +336,7 @@ export function InsightsPage() {
                     </ul>
                   </div>
                 </div>
-              )}
+              ) : null}
             </section>
           </div>
         )}

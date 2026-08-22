@@ -3,7 +3,9 @@ import { useLocation } from 'react-router';
 import { RefreshCw, Sparkles, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/features/auth/useAuth';
+import { useProfileQuery } from '@/hooks/useQueries';
 import {
   fetchDiscoverArticles,
   fetchRecentEntries,
@@ -41,7 +43,8 @@ const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
 };
 
 export function DiscoverPage() {
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
+  const { data: profile } = useProfileQuery();
   const location = useLocation();
 
   const [articles, setArticles] = useState<DiscoverArticle[]>([]);
@@ -384,20 +387,17 @@ export function DiscoverPage() {
         )}
 
         {((activeTab === 'foryou' && isLoading) || (activeTab === 'explore' && isLoadingExplore) || (activeTab === 'saved' && isLoadingSaved)) && (
-          <div className="flex flex-col items-center gap-5 pt-16 animate-fade-in">
-            <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-primary/30 border-t-primary" />
-            <p className="text-sm text-muted-foreground">Cargando…</p>
+          <div className="flex flex-col gap-4 mt-8 w-full">
+            <Skeleton className="h-48 w-full rounded-2xl" />
+            <Skeleton className="h-48 w-full rounded-2xl" />
+            <Skeleton className="h-48 w-full rounded-2xl" />
           </div>
         )}
 
         {(isGenerating || isGeneratingExplore) && (
-          <div className="flex flex-col items-center gap-5 pt-16 animate-fade-in">
-            <div className="relative">
-              <div className="h-16 w-16 animate-spin rounded-full border-[3px] border-primary/30 border-t-primary" />
-              <Sparkles className="absolute left-1/2 top-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2 text-primary" />
-            </div>
-            <p className="text-sm text-muted-foreground">Analizando contenido…</p>
-            <p className="text-xs text-muted-foreground/60">Esto puede tardar unos segundos</p>
+          <div className="flex flex-col gap-4 mt-8 w-full">
+            <Skeleton className="h-48 w-full rounded-2xl" />
+            <Skeleton className="h-48 w-full rounded-2xl" />
           </div>
         )}
 

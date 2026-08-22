@@ -36,11 +36,10 @@ describe('Feature: Weekly Insights Synthesis', () => {
     vi.clearAllMocks();
     vi.mocked(useAuth).mockReturnValue({
       user: mockUser as any,
-      profile: null as any,
+      
       isLoading: false,
       signInWithGoogle: vi.fn(),
       signOut: vi.fn(),
-      refreshProfile: vi.fn(),
       deleteAccount: vi.fn(),
     });
   });

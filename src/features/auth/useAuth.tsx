@@ -14,18 +14,13 @@ import {
   GoogleAuthProvider,
   type User,
 } from 'firebase/auth';
-import { toast } from 'sonner';
 import { auth } from '@/lib/firebase';
-import { fetchUserProfile } from '@/lib/firestore';
-import type { UserProfile } from '@/types/user';
 
 interface AuthState {
   user: User | null;
-  profile: UserProfile | null;
   isLoading: boolean;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
-  refreshProfile: () => Promise<void>;
   deleteAccount: () => Promise<void>;
 }
 
@@ -35,37 +30,16 @@ const googleProvider = new GoogleAuthProvider();
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
-  const loadProfile = useCallback(async (uid: string) => {
-    try {
-      const p = await fetchUserProfile(uid);
-      setProfile(p);
-    } catch (e) {
-      toast.error('Error al cargar tu perfil.');
-    }
-  }, []);
-
-  const refreshProfile = useCallback(async () => {
-    if (user) {
-      await loadProfile(user.uid);
-    }
-  }, [user, loadProfile]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
-      if (firebaseUser) {
-        await loadProfile(firebaseUser.uid);
-      } else {
-        setProfile(null);
-      }
       setIsLoading(false);
     });
 
-    return unsubscribe;
-  }, [loadProfile]);
+    return () => unsubscribe();
+  }, []);
 
   const signInWithGoogle = useCallback(async () => {
     await signInWithPopup(auth, googleProvider);
@@ -79,12 +53,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (auth.currentUser) {
       await deleteUser(auth.currentUser);
       setUser(null);
-      setProfile(null);
     }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, profile, isLoading, signInWithGoogle, signOut, refreshProfile, deleteAccount }}>
+    <AuthContext.Provider value={{ user, isLoading, signInWithGoogle, signOut, deleteAccount }}>
       {children}
     </AuthContext.Provider>
   );

@@ -5,6 +5,7 @@ import { Activity, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
+import { useProfileQuery } from '@/hooks/useQueries';
 import { useVoiceRecorder } from '@/features/journal/useVoiceRecorder';
 import { RecordButton } from '@/features/journal/RecordButton';
 import { TranscriptEditor } from '@/features/journal/TranscriptEditor';
@@ -21,7 +22,8 @@ import { entryAnalysisSchema, type EntryAnalysis } from '@/types/entry';
 type FlowStep = 'idle' | 'transcribing' | 'editing' | 'analyzing' | 'reviewing' | 'saving';
 
 export function JournalPage() {
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
+  const { data: profile } = useProfileQuery(user?.uid);
   const navigate = useNavigate();
   const recorder = useVoiceRecorder();
 
@@ -34,32 +36,21 @@ export function JournalPage() {
   const [checkingReport, setCheckingReport] = useState(false);
 
   useEffect(() => {
-    if (user) {
-        
-      if (!checkingReport) {
-        setCheckingReport(true);
-        import('@/lib/firestore').then(({ fetchUserProfile }) => {
-          fetchUserProfile(user.uid).then(profile => {
-            if (profile) {
-              checkAndGenerateMonthlyReport(user.uid, profile)
-                .then(report => {
-
-
-                  if (report) {
-                    const shownKey = `report_shown_${report.id}`;
-                    if (!localStorage.getItem(shownKey)) {
-                      setMonthlyReport(report);
-                      localStorage.setItem(shownKey, 'true');
-                    }
-                  }
-                })
-                .catch(console.error);
+    if (user && profile && !checkingReport) {
+      setCheckingReport(true);
+      checkAndGenerateMonthlyReport(user.uid, profile)
+        .then(report => {
+          if (report) {
+            const shownKey = `report_shown_${report.id}`;
+            if (!localStorage.getItem(shownKey)) {
+              setMonthlyReport(report);
+              localStorage.setItem(shownKey, 'true');
             }
-          });
-        });
-      }
+          }
+        })
+        .catch(console.error);
     }
-  }, [user]);
+  }, [user, profile, checkingReport]);
 
   const resetFlow = useCallback(() => {
     setFlowStep('idle');

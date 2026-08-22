@@ -23,7 +23,7 @@ vi.mock('@/lib/firebase', () => ({
 }));
 
 const TestComponent = () => {
-  const { user, profile, isLoading, signInWithGoogle, signOut } = useAuth();
+  const { user, isLoading, signInWithGoogle, signOut } = useAuth();
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -32,7 +32,6 @@ const TestComponent = () => {
       {user ? (
         <div>
           <span data-testid="user-id">{user.uid}</span>
-          <span data-testid="profile-name">{profile?.name || 'No Profile'}</span>
           <button onClick={signOut}>Logout</button>
         </div>
       ) : (
@@ -87,7 +86,6 @@ describe('Feature: User Authentication', () => {
       
       await waitFor(() => {
         expect(screen.getByTestId('user-id')).toHaveTextContent('user123');
-        expect(screen.getByTestId('profile-name')).toHaveTextContent('David');
       });
     });
   });
