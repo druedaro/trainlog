@@ -161,8 +161,17 @@ export function InsightsPage() {
 
         <main className="flex-1 space-y-6 p-5">
           <div className="prose prose-sm dark:prose-invert prose-p:leading-relaxed prose-headings:font-semibold prose-strong:text-primary max-w-none text-foreground/90">
-            <ReactMarkdown>
-              {insightsDoc.synthesis.summary}
+            <ReactMarkdown
+              components={{
+                strong: ({node, ...props}) => <strong className="font-bold text-primary underline decoration-primary/40 decoration-2 underline-offset-2" {...props} />,
+                em: ({node, ...props}) => <em className="italic text-foreground/80" {...props} />,
+                h1: ({node, ...props}) => <h3 className="text-lg font-bold mt-4 mb-2 text-foreground" {...props} />,
+                h2: ({node, ...props}) => <h4 className="text-base font-bold mt-3 mb-2 text-foreground" {...props} />,
+                h3: ({node, ...props}) => <h5 className="text-sm font-bold mt-2 mb-1 text-foreground" {...props} />,
+                p: ({node, ...props}) => <p className="mb-4 leading-relaxed last:mb-0" {...props} />
+              }}
+            >
+              {insightsDoc.synthesis.summary.replace(/##/g, '\n\n##')}
             </ReactMarkdown>
           </div>
 
@@ -329,7 +338,7 @@ export function InsightsPage() {
                           p: ({node, ...props}) => <p className="mb-3 leading-relaxed last:mb-0" {...props} />
                         }}
                       >
-                        {insightsDoc.synthesis.summary}
+                        {insightsDoc.synthesis.summary.replace(/##/g, '\n\n##')}
                       </ReactMarkdown>
                     </div>
                     <span className="text-xs font-semibold text-primary md:hidden">Leer resumen completo...</span>
