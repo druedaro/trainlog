@@ -30,15 +30,11 @@ export function JournalPage() {
   const [analysis, setAnalysis] = useState<EntryAnalysis | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showInstructions, setShowInstructions] = useState(false);
-  const [streak, setStreak] = useState<number>(0);
   const [monthlyReport, setMonthlyReport] = useState<MonthlyReport | null>(null);
   const [checkingReport, setCheckingReport] = useState(false);
 
   useEffect(() => {
     if (user) {
-      fetchUserStreak(user.uid)
-        .then(setStreak)
-        .catch(console.error);
         
       if (!checkingReport) {
         setCheckingReport(true);
@@ -148,7 +144,7 @@ export function JournalPage() {
           entryCount: 1,
           streak: currentStreak,
           transcript,
-          mood: analysis?.mood
+          perceivedMood: analysis?.perceivedMood
         });
 
         if (newUnlocks.length > 0) {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate, Link } from 'react-router';
-import { LogOut, Download, Activity, Calendar, Flame, Edit2, User, AlertTriangle, Shield, FileText, Bell, Mic } from 'lucide-react';
+import { LogOut, Download, Activity, Calendar, Flame, Edit2, User, AlertTriangle, Shield, FileText, Bell, Mic, BookOpen } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
@@ -10,6 +10,7 @@ import { calculateStreak, ACHIEVEMENTS } from '@/lib/gamification';
 import { requestPushPermissions } from '@/lib/push';
 import type { JournalEntry } from '@/types/entry';
 import type { Gender } from '@/types/user';
+import { OnboardingModal } from '@/features/auth/OnboardingModal';
 
 export function ProfilePage() {
   const { user, profile, signOut, refreshProfile, deleteAccount } = useAuth();
@@ -31,6 +32,7 @@ export function ProfilePage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isAchievementsModalOpen, setIsAchievementsModalOpen] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -405,6 +407,14 @@ export function ProfilePage() {
             <Download className="h-5 w-5" />
             <span className="text-base font-semibold">Exportar mis datos (JSON)</span>
           </Button>
+          <Button
+            variant="ghost"
+            onClick={() => setShowOnboarding(true)}
+            className="w-full justify-start gap-3 rounded-xl bg-primary/5 text-foreground hover:bg-primary/10 px-4 py-6 mt-2"
+          >
+            <BookOpen className="h-5 w-5" />
+            <span className="text-base font-semibold">Repetir Tutorial Inicial</span>
+          </Button>
 
           <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground px-2 pt-6">Legal</h3>
           <Link
@@ -527,6 +537,10 @@ export function ProfilePage() {
             </div>
           </div>
         </div>
+      )}
+
+      {showOnboarding && (
+        <OnboardingModal forceShow={true} onClose={() => setShowOnboarding(false)} />
       )}
     </div>
   );

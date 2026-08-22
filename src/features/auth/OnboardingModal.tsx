@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ChevronRight, Bell, Shield, User as UserIcon, Mic } from 'lucide-react';
+import { ChevronRight, Bell, Shield, User as UserIcon, Mic, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
 import { saveUserProfile } from '@/lib/firestore';
@@ -7,7 +7,12 @@ import { requestPushPermissions } from '@/lib/push';
 import { toast } from 'sonner';
 import type { Gender } from '@/types/user';
 
-export function OnboardingModal() {
+interface OnboardingModalProps {
+  forceShow?: boolean;
+  onClose?: () => void;
+}
+
+export function OnboardingModal({ forceShow = false, onClose }: OnboardingModalProps = {}) {
   const { user, profile, refreshProfile } = useAuth();
   const [step, setStep] = useState(1);
   const [name, setName] = useState(profile?.name || user?.displayName || '');
@@ -115,22 +120,30 @@ export function OnboardingModal() {
         onboardingCompleted: true,
       });
       await refreshProfile();
-      toast.success('¡Bienvenido a TrainLog!');
+      toast.success(forceShow ? 'Tutorial completado.' : '¡Bienvenido a TrainLog!');
+      if (onClose) onClose();
     } catch (e) {
       toast.error('Error al guardar el perfil.');
       setIsSubmitting(false);
     }
   };
 
-  
-  if (profile?.onboardingCompleted) return null;
+  if (!forceShow && profile?.onboardingCompleted) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm animate-in fade-in duration-300">
       <div
         className="w-full max-w-md overflow-hidden rounded-3xl border border-border/50 bg-background/60 shadow-2xl backdrop-blur-xl animate-scale-in"
       >
-        <div className="p-6 sm:p-8">
+        <div className="p-6 sm:p-8 relative">
+          {forceShow && onClose && (
+            <button
+              onClick={onClose}
+              className="absolute right-4 top-4 rounded-full p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          )}
           <div className="mb-8 flex flex-col items-center text-center">
             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
               <span className="text-3xl">👋</span>

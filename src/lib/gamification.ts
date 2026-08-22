@@ -144,7 +144,7 @@ export function checkAchievements(
     savedArticlesCount?: number;
     hasChatted?: boolean;
     transcript?: string;
-    mood?: string;
+    perceivedMood?: string | null;
   }
 ): string[] {
   const newUnlocks: string[] = [];
@@ -181,7 +181,7 @@ export function checkAchievements(
   }
 
   // Check emotional strength
-  if (context.mood && (context.mood === 'very_low' || context.mood === 'low')) {
+  if (context.perceivedMood && (context.perceivedMood === 'very_negative' || context.perceivedMood === 'negative')) {
     unlock('emotional_strength');
   }
 
