@@ -26,12 +26,26 @@ export function CoachPage() {
   const { user } = useAuth();
   const { data: profile } = useProfileQuery();
   const { data: entries = [] } = useEntriesByDaysQuery(user?.uid, 90);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: 'assistant',
-      content: 'Hola, soy Anna, la coach que te acompaña en tu día a día. He estado analizando tu diario de entrenamiento. ¿En qué puedo ayudarte hoy?',
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>(() => {
+    const saved = sessionStorage.getItem('coach_chat_messages');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Error parsing saved chat messages', e);
+      }
+    }
+    return [
+      {
+        role: 'assistant',
+        content: 'Hola, soy Anna, la coach que te acompaña en tu día a día. He estado analizando tu diario de entrenamiento. ¿En qué puedo ayudarte hoy?',
+      },
+    ];
+  });
+
+  useEffect(() => {
+    sessionStorage.setItem('coach_chat_messages', JSON.stringify(messages));
+  }, [messages]);
   const [input, setInput] = useState('');
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
