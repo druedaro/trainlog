@@ -387,17 +387,18 @@ export function DiscoverPage() {
         )}
 
         {((activeTab === 'foryou' && isLoading) || (activeTab === 'explore' && isLoadingExplore) || (activeTab === 'saved' && isLoadingSaved)) && (
-          <div className="flex flex-col gap-4 mt-8 w-full">
-            <Skeleton className="h-48 w-full rounded-2xl" />
-            <Skeleton className="h-48 w-full rounded-2xl" />
-            <Skeleton className="h-48 w-full rounded-2xl" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8 w-full">
+            <Skeleton className="h-32 w-full rounded-2xl" />
+            <Skeleton className="h-32 w-full rounded-2xl" />
+            <Skeleton className="h-32 w-full rounded-2xl" />
+            <Skeleton className="h-32 w-full rounded-2xl" />
           </div>
         )}
 
         {(isGenerating || isGeneratingExplore) && (
-          <div className="flex flex-col gap-4 mt-8 w-full">
-            <Skeleton className="h-48 w-full rounded-2xl" />
-            <Skeleton className="h-48 w-full rounded-2xl" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8 w-full">
+            <Skeleton className="h-32 w-full rounded-2xl" />
+            <Skeleton className="h-32 w-full rounded-2xl" />
           </div>
         )}
 

@@ -206,9 +206,15 @@ export function InsightsPage() {
         )}
 
         {isLoading ? (
-          <div className="flex flex-col gap-4 mt-8">
-            <Skeleton className="h-48 w-full rounded-2xl" />
-            <Skeleton className="h-48 w-full rounded-2xl" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+            <div className="flex flex-col gap-4">
+              <Skeleton className="h-48 w-full rounded-2xl" />
+              <Skeleton className="h-24 w-full rounded-2xl" />
+            </div>
+            <div className="flex flex-col gap-4">
+              <Skeleton className="h-64 w-full rounded-2xl" />
+              <Skeleton className="h-48 w-full rounded-2xl" />
+            </div>
           </div>
         ) : entries.length === 0 ? (
           <div className="flex flex-col items-center gap-4 pt-12 text-center">
