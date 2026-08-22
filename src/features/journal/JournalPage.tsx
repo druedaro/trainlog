@@ -178,15 +178,7 @@ export function JournalPage() {
           <h1 className="text-lg font-bold text-gradient">Trainlog</h1>
         </div>
         <div className="flex items-center gap-3">
-          {streak > 0 && (
-            <div 
-              className="flex items-center gap-1.5 rounded-full bg-orange-500/10 px-3 py-1 border border-orange-500/20"
-              title="Racha de días seguidos registrando entrenamientos"
-            >
-              <span className="text-sm font-bold text-orange-500">{streak} días</span>
-              <span className="text-sm">🔥</span>
-            </div>
-          )}
+          {/* Streak removed from header to avoid anxiety and pressure */}
         </div>
       </header>
 
