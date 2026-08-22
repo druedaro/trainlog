@@ -273,7 +273,7 @@ export function CoachPage() {
                 disabled={isLoading || entries.length === 0}
                 className="w-full rounded-full border border-border/40 bg-card/50 pl-4 pr-16 py-2.5 text-sm outline-none transition-colors focus:border-primary disabled:opacity-50"
               />
-              <div className="absolute right-4 top-[10px] text-[10px] text-muted-foreground pointer-events-none">
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground pointer-events-none">
                 {input.length}/2000
               </div>
             </div>

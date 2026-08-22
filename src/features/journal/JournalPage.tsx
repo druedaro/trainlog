@@ -156,6 +156,15 @@ export function JournalPage() {
         }
       }
 
+      const mood = analysis?.perceivedMood;
+      if (mood === 'very_negative' || mood === 'negative') {
+        toast.success("Has venido a pesar de todo, eso ya es mucho.", { duration: 4000 });
+      } else if (mood === 'positive' || mood === 'very_positive') {
+        toast.success("Hoy te has regalado algo bueno.", { duration: 4000 });
+      } else {
+        toast.success("Entrada guardada con éxito.", { duration: 3000 });
+      }
+
       resetFlow();
       navigate(`/entry/${entryId}`);
     } catch {

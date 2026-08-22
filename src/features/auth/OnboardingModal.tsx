@@ -179,9 +179,9 @@ export function OnboardingModal({ forceShow = false, onClose }: OnboardingModalP
                       maxLength={50}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Tu nombre o apodo"
-                      className="w-full rounded-xl border border-border/50 bg-background/50 py-3 pl-10 pr-4 text-sm text-foreground outline-none transition-colors focus:border-primary focus:bg-background"
+                      className="w-full rounded-xl border border-border/50 bg-background/50 py-3 pl-10 pr-12 text-sm text-foreground outline-none transition-colors focus:border-primary focus:bg-background"
                     />
-                    <div className="absolute bottom-[-20px] right-0 text-[10px] text-muted-foreground">
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground pointer-events-none">
                       {name.length}/50
                     </div>
                   </div>
@@ -239,24 +239,25 @@ export function OnboardingModal({ forceShow = false, onClose }: OnboardingModalP
                       maxLength={400}
                       onChange={(e) => setPersonalContext(e.target.value)}
                       placeholder="Ej: Estoy preparándome para una maratón o recuperándome de una lesión de rodilla..."
-                      className="w-full min-h-[120px] rounded-xl border border-border/50 bg-background/50 p-4 text-sm text-foreground outline-none transition-colors focus:border-primary focus:bg-background resize-none pb-12"
+                      className="w-full min-h-[120px] rounded-xl border border-border/50 bg-background/50 p-4 text-sm text-foreground outline-none transition-colors focus:border-primary focus:bg-background resize-y"
                     />
-                    <div className="absolute bottom-3 left-3 text-xs text-muted-foreground">
-                      <span className={personalContext.length >= 400 ? 'text-destructive font-bold' : ''}>
-                        {personalContext.length}
-                      </span>
-                      /400
-                    </div>
-                    <div className="absolute bottom-3 right-3">
+                    <div className="flex justify-between items-center mt-2">
+                      <div className="text-xs text-muted-foreground">
+                        <span className={personalContext.length >= 400 ? 'text-destructive font-bold' : ''}>
+                          {personalContext.length}
+                        </span>
+                        /400
+                      </div>
                       {((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition) && (
                         <Button
                           type="button"
                           variant="secondary"
-                          size="icon"
+                          size="sm"
                           onClick={isRecording ? stopRecording : startRecording}
-                          className={`h-8 w-8 rounded-full ${isRecording ? 'bg-red-500/20 text-red-500 hover:bg-red-500/30' : 'bg-primary/10 text-primary hover:bg-primary/20'}`}
+                          className={`h-8 rounded-full ${isRecording ? 'bg-red-500/20 text-red-500 hover:bg-red-500/30' : 'bg-primary/10 text-primary hover:bg-primary/20'}`}
                         >
-                          <Mic className={`h-4 w-4 ${isRecording ? 'animate-pulse' : ''}`} />
+                          <Mic className={`h-4 w-4 mr-2 ${isRecording ? 'animate-pulse' : ''}`} />
+                          {isRecording ? 'Detener' : 'Dictar'}
                         </Button>
                       )}
                     </div>

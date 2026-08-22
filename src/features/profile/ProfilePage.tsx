@@ -202,7 +202,7 @@ export function ProfilePage() {
               maxLength={50}
               value={editName}
               onChange={e => setEditName(e.target.value)}
-              className="mt-1 block w-full rounded-xl border border-border/40 bg-card/50 p-3 text-foreground"
+              className="mt-1 block w-full rounded-xl border border-border/40 bg-card/50 p-3 pr-12 text-foreground"
               placeholder="Ej. David"
             />
             <div className="absolute right-2 top-[34px] text-xs text-muted-foreground">
@@ -254,24 +254,25 @@ export function ProfilePage() {
                 maxLength={400}
                 onChange={(e) => setEditPersonalContext(e.target.value)}
                 placeholder="Ej: Estoy preparándome para una maratón o recuperándome de una lesión de rodilla..."
-                className="w-full min-h-[120px] rounded-xl border border-border/50 bg-background/50 p-4 text-sm text-foreground outline-none transition-colors focus:border-primary focus:bg-background resize-none pb-12"
+                className="w-full min-h-[120px] rounded-xl border border-border/50 bg-background/50 p-4 text-sm text-foreground outline-none transition-colors focus:border-primary focus:bg-background resize-y"
               />
-              <div className="absolute bottom-3 left-3 text-xs text-muted-foreground">
-                <span className={editPersonalContext.length >= 400 ? 'text-destructive font-bold' : ''}>
-                  {editPersonalContext.length}
-                </span>
-                /400
-              </div>
-              <div className="absolute bottom-3 right-3">
+              <div className="flex justify-between items-center mt-2">
+                <div className="text-xs text-muted-foreground">
+                  <span className={editPersonalContext.length >= 400 ? 'text-destructive font-bold' : ''}>
+                    {editPersonalContext.length}
+                  </span>
+                  /400
+                </div>
                 {((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition) && (
                   <Button
                     type="button"
                     variant="secondary"
-                    size="icon"
+                    size="sm"
                     onClick={isRecording ? stopRecording : startRecording}
-                    className={`h-8 w-8 rounded-full ${isRecording ? 'bg-red-500/20 text-red-500 hover:bg-red-500/30' : 'bg-primary/10 text-primary hover:bg-primary/20'}`}
+                    className={`h-8 rounded-full ${isRecording ? 'bg-red-500/20 text-red-500 hover:bg-red-500/30' : 'bg-primary/10 text-primary hover:bg-primary/20'}`}
                   >
-                    <Mic className={`h-4 w-4 ${isRecording ? 'animate-pulse' : ''}`} />
+                    <Mic className={`h-4 w-4 mr-2 ${isRecording ? 'animate-pulse' : ''}`} />
+                    {isRecording ? 'Detener' : 'Dictar'}
                   </Button>
                 )}
               </div>

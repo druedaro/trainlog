@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Activity, Sparkles, AlertCircle, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
+import ReactMarkdown from 'react-markdown';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
 import {
@@ -156,10 +157,10 @@ export function InsightsPage() {
         </header>
 
         <main className="flex-1 space-y-6 p-5">
-          <div className="prose-trainlog text-sm leading-relaxed text-foreground/90">
-            {insightsDoc.synthesis.summary.split('\n').map((paragraph, i) => (
-              <p key={i} className="mb-4 last:mb-0">{paragraph}</p>
-            ))}
+          <div className="prose prose-sm dark:prose-invert prose-p:leading-relaxed prose-headings:font-semibold prose-strong:text-primary max-w-none text-foreground/90">
+            <ReactMarkdown>
+              {insightsDoc.synthesis.summary}
+            </ReactMarkdown>
           </div>
 
           <div className="rounded-2xl border border-border/40 bg-card/50 p-5 mt-6">
