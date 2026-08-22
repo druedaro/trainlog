@@ -9,6 +9,14 @@
     {
       "path": "/api/cron/dailyReminder",
       "schedule": "0 18 * * *"
+    },
+    {
+      "path": "/api/cron/monthlyReportBuilder",
+      "schedule": "0 9 1 * *"
+    },
+    {
+      "path": "/api/cron/reengagement",
+      "schedule": "0 17 * * *"
     }
   ],
   "rewrites": [
