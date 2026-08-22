@@ -37,7 +37,7 @@ describe('TranscriptEditor', () => {
     const confirmButton = screen.getByRole('button', { name: /Confirmar y analizar/i });
     fireEvent.click(confirmButton);
 
-    // wait for react-hook-form to process
+
     await screen.findByRole('button', { name: /Confirmar y analizar/i });
     
     setTimeout(() => {

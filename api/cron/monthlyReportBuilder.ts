@@ -20,7 +20,7 @@ export default async function monthlyReportBuilder(req: VercelRequest, res: Verc
 
   try {
     const now = new Date();
-    // This cron runs on the 1st of the month, so we calculate for the previous month
+
     const firstDayOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const lastDayOfPrevMonth = new Date(firstDayOfCurrentMonth.getTime() - 1);
     const prevMonthStr = `${lastDayOfPrevMonth.getFullYear()}-${String(lastDayOfPrevMonth.getMonth() + 1).padStart(2, '0')}`;
@@ -42,7 +42,7 @@ export default async function monthlyReportBuilder(req: VercelRequest, res: Verc
       const reportSnap = await reportRef.get();
 
       if (reportSnap.exists) {
-        // Skip if report already generated
+
         continue;
       }
 
@@ -121,7 +121,6 @@ Escribe UN SOLO PÁRRAFO de máximo 40-50 palabras felicitándole, destacando su
       await reportRef.set(reportData);
       generatedCount++;
 
-      // Send Push Notification
       const tokensSnapshot = await adminDb
         .collection('users')
         .doc(userId)

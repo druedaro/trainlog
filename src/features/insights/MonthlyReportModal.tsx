@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 
 export interface MonthlyReport {
   id: string;
-  month: string; // 'YYYY-MM'
+  month: string;
   summary: string;
   totalEntries: number;
   maxStreak: number;

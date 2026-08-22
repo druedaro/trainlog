@@ -30,8 +30,7 @@ describe('MonthlyReportModal', () => {
   it('calls onClose when close button is clicked', () => {
     const handleClose = vi.fn();
     render(<MonthlyReportModal report={mockReport} onClose={handleClose} />);
-    
-    // Test the X button (first button) or the main button
+
     const closeButtons = screen.getAllByRole('button');
     fireEvent.click(closeButtons[0]!);
     

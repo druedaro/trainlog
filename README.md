@@ -45,6 +45,15 @@ After a workout, users record a voice note describing how the session went — w
 * 🔔 **Push Notifications**
   Stay engaged with background updates and alerts via Firebase Cloud Messaging.
 
+* 🏆 **Gamification & Milestones**
+  A robust achievement system designed to reward consistency without creating anxiety. Earn badges for emotional resilience, consistency, and exploration.
+
+* 🛡️ **Hardened Security & Validation**
+  Strict Zod schema validations across the frontend and backend boundaries, with real-time XSS protection and intelligent character limits.
+
+* 💡 **Context-Aware Interactions**
+  Empathic, micro-interactions generated dynamically based on your perceived mood at the end of each session.
+
 * 🔒 **User-controlled data**
   AI-generated information is reviewed by the user before it is stored. Account deletion removes all data.
 
@@ -185,7 +194,7 @@ npm run test:watch
 ### Phase 7 — Personal Patterns & Weekly Insights ✅
 ### Phase 8 — AI Coach (Anna) ✅
 ### Phase 9 — Push Notifications, Monthly Reports & PWA ✅
-### Phase 10 — Security Hardening (Rate Limiting, PII Sanitization) ✅
+### Phase 10 — Security Hardening, Gamification & UX Polish ✅
 ### Phase 11 — Tablet & Desktop Adaptation ✅
 ### Phase 12 — Release Preparation ✅
 

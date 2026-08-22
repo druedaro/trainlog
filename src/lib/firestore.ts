@@ -411,7 +411,7 @@ export async function fetchUserProfile(userId: string): Promise<UserProfile | nu
 
 export async function saveUserProfile(userId: string, profile: Partial<UserProfile>): Promise<void> {
   const docRef = doc(db, 'users', userId);
-  // Validamos con Zod antes de guardar, ignorando validación estricta de undefined fields gracias a partial
+
   const validatedProfile = userProfileSchema.partial().parse(profile);
   await setDoc(docRef, validatedProfile, { merge: true });
 }

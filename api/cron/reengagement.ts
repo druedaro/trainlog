@@ -19,7 +19,7 @@ export default async function reengagement(req: VercelRequest, res: VercelRespon
 
   try {
     const now = new Date();
-    // Normalize to midnight UTC for day difference calculations
+
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
     const usersSnapshot = await adminDb.collection('users').get();
@@ -35,7 +35,6 @@ export default async function reengagement(req: VercelRequest, res: VercelRespon
       const age = userData.age || 30;
       const personalContext = userData.personalContext;
 
-      // Get last entry
       const entriesSnapshot = await adminDb
         .collection('users')
         .doc(userId)
@@ -58,11 +57,10 @@ export default async function reengagement(req: VercelRequest, res: VercelRespon
         const lastEntryDay = new Date(lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate());
         daysInactive = Math.floor((today.getTime() - lastEntryDay.getTime()) / (1000 * 60 * 60 * 24));
       } else {
-        // Fallback to account creation date if stored, but for now we ignore if 0 entries
+
         continue;
       }
 
-      // Check if it's exactly 3, 5, or 7 days
       if (daysInactive === 3 || daysInactive === 5 || daysInactive === 7) {
         
         const tokensSnapshot = await adminDb
@@ -95,8 +93,7 @@ NO te pases de 120 caracteres.`;
               max_tokens: 60,
             });
             pushMessageBody = response.choices[0]?.message?.content?.trim() || pushMessageBody;
-            
-            // Cleanup quotes if AI returns them
+
             if (pushMessageBody.startsWith('"') && pushMessageBody.endsWith('"')) {
               pushMessageBody = pushMessageBody.slice(1, -1);
             }

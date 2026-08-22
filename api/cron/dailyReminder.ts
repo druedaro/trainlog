@@ -2,7 +2,7 @@ import { VercelRequest, VercelResponse } from '@vercel/node';
 import { adminDb, adminMessaging } from '../_lib/firebaseAdmin.js';
 
 export default async function dailyReminder(req: VercelRequest, res: VercelResponse) {
-  // Verificación de seguridad para asegurar que la llamada viene del Cron de Vercel
+
   if (
     process.env.CRON_SECRET &&
     req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`
@@ -11,13 +11,12 @@ export default async function dailyReminder(req: VercelRequest, res: VercelRespo
   }
 
   try {
-    // 1. Calcular el inicio y fin del día en curso (UTC)
-    // Asumimos que la lógica del usuario para "hoy" se basa en su zona horaria, pero para el cron usaremos la fecha actual del servidor.
+
+
     const now = new Date();
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const endOfDay = new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000 - 1);
 
-    // 2. Obtener todos los usuarios
     const usersSnapshot = await adminDb.collection('users').get();
 
     const notificationsPromises: Promise<any>[] = [];
@@ -26,7 +25,6 @@ export default async function dailyReminder(req: VercelRequest, res: VercelRespo
     for (const userDoc of usersSnapshot.docs) {
       const userId = userDoc.id;
 
-      // 3. Comprobar si el usuario tiene una entrada creada hoy
       const entriesSnapshot = await adminDb
         .collection('users')
         .doc(userId)
@@ -37,8 +35,8 @@ export default async function dailyReminder(req: VercelRequest, res: VercelRespo
         .get();
 
       if (entriesSnapshot.empty) {
-        // No ha entrenado/registrado nada hoy
-        // 4. Buscar si tiene tokens FCM activos
+
+
         const tokensSnapshot = await adminDb
           .collection('users')
           .doc(userId)
@@ -48,7 +46,7 @@ export default async function dailyReminder(req: VercelRequest, res: VercelRespo
         const tokens = tokensSnapshot.docs.map(doc => doc.id);
 
         if (tokens.length > 0) {
-          // 5. Enviar push notification a todos sus dispositivos
+
           const message = {
             notification: {
               title: '¡No olvides tu entrenamiento!',
@@ -60,7 +58,7 @@ export default async function dailyReminder(req: VercelRequest, res: VercelRespo
           const pushPromise = adminMessaging.sendEachForMulticast(message)
             .then((response) => {
               sentCount += response.successCount;
-              // Limpiar tokens inválidos si hay fallos (opcional pero recomendado)
+
               if (response.failureCount > 0) {
                 const failedTokens: string[] = [];
                 response.responses.forEach((resp, idx) => {

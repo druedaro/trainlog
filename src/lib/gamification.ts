@@ -165,7 +165,7 @@ export function checkAchievements(
   if (context.savedArticlesCount && context.savedArticlesCount >= 50) unlock('articles_50');
   if (context.hasChatted) unlock('coach_chat');
 
-  // Check social training (mentioned someone in transcript)
+
   if (context.transcript) {
     const transcriptLower = context.transcript.toLowerCase();
     const socialKeywords = ['con ', 'junto a ', 'acompañado'];
@@ -173,14 +173,14 @@ export function checkAchievements(
       unlock('social_training');
     }
 
-    // Check mental clarity
+
     const mentalKeywords = ['desconectar', 'despejar', 'terapia', 'escapar', 'olvidar'];
     if (mentalKeywords.some(kw => transcriptLower.includes(kw))) {
       unlock('mental_clarity');
     }
   }
 
-  // Check emotional strength
+
   if (context.perceivedMood && (context.perceivedMood === 'very_negative' || context.perceivedMood === 'negative')) {
     unlock('emotional_strength');
   }
