@@ -262,15 +262,21 @@ export function CoachPage() {
                 {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
               </Button>
             ) : null}
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Pregunta a tu coach..."
-              disabled={isLoading || entries.length === 0}
-              className="flex-1 rounded-full border border-border/40 bg-card/50 px-4 py-2.5 text-sm outline-none transition-colors focus:border-primary disabled:opacity-50"
-            />
+            <div className="relative flex-1">
+              <input
+                type="text"
+                value={input}
+                maxLength={2000}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Pregunta a tu coach..."
+                disabled={isLoading || entries.length === 0}
+                className="w-full rounded-full border border-border/40 bg-card/50 pl-4 pr-16 py-2.5 text-sm outline-none transition-colors focus:border-primary disabled:opacity-50"
+              />
+              <div className="absolute right-4 top-[10px] text-[10px] text-muted-foreground pointer-events-none">
+                {input.length}/2000
+              </div>
+            </div>
             <Button
               onClick={handleSend}
               disabled={!input.trim() || isLoading || entries.length === 0}

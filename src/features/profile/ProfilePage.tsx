@@ -153,7 +153,7 @@ export function ProfilePage() {
     if (!user) return;
     setIsSaving(true);
     try {
-      await saveUserProfile(user.uid, {
+      const profileData = {
         uid: user.uid,
         name: editName.trim() || 'Atleta',
         gender: editGender,
@@ -161,7 +161,16 @@ export function ProfilePage() {
         birthDate: editBirthDate || undefined,
         personalContext: editPersonalContext.trim() || undefined,
         createdAt: profile?.createdAt || Date.now()
-      });
+      };
+
+      const parsed = userProfileSchema.partial().safeParse(profileData);
+      if (!parsed.success) {
+        toast.error(parsed.error.errors[0].message);
+        setIsSaving(false);
+        return;
+      }
+
+      await saveUserProfile(user.uid, parsed.data);
       await refreshProfile();
       setIsEditing(false);
       toast.success('Perfil guardado con éxito.');
@@ -186,15 +195,19 @@ export function ProfilePage() {
       <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col bg-background p-6">
         <h1 className="text-2xl font-bold mb-6 text-foreground">Editar Perfil</h1>
         <div className="space-y-4">
-          <div>
+          <div className="relative">
             <label className="text-sm font-semibold text-muted-foreground">Nombre</label>
             <input 
               type="text" 
+              maxLength={50}
               value={editName}
               onChange={e => setEditName(e.target.value)}
               className="mt-1 block w-full rounded-xl border border-border/40 bg-card/50 p-3 text-foreground"
               placeholder="Ej. David"
             />
+            <div className="absolute right-2 top-[34px] text-xs text-muted-foreground">
+              {editName.length}/50
+            </div>
           </div>
           <div>
             <label className="text-sm font-semibold text-muted-foreground">Sexo</label>
@@ -238,10 +251,17 @@ export function ProfilePage() {
             <div className="relative">
               <textarea
                 value={editPersonalContext}
+                maxLength={400}
                 onChange={(e) => setEditPersonalContext(e.target.value)}
-                placeholder="Ej: Estoy pasando por un duelo amoroso y hacer clases dirigidas me ayuda a desconectar..."
+                placeholder="Ej: Estoy preparándome para una maratón o recuperándome de una lesión de rodilla..."
                 className="w-full min-h-[120px] rounded-xl border border-border/50 bg-background/50 p-4 text-sm text-foreground outline-none transition-colors focus:border-primary focus:bg-background resize-none pb-12"
               />
+              <div className="absolute bottom-3 left-3 text-xs text-muted-foreground">
+                <span className={editPersonalContext.length >= 400 ? 'text-destructive font-bold' : ''}>
+                  {editPersonalContext.length}
+                </span>
+                /400
+              </div>
               <div className="absolute bottom-3 right-3">
                 {((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition) && (
                   <Button

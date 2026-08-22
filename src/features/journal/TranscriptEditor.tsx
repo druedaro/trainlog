@@ -19,9 +19,11 @@ export function TranscriptEditor({
   onDiscard,
   isSubmitting = false,
 }: TranscriptEditorProps) {
-  const { register, handleSubmit, formState } = useForm<TranscriptFormValues>({
+  const { register, handleSubmit, formState, watch } = useForm<TranscriptFormValues>({
     defaultValues: { transcript },
   });
+  
+  const currentTranscript = watch('transcript');
 
   const onSubmit = (values: TranscriptFormValues) => {
     const trimmed = values.transcript.trim();
@@ -44,6 +46,7 @@ export function TranscriptEditor({
         <textarea
           {...register('transcript', {
             required: 'La transcripción no puede estar vacía.',
+            maxLength: { value: 5000, message: 'La transcripción no puede exceder los 5000 caracteres.' },
             validate: (value) =>
               value.trim().length > 0 || 'La transcripción no puede estar vacía.',
           })}
@@ -56,9 +59,14 @@ export function TranscriptEditor({
             {formState.errors.transcript.message}
           </p>
         )}
-        <p className="mt-2 text-xs text-muted-foreground">
-          Edita el texto si es necesario y confirma para analizar tu reflexión.
-        </p>
+        <div className="flex justify-between items-center mt-2">
+          <p className="text-xs text-muted-foreground">
+            Edita el texto si es necesario y confirma para analizar tu reflexión.
+          </p>
+          <p className={`text-xs ${currentTranscript?.length > 5000 ? 'text-destructive font-bold' : 'text-muted-foreground'}`}>
+            {currentTranscript?.length || 0} / 5000
+          </p>
+        </div>
 
         <div className="mt-5 flex gap-3">
           <Button

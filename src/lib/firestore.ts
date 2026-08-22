@@ -20,7 +20,7 @@ import { db } from '@/lib/firebase';
 import { generateMonthlyReport } from '@/lib/api';
 import type { JournalEntry, EntryAnalysis } from '@/types/entry';
 import type { DiscoverDocument, DiscoverArticle } from '@/types/discover';
-import type { UserProfile } from '@/types/user';
+import { type UserProfile, userProfileSchema } from '@/types/user';
 import type { MonthlyReport } from '@/features/insights/MonthlyReportModal';
 
 const ENTRIES_COLLECTION = 'entries';
@@ -411,5 +411,7 @@ export async function fetchUserProfile(userId: string): Promise<UserProfile | nu
 
 export async function saveUserProfile(userId: string, profile: Partial<UserProfile>): Promise<void> {
   const docRef = doc(db, 'users', userId);
-  await setDoc(docRef, profile, { merge: true });
+  // Validamos con Zod antes de guardar, ignorando validación estricta de undefined fields gracias a partial
+  const validatedProfile = userProfileSchema.partial().parse(profile);
+  await setDoc(docRef, validatedProfile, { merge: true });
 }

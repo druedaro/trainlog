@@ -5,7 +5,8 @@ import { useAuth } from '@/features/auth/useAuth';
 import { saveUserProfile } from '@/lib/firestore';
 import { requestPushPermissions } from '@/lib/push';
 import { toast } from 'sonner';
-import type { Gender } from '@/types/user';
+import { toast } from 'sonner';
+import { type Gender, userProfileSchema } from '@/types/user';
 
 interface OnboardingModalProps {
   forceShow?: boolean;
@@ -108,17 +109,24 @@ export function OnboardingModal({ forceShow = false, onClose }: OnboardingModalP
       toast.error('Por favor completa todos los campos requeridos.');
       return;
     }
+    const profileData = {
+      uid: user.uid,
+      name: name.trim(),
+      age: parseInt(age, 10),
+      gender: gender as Gender,
+      personalContext: personalContext.trim(),
+      onboardingCompleted: true,
+    };
+
+    const parsed = userProfileSchema.partial().safeParse(profileData);
+    if (!parsed.success) {
+      toast.error(parsed.error.errors[0].message);
+      return;
+    }
     
     setIsSubmitting(true);
     try {
-      await saveUserProfile(user.uid, {
-        uid: user.uid,
-        name: name.trim(),
-        age: parseInt(age, 10),
-        gender: gender as Gender,
-        personalContext: personalContext.trim(),
-        onboardingCompleted: true,
-      });
+      await saveUserProfile(user.uid, parsed.data);
       await refreshProfile();
       toast.success(forceShow ? 'Tutorial completado.' : '¡Bienvenido a TrainLog!');
       if (onClose) onClose();
@@ -169,10 +177,14 @@ export function OnboardingModal({ forceShow = false, onClose }: OnboardingModalP
                     <input
                       type="text"
                       value={name}
+                      maxLength={50}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Tu nombre o apodo"
                       className="w-full rounded-xl border border-border/50 bg-background/50 py-3 pl-10 pr-4 text-sm text-foreground outline-none transition-colors focus:border-primary focus:bg-background"
                     />
+                    <div className="absolute bottom-[-20px] right-0 text-[10px] text-muted-foreground">
+                      {name.length}/50
+                    </div>
                   </div>
                 </div>
 
@@ -225,10 +237,17 @@ export function OnboardingModal({ forceShow = false, onClose }: OnboardingModalP
                   <div className="relative">
                     <textarea
                       value={personalContext}
+                      maxLength={400}
                       onChange={(e) => setPersonalContext(e.target.value)}
-                      placeholder="Ej: Estoy pasando por un duelo amoroso y hacer clases dirigidas me ayuda a desconectar..."
-                      className="w-full min-h-[120px] rounded-xl border border-border/50 bg-background/50 p-4 text-sm text-foreground outline-none transition-colors focus:border-primary focus:bg-background resize-none"
+                      placeholder="Ej: Estoy preparándome para una maratón o recuperándome de una lesión de rodilla..."
+                      className="w-full min-h-[120px] rounded-xl border border-border/50 bg-background/50 p-4 text-sm text-foreground outline-none transition-colors focus:border-primary focus:bg-background resize-none pb-12"
                     />
+                    <div className="absolute bottom-3 left-3 text-xs text-muted-foreground">
+                      <span className={personalContext.length >= 400 ? 'text-destructive font-bold' : ''}>
+                        {personalContext.length}
+                      </span>
+                      /400
+                    </div>
                     <div className="absolute bottom-3 right-3">
                       {((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition) && (
                         <Button
