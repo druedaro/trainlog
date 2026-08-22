@@ -55,16 +55,33 @@ export function CoachPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Lock body scroll to prevent keyboard from pushing layout up on mobile
+    const handleResize = () => {
+      if (window.visualViewport) {
+        document.documentElement.style.setProperty('--vh', `${window.visualViewport.height}px`);
+        if (messagesEndRef.current) {
+          const mainElement = messagesEndRef.current.closest('main');
+          if (mainElement) {
+            mainElement.scrollTop = mainElement.scrollHeight;
+          }
+        }
+      }
+    };
+    
+    handleResize();
+    window.visualViewport?.addEventListener('resize', handleResize);
+    window.visualViewport?.addEventListener('scroll', handleResize);
+    
     document.body.style.overflow = 'hidden';
     document.body.style.position = 'fixed';
     document.body.style.width = '100%';
-    document.body.style.height = '100%';
+    
     return () => {
+      window.visualViewport?.removeEventListener('resize', handleResize);
+      window.visualViewport?.removeEventListener('scroll', handleResize);
+      document.documentElement.style.removeProperty('--vh');
       document.body.style.overflow = '';
       document.body.style.position = '';
       document.body.style.width = '';
-      document.body.style.height = '';
     };
   }, []);
 
@@ -198,12 +215,15 @@ export function CoachPage() {
   };
 
   return (
-    <div className="flex h-[calc(100dvh-64px)] md:h-[100dvh] w-full flex-col bg-background">
-      <header className="glass sticky top-0 z-20 flex items-center justify-between border-b border-border/40 px-5 py-3.5">
+    <div 
+      className="fixed inset-0 z-10 flex flex-col bg-background pb-[64px] md:pb-0 md:pl-24 lg:pl-64"
+      style={{ height: 'var(--vh, 100dvh)' }}
+    >
+      <header className="shrink-0 glass flex items-center justify-between border-b border-border/40 px-5 py-3.5">
         <h1 className="text-lg font-bold text-gradient">Personal Coach</h1>
       </header>
 
-      <main className="mx-auto w-full max-w-3xl flex-1 overflow-y-auto px-5 pt-6 pb-[120px] md:pb-[80px] space-y-4">
+      <main className="mx-auto w-full max-w-3xl flex-1 overflow-y-auto px-5 pt-6 pb-4 space-y-4">
         {error && (
           <div className="flex items-center gap-3 rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
             <AlertCircle className="h-5 w-5 shrink-0" />
@@ -266,7 +286,7 @@ export function CoachPage() {
         </div>
       </main>
 
-      <div className="fixed bottom-[72px] left-0 right-0 z-20 border-t border-border/40 bg-background/80 px-4 py-3 backdrop-blur-md md:bottom-0 md:left-24 lg:left-64">
+      <div className="shrink-0 border-t border-border/40 bg-background/80 px-4 py-3 backdrop-blur-md">
         <div className="mx-auto w-full max-w-3xl">
           <div className="flex w-full gap-2">
             {window.SpeechRecognition || window.webkitSpeechRecognition ? (
