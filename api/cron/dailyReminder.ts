@@ -1,5 +1,5 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { adminDb, adminMessaging } from '../lib/firebaseAdmin';
+import { adminDb, adminMessaging } from '../lib/firebaseAdmin.js';
 
 export default async function dailyReminder(req: VercelRequest, res: VercelResponse) {
   // Verificación de seguridad para asegurar que la llamada viene del Cron de Vercel
