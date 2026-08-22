@@ -17,6 +17,20 @@ import { generateContextualResponse } from '@/lib/api';
 import type { JournalEntry } from '@/types/entry';
 import ReactMarkdown from 'react-markdown';
 
+
+const getEmpatheticPhrase = (mood: string | null) => {
+  if (mood === 'very_negative' || mood === 'negative') {
+    return "Has venido a pesar de todo, eso ya es mucho.";
+  }
+  if (mood === 'very_positive' || mood === 'positive') {
+    return "Hoy te has regalado algo bueno.";
+  }
+  if (mood === 'neutral') {
+    return "Paso a paso, sigues avanzando.";
+  }
+  return null;
+};
+
 const ENERGY_CONFIG: Record<string, { label: string; color: string; emoji: string }> = {
   very_low: { label: 'Muy baja', color: 'text-red-400', emoji: '🔋' },
   low: { label: 'Baja', color: 'text-orange-400', emoji: '🔋' },
@@ -300,9 +314,14 @@ export function EntryDetail() {
               <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-primary/70">
                 Para reflexionar
               </h3>
-              <p className="text-sm italic leading-relaxed text-foreground/80">
+              <p className="text-sm italic leading-relaxed text-foreground/80 mb-3">
                 {analysis.reflectionPrompt}
               </p>
+              {getEmpatheticPhrase(analysis.perceivedMood) && (
+                <p className="text-xs font-medium text-foreground/60 border-t border-primary/10 pt-2">
+                  ✨ {getEmpatheticPhrase(analysis.perceivedMood)}
+                </p>
+              )}
             </div>
           )}
 
