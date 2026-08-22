@@ -179,8 +179,11 @@ export function JournalPage() {
         </div>
         <div className="flex items-center gap-3">
           {streak > 0 && (
-            <div className="flex items-center gap-1.5 rounded-full bg-orange-500/10 px-3 py-1 border border-orange-500/20">
-              <span className="text-sm font-bold text-orange-500">{streak}</span>
+            <div 
+              className="flex items-center gap-1.5 rounded-full bg-orange-500/10 px-3 py-1 border border-orange-500/20"
+              title="Racha de días seguidos registrando entrenamientos"
+            >
+              <span className="text-sm font-bold text-orange-500">{streak} días</span>
               <span className="text-sm">🔥</span>
             </div>
           )}
