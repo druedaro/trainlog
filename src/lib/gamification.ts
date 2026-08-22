@@ -117,6 +117,22 @@ export const ACHIEVEMENTS: Record<string, Achievement> = {
     category: 'social',
     tier: 'silver',
     icon: '🤝'
+  },
+  emotional_strength: {
+    id: 'emotional_strength',
+    title: 'El paso más difícil',
+    description: 'Has registrado un entrenamiento a pesar de sentirte mal.',
+    category: 'insight',
+    tier: 'gold',
+    icon: '🛡️'
+  },
+  mental_clarity: {
+    id: 'mental_clarity',
+    title: 'Mente en blanco',
+    description: 'El entrenamiento te ha servido de terapia o para desconectar.',
+    category: 'insight',
+    tier: 'silver',
+    icon: '🧘'
   }
 };
 
@@ -128,6 +144,7 @@ export function checkAchievements(
     savedArticlesCount?: number;
     hasChatted?: boolean;
     transcript?: string;
+    mood?: string;
   }
 ): string[] {
   const newUnlocks: string[] = [];
@@ -155,6 +172,17 @@ export function checkAchievements(
     if (socialKeywords.some(kw => transcriptLower.includes(kw))) {
       unlock('social_training');
     }
+
+    // Check mental clarity
+    const mentalKeywords = ['desconectar', 'despejar', 'terapia', 'escapar', 'olvidar'];
+    if (mentalKeywords.some(kw => transcriptLower.includes(kw))) {
+      unlock('mental_clarity');
+    }
+  }
+
+  // Check emotional strength
+  if (context.mood && (context.mood === 'very_low' || context.mood === 'low')) {
+    unlock('emotional_strength');
   }
 
   return newUnlocks;

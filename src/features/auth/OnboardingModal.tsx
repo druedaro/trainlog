@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { ChevronRight, Bell, Shield, User as UserIcon } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { ChevronRight, Bell, Shield, User as UserIcon, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/useAuth';
 import { saveUserProfile } from '@/lib/firestore';
@@ -13,6 +13,11 @@ export function OnboardingModal() {
   const [name, setName] = useState(profile?.name || user?.displayName || '');
   const [age, setAge] = useState<string>(profile?.age?.toString() || '');
   const [gender, setGender] = useState<Gender | ''>(profile?.gender || '');
+  const [personalContext, setPersonalContext] = useState(profile?.personalContext || '');
+  
+  const [isRecording, setIsRecording] = useState(false);
+  const recognitionRef = useRef<any>(null);
+
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,6 +51,52 @@ export function OnboardingModal() {
     }
   };
 
+  const startRecording = () => {
+    const win = window as any;
+    const SpeechRecognition = win.SpeechRecognition || win.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      toast.error('Tu navegador no soporta reconocimiento de voz.');
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'es-ES';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    recognition.onresult = (event: any) => {
+      let finalTranscript = '';
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript;
+        }
+      }
+      if (finalTranscript) {
+        setPersonalContext(prev => (prev ? prev + ' ' + finalTranscript : finalTranscript));
+      }
+    };
+
+    recognition.onerror = () => {
+      setIsRecording(false);
+      toast.error('Error al escuchar.');
+    };
+
+    recognition.onend = () => {
+      setIsRecording(false);
+    };
+
+    recognitionRef.current = recognition;
+    recognition.start();
+    setIsRecording(true);
+  };
+
+  const stopRecording = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+    setIsRecording(false);
+  };
+
   const handleComplete = async () => {
     if (!user) return;
     if (!name.trim() || !age || !gender || !privacyAccepted) {
@@ -60,6 +111,7 @@ export function OnboardingModal() {
         name: name.trim(),
         age: parseInt(age, 10),
         gender: gender as Gender,
+        personalContext: personalContext.trim(),
         onboardingCompleted: true,
       });
       await refreshProfile();
@@ -84,19 +136,19 @@ export function OnboardingModal() {
               <span className="text-3xl">👋</span>
             </div>
             <h2 className="text-2xl font-bold text-foreground">
-              {step === 1 ? '¡Hola, atleta!' : 'Ya casi terminamos'}
+              {step === 1 ? '¡Hola, atleta!' : step === 2 ? 'Contexto Vital' : 'Ya casi terminamos'}
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
               {step === 1 
                 ? 'Queremos conocerte un poco mejor para que nuestra IA adapte tu experiencia al milímetro.'
+                : step === 2
+                ? 'Ayuda a Anna a entender tu situación actual para darte un apoyo emocional 100% personalizado.'
                 : 'Configura tus preferencias para sacar el máximo partido a tu diario.'}
             </p>
           </div>
 
             {step === 1 ? (
-              <div
-                className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300"
-              >
+              <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">¿Cómo te llamas?</label>
                   <div className="relative">
@@ -148,10 +200,57 @@ export function OnboardingModal() {
                   <ChevronRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
+            ) : step === 2 ? (
+              <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground flex justify-between items-center">
+                    <span>Contexto Vital (Opcional)</span>
+                  </label>
+                  <p className="text-xs text-muted-foreground mb-2">
+                    Si estás pasando por una lesión, un duelo, o tienes una meta específica, díselo a Anna para que su apoyo sea empático y real.
+                  </p>
+                  <div className="relative">
+                    <textarea
+                      value={personalContext}
+                      onChange={(e) => setPersonalContext(e.target.value)}
+                      placeholder="Ej: Estoy pasando por un duelo amoroso y hacer clases dirigidas me ayuda a desconectar..."
+                      className="w-full min-h-[120px] rounded-xl border border-border/50 bg-background/50 p-4 text-sm text-foreground outline-none transition-colors focus:border-primary focus:bg-background resize-none"
+                    />
+                    <div className="absolute bottom-3 right-3">
+                      {((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition) && (
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          size="icon"
+                          onClick={isRecording ? stopRecording : startRecording}
+                          className={`h-8 w-8 rounded-full ${isRecording ? 'bg-red-500/20 text-red-500 hover:bg-red-500/30' : 'bg-primary/10 text-primary hover:bg-primary/20'}`}
+                        >
+                          <Mic className={`h-4 w-4 ${isRecording ? 'animate-pulse' : ''}`} />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 mt-6">
+                  <Button
+                    variant="outline"
+                    onClick={() => setStep(1)}
+                    className="w-1/3 rounded-xl py-6 font-semibold"
+                  >
+                    Volver
+                  </Button>
+                  <Button
+                    onClick={() => setStep(3)}
+                    className="w-2/3 rounded-xl py-6 font-semibold"
+                  >
+                    Siguiente
+                    <ChevronRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
             ) : (
-              <div
-                className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300"
-              >
+              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                 <div className="rounded-2xl border border-border/50 bg-background/40 p-4">
                   <div className="flex items-start gap-4">
                     <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-500/10 text-blue-500">
@@ -204,7 +303,7 @@ export function OnboardingModal() {
                 <div className="flex gap-3">
                   <Button
                     variant="outline"
-                    onClick={() => setStep(1)}
+                    onClick={() => setStep(2)}
                     className="w-1/3 rounded-xl py-6 font-semibold"
                   >
                     Volver

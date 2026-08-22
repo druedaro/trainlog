@@ -33,6 +33,7 @@ export default async function reengagement(req: VercelRequest, res: VercelRespon
       const displayName = userData.displayName || 'atleta';
       const gender = userData.gender || 'masculino';
       const age = userData.age || 30;
+      const personalContext = userData.personalContext;
 
       // Get last entry
       const entriesSnapshot = await adminDb
@@ -75,6 +76,7 @@ export default async function reengagement(req: VercelRequest, res: VercelRespon
         if (tokens.length > 0) {
           const systemPrompt = `Eres Anna, la entrenadora personal y psicóloga deportiva IA de la app Trainlog.
 El usuario se llama ${displayName}, tiene ${age} años, género ${gender}.
+${personalContext ? `Contexto vital actual del usuario: "${personalContext}"` : ''}
 El usuario lleva exactamente ${daysInactive} días sin entrenar ni registrar actividad en la app.
 Tu tarea es escribir el texto de una notificación push corta (MÁXIMO 120 caracteres) para animarle amablemente a volver y registrar algo hoy.
 Debe sonar como un mensaje de chat, muy empático, directo y que demuestre que te importas por él/ella. Usa algún emoji.

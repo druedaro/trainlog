@@ -9,4 +9,5 @@ export interface UserProfile {
   createdAt: number;
   onboardingCompleted?: boolean;
   achievements?: string[];
+  personalContext?: string;
 }

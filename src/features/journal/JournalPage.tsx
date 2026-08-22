@@ -147,7 +147,8 @@ export function JournalPage() {
         const newUnlocks = checkAchievements(profile.achievements || [], {
           entryCount: 1,
           streak: currentStreak,
-          transcript
+          transcript,
+          mood: analysis?.mood
         });
 
         if (newUnlocks.length > 0) {

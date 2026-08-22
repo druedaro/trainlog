@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate, Link } from 'react-router';
-import { LogOut, Download, Activity, Calendar, Flame, Edit2, User, AlertTriangle, Shield, FileText, Bell } from 'lucide-react';
+import { LogOut, Download, Activity, Calendar, Flame, Edit2, User, AlertTriangle, Shield, FileText, Bell, Mic } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
@@ -24,7 +24,10 @@ export function ProfilePage() {
   const [editGender, setEditGender] = useState<Gender>(profile?.gender || 'prefiero no decirlo');
   const [editAge, setEditAge] = useState<string>(profile?.age?.toString() || '');
   const [editBirthDate, setEditBirthDate] = useState(profile?.birthDate || '');
+  const [editPersonalContext, setEditPersonalContext] = useState(profile?.personalContext || '');
   const [isSaving, setIsSaving] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const recognitionRef = useRef<any>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isAchievementsModalOpen, setIsAchievementsModalOpen] = useState(false);
@@ -80,6 +83,52 @@ export function ProfilePage() {
     return { streak, topActivity, daysAgo };
   }, [recentEntries]);
 
+  const startRecording = () => {
+    const win = window as any;
+    const SpeechRecognition = win.SpeechRecognition || win.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      toast.error('Tu navegador no soporta reconocimiento de voz.');
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'es-ES';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    recognition.onresult = (event: any) => {
+      let finalTranscript = '';
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript;
+        }
+      }
+      if (finalTranscript) {
+        setEditPersonalContext(prev => (prev ? prev + ' ' + finalTranscript : finalTranscript));
+      }
+    };
+
+    recognition.onerror = () => {
+      setIsRecording(false);
+      toast.error('Error al escuchar.');
+    };
+
+    recognition.onend = () => {
+      setIsRecording(false);
+    };
+
+    recognitionRef.current = recognition;
+    recognition.start();
+    setIsRecording(true);
+  };
+
+  const stopRecording = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+    setIsRecording(false);
+  };
+
   const handleLogout = async () => {
     await signOut();
     navigate('/login');
@@ -108,6 +157,7 @@ export function ProfilePage() {
         gender: editGender,
         age: editAge ? parseInt(editAge, 10) : undefined,
         birthDate: editBirthDate || undefined,
+        personalContext: editPersonalContext.trim() || undefined,
         createdAt: profile?.createdAt || Date.now()
       });
       await refreshProfile();
@@ -175,6 +225,35 @@ export function ProfilePage() {
               onChange={e => setEditBirthDate(e.target.value)}
               className="mt-1 block w-full rounded-xl border border-border/40 bg-card/50 p-3 text-foreground"
             />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground flex justify-between items-center">
+              <span>Contexto Vital (Privado)</span>
+            </label>
+            <p className="text-xs text-muted-foreground mb-2">
+              Explícale a Anna tu situación actual (ej: lesiones, duelo, metas). Lo usará para adaptar su empatía a ti.
+            </p>
+            <div className="relative">
+              <textarea
+                value={editPersonalContext}
+                onChange={(e) => setEditPersonalContext(e.target.value)}
+                placeholder="Ej: Estoy pasando por un duelo amoroso y hacer clases dirigidas me ayuda a desconectar..."
+                className="w-full min-h-[120px] rounded-xl border border-border/50 bg-background/50 p-4 text-sm text-foreground outline-none transition-colors focus:border-primary focus:bg-background resize-none pb-12"
+              />
+              <div className="absolute bottom-3 right-3">
+                {((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition) && (
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="icon"
+                    onClick={isRecording ? stopRecording : startRecording}
+                    className={`h-8 w-8 rounded-full ${isRecording ? 'bg-red-500/20 text-red-500 hover:bg-red-500/30' : 'bg-primary/10 text-primary hover:bg-primary/20'}`}
+                  >
+                    <Mic className={`h-4 w-4 ${isRecording ? 'animate-pulse' : ''}`} />
+                  </Button>
+                )}
+              </div>
+            </div>
           </div>
           <div className="pt-4 flex gap-3">
             <Button 

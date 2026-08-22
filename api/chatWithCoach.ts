@@ -111,6 +111,9 @@ export default async function handler(
       const age = Math.floor((Date.now() - new Date(userProfile.birthDate).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
       userContext += `\n- Edad: ${age}`;
     }
+    if (userProfile.personalContext) {
+      userContext += `\n\nCONTEXTO VITAL CRÍTICO DEL USUARIO (DEBES TENERLO EN CUENTA EN TU EMPATÍA Y CONSEJOS):\n"${userProfile.personalContext}"`;
+    }
   }
 
   const dynamicSystemPrompt = SYSTEM_PROMPT + userContext;

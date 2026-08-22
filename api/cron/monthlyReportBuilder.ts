@@ -36,6 +36,7 @@ export default async function monthlyReportBuilder(req: VercelRequest, res: Verc
       const userData = userDoc.data();
       const gender = userData.gender || 'masculino';
       const age = userData.age || 30;
+      const personalContext = userData.personalContext;
 
       const reportRef = adminDb.collection('users').doc(userId).collection('monthlyReports').doc(prevMonthStr);
       const reportSnap = await reportRef.get();
@@ -86,8 +87,9 @@ Datos del mes (${prevMonthStr}):
 - Actividad favorita: ${topActivity}
 - Mejor racha de días seguidos: ${maxStreak}
 - Perfil del usuario: ${gender}, ${age} años.
+${personalContext ? `- Contexto Vital Actual (Tenlo muy en cuenta para la motivación): "${personalContext}"` : ''}
 
-Escribe UN SOLO PÁRRAFO de máximo 40-50 palabras felicitándole, destacando sus logros de este mes, y animándole a superarse el próximo mes. Usa emojis. No incluyas saludos genéricos como "Hola", ve directo al grano. Adapta el lenguaje a su género (${gender}).`;
+Escribe UN SOLO PÁRRAFO de máximo 40-50 palabras felicitándole, destacando sus logros de este mes, y animándole a superarse el próximo mes (o simplemente felicitándole por la resiliencia si su contexto vital es duro). Usa emojis. No incluyas saludos genéricos como "Hola", ve directo al grano. Adapta el lenguaje a su género (${gender}).`;
 
         try {
           const response = await groq.chat.completions.create({
