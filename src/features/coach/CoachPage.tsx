@@ -289,7 +289,7 @@ export function CoachPage() {
                 onKeyDown={handleKeyDown}
                 placeholder="Pregunta a tu coach..."
                 disabled={isLoading || entries.length === 0}
-                className="w-full rounded-full border border-border/40 bg-card/50 pl-4 pr-16 py-2.5 text-base md:text-sm outline-none transition-colors focus:border-primary disabled:opacity-50"
+                className="w-full rounded-full border border-border/40 bg-card/50 pl-4 pr-16 py-2.5 text-base outline-none transition-colors focus:border-primary disabled:opacity-50"
               />
               <div className="absolute right-4 top-[52%] -translate-y-1/2 text-[10px] text-muted-foreground pointer-events-none bg-card/50 pl-2">
                 {input.length}/2000
