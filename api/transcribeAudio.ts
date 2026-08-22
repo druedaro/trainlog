@@ -17,14 +17,14 @@ export default async function handler(
     return response.status(401).json({ error: 'Authentication required.' });
   }
 
-  const { verifyFirebaseToken } = await import('./lib/verifyToken.js');
+  const { verifyFirebaseToken } = await import('./_lib/verifyToken.js');
   const decodedToken = await verifyFirebaseToken(authHeader.split('Bearer ')[1] ?? '');
 
   if (!decodedToken) {
     return response.status(401).json({ error: 'Unauthorized' });
   }
 
-  const { checkRateLimit } = await import('./lib/ratelimit.js');
+  const { checkRateLimit } = await import('./_lib/ratelimit.js');
   const isAllowed = await checkRateLimit(decodedToken.uid);
   if (!isAllowed) {
     return response.status(429).json({ error: 'Too many requests. Please try again later.' });

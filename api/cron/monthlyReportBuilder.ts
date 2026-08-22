@@ -1,6 +1,6 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { adminDb, adminMessaging } from '../lib/firebaseAdmin.js';
-import { calculateStreak, getTopActivity } from '../lib/gamification.js';
+import { adminDb, adminMessaging } from '../_lib/firebaseAdmin.js';
+import { calculateStreak, getTopActivity } from '../_lib/gamification.js';
 import Groq from 'groq-sdk';
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
