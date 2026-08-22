@@ -9,7 +9,7 @@ import { countUserEntries, fetchRecentEntries, saveUserProfile } from '@/lib/fir
 import { calculateStreak, ACHIEVEMENTS } from '@/lib/gamification';
 import { requestPushPermissions } from '@/lib/push';
 import type { JournalEntry } from '@/types/entry';
-import type { Gender } from '@/types/user';
+import { type Gender, userProfileSchema } from '@/types/user';
 import { OnboardingModal } from '@/features/auth/OnboardingModal';
 
 export function ProfilePage() {
@@ -165,7 +165,7 @@ export function ProfilePage() {
 
       const parsed = userProfileSchema.partial().safeParse(profileData);
       if (!parsed.success) {
-        toast.error(parsed.error.errors[0].message);
+        toast.error(parsed.error?.errors[0]?.message || 'Error de validación');
         setIsSaving(false);
         return;
       }

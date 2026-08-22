@@ -5,7 +5,6 @@ import { useAuth } from '@/features/auth/useAuth';
 import { saveUserProfile } from '@/lib/firestore';
 import { requestPushPermissions } from '@/lib/push';
 import { toast } from 'sonner';
-import { toast } from 'sonner';
 import { type Gender, userProfileSchema } from '@/types/user';
 
 interface OnboardingModalProps {
@@ -120,7 +119,7 @@ export function OnboardingModal({ forceShow = false, onClose }: OnboardingModalP
 
     const parsed = userProfileSchema.partial().safeParse(profileData);
     if (!parsed.success) {
-      toast.error(parsed.error.errors[0].message);
+      toast.error(parsed.error?.errors[0]?.message || 'Error de validación');
       return;
     }
     
