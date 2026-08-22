@@ -43,7 +43,7 @@ describe('InstallPWA', () => {
     
     const closeButton = screen.getAllByRole('button')[1]; // the X button
     act(() => {
-      fireEvent.click(closeButton);
+      fireEvent.click(closeButton!);
     });
     
     expect(screen.queryByText('Instalar Trainlog')).not.toBeInTheDocument();

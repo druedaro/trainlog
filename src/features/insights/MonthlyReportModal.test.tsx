@@ -33,7 +33,7 @@ describe('MonthlyReportModal', () => {
     
     // Test the X button (first button) or the main button
     const closeButtons = screen.getAllByRole('button');
-    fireEvent.click(closeButtons[0]);
+    fireEvent.click(closeButtons[0]!);
     
     expect(handleClose).toHaveBeenCalledTimes(1);
   });
