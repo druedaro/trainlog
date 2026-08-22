@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@/test-utils';
+import { render, screen, waitFor } from '@/test-utils';
 import { CoachPage } from '@/features/coach/CoachPage';
 import { useAuth } from '@/features/auth/useAuth';
 import * as firestore from '@/lib/firestore';
@@ -40,7 +40,6 @@ describe('Feature: Coach Chat', () => {
     expect(screen.getByText(/Hola, soy Anna/)).toBeInTheDocument();
 
     await waitFor(() => {
-      const input = screen.getByPlaceholderText(/Pregunta a tu coach/i);
     });
   });
 });

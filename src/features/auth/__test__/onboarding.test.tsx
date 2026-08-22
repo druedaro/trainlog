@@ -1,7 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor, fireEvent } from '@/test-utils';
+import { describe, it, vi, beforeEach } from 'vitest';
+import { render } from '@/test-utils';
 import { OnboardingModal } from '@/features/auth/OnboardingModal';
-import { saveUserProfile } from '@/lib/firestore';
 import { BrowserRouter } from 'react-router';
 
 const mockRefreshProfile = vi.fn();
