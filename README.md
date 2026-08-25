@@ -34,7 +34,7 @@ After a workout, users record a voice note describing how the session went — w
   A persistent chat interface with your personal AI sports coach. Anna has full context of your entire journal, responds to voice dictation, reads her responses aloud via Text-to-Speech, and provides evidence-based guidance.
 
 * 🔖 **Save & revisit content**
-  Bookmark articles from Discover to build your personal knowledge library.
+  Bookmark articles from Discover to build your personal knowledge library with native-like infinite scrolling pagination.
 
 * 🚀 **Personalized Onboarding**
   A customized initial setup flow to capture user preferences, gender, and notification settings for a tailored experience.
