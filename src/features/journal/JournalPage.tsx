@@ -190,7 +190,16 @@ export function JournalPage() {
         {flowStep === 'idle' && !hasBlob && recorder.status !== 'recording' && (
           <div className="flex flex-col gap-10 lg:gap-14 animate-fade-in pb-8">
             <div className="space-y-8 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-10 lg:items-start">
-              <div className="flex flex-col items-center pt-6 lg:pt-16 gap-6 lg:sticky lg:top-28">
+              <div className="flex flex-col items-center pt-2 lg:pt-8 gap-6 lg:sticky lg:top-28">
+                <div className="text-center px-4">
+                  <h2 className="text-2xl font-bold tracking-tight text-foreground mb-1.5">
+                    Hola, {profile?.name?.split(' ')[0] || 'Atleta'} 👋
+                  </h2>
+                  <p className="text-[15px] leading-relaxed text-muted-foreground">
+                    ¿Cómo ha ido tu entrenamiento hoy?<br />
+                    Estoy aquí para escucharte.
+                  </p>
+                </div>
                 <button 
                   onClick={() => setShowInstructions(true)}
                   className="flex items-center gap-2 text-xs font-semibold text-primary bg-primary/10 hover:bg-primary/20 transition-colors px-4 py-2 rounded-full border border-primary/20 shadow-sm"
