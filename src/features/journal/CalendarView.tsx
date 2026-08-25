@@ -63,7 +63,7 @@ export function CalendarView() {
         {showFullMonth ? 'Vista mensual' : 'Vista semanal'}
       </h2>
       {showFullMonth ? (
-        <div className="flex flex-col w-full items-center rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm animate-fade-in">
+        <div className="flex flex-col w-full items-center rounded-3xl shadow-sm border border-border/40 bg-card/50 p-4 backdrop-blur-sm animate-fade-in">
           <DayPicker
             locale={es}
             month={selectedMonth}
@@ -85,7 +85,7 @@ export function CalendarView() {
           </button>
         </div>
       ) : (
-        <div className="flex w-full flex-col items-center rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm animate-fade-in">
+        <div className="flex w-full flex-col items-center rounded-3xl shadow-sm border border-border/40 bg-card/50 p-4 backdrop-blur-sm animate-fade-in">
           <div className="flex w-full justify-between px-2 mb-2">
             {last7Days.map((day, i) => {
               const hasEntry = daysWithEntries.some(d => isSameDay(d, day));

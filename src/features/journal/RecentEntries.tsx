@@ -71,7 +71,7 @@ export function RecentEntries() {
           <button
             key={entry.id}
             onClick={() => navigate(`/entry/${entry.id}`)}
-            className="card-interactive flex h-full w-full flex-col gap-3 rounded-xl border border-border/40 bg-card/50 p-4 text-left backdrop-blur-sm"
+            className="card-interactive flex h-full w-full flex-col gap-3 rounded-3xl shadow-sm border border-border/40 bg-card/50 p-5 text-left backdrop-blur-sm hover:shadow-[0_0_15px_hsl(var(--primary)/0.15)] transition-shadow"
           >
             <div className="flex w-full justify-between items-start">
               <p className="text-xs font-medium text-muted-foreground">

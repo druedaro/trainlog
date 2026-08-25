@@ -120,7 +120,7 @@ export function ProfilePage() {
           <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 shadow-inner">
             <User className="h-10 w-10 text-primary" />
           </div>
-          <h2 className="text-2xl font-bold tracking-tight text-foreground">{greeting}, {displayName}!</h2>
+          <h2 className="text-2xl font-extrabold tracking-tight text-foreground">{greeting}, {displayName}!</h2>
           <p className="text-sm text-muted-foreground">Aquí está el resumen de tu progreso</p>
         </section>
 
@@ -128,7 +128,7 @@ export function ProfilePage() {
         <section>
           <h3 className="mb-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Métricas Globales</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-accent/50">
+            <div className="rounded-3xl shadow-sm border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-accent/50 hover:shadow-[0_0_15px_hsl(var(--primary)/0.15)]">
               <div className="flex items-center gap-2 text-muted-foreground mb-2">
                 <Activity className="h-4 w-4" />
                 <span className="text-xs font-medium">Entradas</span>
@@ -136,7 +136,7 @@ export function ProfilePage() {
               {isLoading ? <Skeleton className="h-7 w-12" /> : <div className="text-2xl font-bold text-foreground">{entryCount || 0}</div>}
             </div>
             
-            <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-accent/50">
+            <div className="rounded-3xl shadow-sm border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-accent/50 hover:shadow-[0_0_15px_hsl(var(--primary)/0.15)]">
               <div className="flex items-center gap-2 text-muted-foreground mb-2">
                 <Flame className="h-4 w-4 text-orange-500" />
                 <span className="text-xs font-medium">Racha Activa</span>
@@ -144,7 +144,7 @@ export function ProfilePage() {
               {isLoading ? <Skeleton className="h-7 w-12" /> : <div className="text-2xl font-bold text-foreground">{stats?.streak || 0} <span className="text-sm font-normal text-muted-foreground">días</span></div>}
             </div>
 
-            <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-accent/50">
+            <div className="rounded-3xl shadow-sm border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-accent/50 hover:shadow-[0_0_15px_hsl(var(--primary)/0.15)]">
               <div className="flex items-center gap-2 text-muted-foreground mb-2">
                 <Calendar className="h-4 w-4 text-blue-500" />
                 <span className="text-xs font-medium">Última Sesión</span>
@@ -154,7 +154,7 @@ export function ProfilePage() {
               </div>}
             </div>
 
-            <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-accent/50">
+            <div className="rounded-3xl shadow-sm border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-accent/50 hover:shadow-[0_0_15px_hsl(var(--primary)/0.15)]">
               <div className="flex items-center gap-2 text-muted-foreground mb-2">
                 <Activity className="h-4 w-4 text-green-500" />
                 <span className="text-xs font-medium">Top Actividad</span>
@@ -165,7 +165,7 @@ export function ProfilePage() {
         </section>
 
         {/* Gamification / Achievements */}
-        <section className="rounded-2xl border border-border/40 bg-card/50 p-1">
+        <section className="rounded-3xl shadow-sm border border-border/40 bg-card/50 p-1 hover:shadow-[0_0_15px_hsl(var(--primary)/0.15)] transition-shadow">
           <button 
             onClick={() => setIsAchievementsModalOpen(true)}
             className="w-full flex items-center justify-between p-4 hover:bg-accent/50 rounded-xl transition-colors text-left"
@@ -186,7 +186,7 @@ export function ProfilePage() {
         </section>
 
         {/* Legal & App Links */}
-        <section className="rounded-2xl border border-border/40 bg-card/50 p-1">
+        <section className="rounded-3xl shadow-sm border border-border/40 bg-card/50 p-1">
           <Link to="/privacy" className="flex items-center gap-3 p-4 hover:bg-accent/50 rounded-xl transition-colors">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
               <Shield className="h-5 w-5" />
