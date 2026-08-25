@@ -136,7 +136,7 @@ export function DiscoverPage() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasMoreSaved && !isFetchingMoreSaved && activeTab === 'saved') {
+        if (entries[0]?.isIntersecting && hasMoreSaved && !isFetchingMoreSaved && activeTab === 'saved') {
           loadMoreSavedArticles();
         }
       },

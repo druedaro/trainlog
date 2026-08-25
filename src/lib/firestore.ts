@@ -419,7 +419,7 @@ export async function fetchSavedArticles(
   
   return {
     articles,
-    lastDoc: snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null
+    lastDoc: snapshot.docs.length > 0 ? (snapshot.docs[snapshot.docs.length - 1] ?? null) : null
   };
 }
 
