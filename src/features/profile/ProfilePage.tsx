@@ -79,10 +79,12 @@ export function ProfilePage() {
   };
 
   const greeting = (() => {
+    // getHours() usa la hora local del dispositivo del usuario. 
+    // Así que a las 20:00 de su reloj local cambiará automáticamente.
     const hour = new Date().getHours();
-    if (hour < 12) return '¡Buenos días';
-    if (hour < 20) return '¡Buenas tardes';
-    return '¡Buenas noches';
+    if (hour < 12) return 'A por el día';
+    if (hour < 20) return 'Mantén el enfoque';
+    return 'Buen trabajo hoy';
   })();
 
   const displayName = profile?.name || 'Atleta';
@@ -120,8 +122,8 @@ export function ProfilePage() {
           <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 shadow-inner">
             <User className="h-10 w-10 text-primary" />
           </div>
-          <h2 className="text-2xl font-extrabold tracking-tight text-foreground">{greeting}, {displayName}!</h2>
-          <p className="text-sm text-muted-foreground">Aquí está el resumen de tu progreso</p>
+          <h2 className="text-2xl font-extrabold tracking-tight text-foreground">{greeting}, {displayName}.</h2>
+          <p className="text-sm text-muted-foreground">Tu resumen de rendimiento</p>
         </section>
 
         {/* Stats Grid */}
