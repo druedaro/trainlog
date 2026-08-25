@@ -338,8 +338,13 @@ export function DiscoverPage() {
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col bg-background">
       <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 pt-3.5 pb-2">
-        <div className="flex items-center justify-between mb-3">
-          <h1 className="text-lg font-bold text-gradient">Discover</h1>
+        <div className="flex items-center justify-between mb-2">
+          <div>
+            <h1 className="text-lg font-extrabold text-gradient tracking-tight">Discover</h1>
+            <p className="mt-0.5 text-[13px] text-muted-foreground/80">
+              Ciencia y recursos para ti.
+            </p>
+          </div>
         </div>
 
         <div className="flex gap-2">

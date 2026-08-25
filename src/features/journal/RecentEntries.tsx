@@ -50,7 +50,7 @@ export function RecentEntries() {
         <svg className="h-10 w-10 text-primary animate-bounce rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
         </svg>
-        <div className="text-center rounded-2xl border border-primary/20 bg-primary/10 p-5 backdrop-blur-sm relative shadow-[0_0_15px_rgba(255,255,255,0.05)] w-full max-w-md mx-auto">
+        <div className="text-center rounded-2xl border border-primary/20 bg-primary/10 p-5 backdrop-blur-sm relative shadow-[0_0.08px_rgba(255,255,255,0.05)] w-full max-w-md mx-auto">
           <div className="absolute -top-4 left-1/2 -translate-x-1/2 text-3xl">👋</div>
           <h2 className="mt-2 text-base font-bold text-foreground">¡Hola! Bienvenido a Trainlog</h2>
           <p className="mt-1.5 text-sm leading-relaxed text-foreground/80">
@@ -71,7 +71,7 @@ export function RecentEntries() {
           <button
             key={entry.id}
             onClick={() => navigate(`/entry/${entry.id}`)}
-            className="card-interactive flex h-full w-full flex-col gap-3 rounded-3xl shadow-sm border border-border/40 bg-card/50 p-5 text-left backdrop-blur-sm hover:shadow-[0_0_15px_hsl(var(--primary)/0.15)] transition-shadow"
+            className="card-interactive flex h-full w-full flex-col gap-3 rounded-3xl shadow-sm border border-border/40 bg-card/50 p-5 text-left backdrop-blur-sm hover:shadow-[0_0.08px_hsl(var(--primary)/0.08)] transition-shadow"
           >
             <div className="flex w-full justify-between items-start">
               <p className="text-xs font-medium text-muted-foreground">

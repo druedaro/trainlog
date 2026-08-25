@@ -194,7 +194,10 @@ export function InsightsPage() {
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col bg-background">
       <header className="glass sticky top-0 z-20 border-b border-border/40 px-5 py-3.5">
-        <h1 className="text-lg font-bold text-gradient">Resumen semanal</h1>
+        <h1 className="text-lg font-extrabold text-gradient tracking-tight">Resumen semanal</h1>
+        <p className="mt-0.5 text-[13px] text-muted-foreground/80">
+          Evolución y patrones analizados por IA.
+        </p>
       </header>
 
       <main className="flex-1 px-5 py-6 space-y-8 animate-slide-up pb-24">

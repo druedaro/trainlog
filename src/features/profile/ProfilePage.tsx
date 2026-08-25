@@ -128,7 +128,7 @@ export function ProfilePage() {
         <section>
           <h3 className="mb-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Métricas Globales</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <div className="rounded-3xl shadow-sm border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-accent/50 hover:shadow-[0_0_15px_hsl(var(--primary)/0.15)]">
+            <div className="rounded-3xl shadow-sm border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-accent/50 hover:shadow-[0_0.08px_hsl(var(--primary)/0.08)]">
               <div className="flex items-center gap-2 text-muted-foreground mb-2">
                 <Activity className="h-4 w-4" />
                 <span className="text-xs font-medium">Entradas</span>
@@ -136,7 +136,7 @@ export function ProfilePage() {
               {isLoading ? <Skeleton className="h-7 w-12" /> : <div className="text-2xl font-bold text-foreground">{entryCount || 0}</div>}
             </div>
             
-            <div className="rounded-3xl shadow-sm border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-accent/50 hover:shadow-[0_0_15px_hsl(var(--primary)/0.15)]">
+            <div className="rounded-3xl shadow-sm border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-accent/50 hover:shadow-[0_0.08px_hsl(var(--primary)/0.08)]">
               <div className="flex items-center gap-2 text-muted-foreground mb-2">
                 <Flame className="h-4 w-4 text-orange-500" />
                 <span className="text-xs font-medium">Racha Activa</span>
@@ -144,7 +144,7 @@ export function ProfilePage() {
               {isLoading ? <Skeleton className="h-7 w-12" /> : <div className="text-2xl font-bold text-foreground">{stats?.streak || 0} <span className="text-sm font-normal text-muted-foreground">días</span></div>}
             </div>
 
-            <div className="rounded-3xl shadow-sm border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-accent/50 hover:shadow-[0_0_15px_hsl(var(--primary)/0.15)]">
+            <div className="rounded-3xl shadow-sm border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-accent/50 hover:shadow-[0_0.08px_hsl(var(--primary)/0.08)]">
               <div className="flex items-center gap-2 text-muted-foreground mb-2">
                 <Calendar className="h-4 w-4 text-blue-500" />
                 <span className="text-xs font-medium">Última Sesión</span>
@@ -154,7 +154,7 @@ export function ProfilePage() {
               </div>}
             </div>
 
-            <div className="rounded-3xl shadow-sm border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-accent/50 hover:shadow-[0_0_15px_hsl(var(--primary)/0.15)]">
+            <div className="rounded-3xl shadow-sm border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-accent/50 hover:shadow-[0_0.08px_hsl(var(--primary)/0.08)]">
               <div className="flex items-center gap-2 text-muted-foreground mb-2">
                 <Activity className="h-4 w-4 text-green-500" />
                 <span className="text-xs font-medium">Top Actividad</span>
@@ -165,7 +165,7 @@ export function ProfilePage() {
         </section>
 
         {/* Gamification / Achievements */}
-        <section className="rounded-3xl shadow-sm border border-border/40 bg-card/50 p-1 hover:shadow-[0_0_15px_hsl(var(--primary)/0.15)] transition-shadow">
+        <section className="rounded-3xl shadow-sm border border-border/40 bg-card/50 p-1 hover:shadow-[0_0.08px_hsl(var(--primary)/0.08)] transition-shadow">
           <button 
             onClick={() => setIsAchievementsModalOpen(true)}
             className="w-full flex items-center justify-between p-4 hover:bg-accent/50 rounded-xl transition-colors text-left"
