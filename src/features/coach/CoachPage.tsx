@@ -281,7 +281,10 @@ export function CoachPage() {
               </Button>
             ) : null}
             <div className="relative flex-1">
+              <label htmlFor="coach-chat-input" className="sr-only">Pregunta a tu coach</label>
               <input
+                id="coach-chat-input"
+                name="coachChatInput"
                 type="text"
                 value={input}
                 maxLength={2000}
