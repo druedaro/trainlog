@@ -543,10 +543,25 @@ export function DiscoverPage() {
               </div>
             )}
             
-            {activeTab === 'foryou' && updatedAt && (
-              <p className="text-xs text-muted-foreground/60">
-                Última actualización: {new Date(updatedAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
-              </p>
+            {activeTab === 'foryou' && (
+              <div className="flex flex-col gap-4 mb-2">
+                <Button
+                  variant="outline"
+                  onClick={() => handleGenerate(false)}
+                  disabled={isGenerating}
+                  className="group w-full justify-center gap-2 rounded-xl py-6 font-semibold shadow-sm transition-all hover:border-primary/50 hover:shadow-md"
+                >
+                  <RefreshCw className={`h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary ${isGenerating ? 'animate-spin text-primary' : ''}`} />
+                  <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                    Actualizar recomendaciones "Para ti"
+                  </span>
+                </Button>
+                {updatedAt && (
+                  <p className="text-xs text-muted-foreground/60">
+                    Última actualización: {new Date(updatedAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </p>
+                )}
+              </div>
             )}
             {activeTab === 'explore' && exploreUpdatedAt && (
               <p className="text-xs text-muted-foreground/60">

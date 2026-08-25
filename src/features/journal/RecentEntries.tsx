@@ -17,7 +17,7 @@ export function RecentEntries() {
   useEffect(() => {
     if (!user) return;
     setIsLoading(true);
-    fetchRecentEntries(user.uid, 6)
+    fetchRecentEntries(user.uid, 4)
       .then(setRecentEntries)
       .catch(() => toast.error('Error al cargar historial.'))
       .finally(() => setIsLoading(false));
