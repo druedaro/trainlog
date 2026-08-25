@@ -342,7 +342,7 @@ export function DiscoverPage() {
           <div>
             <h1 className="text-lg font-extrabold text-gradient tracking-tight">Discover</h1>
             <p className="mt-0.5 text-[13px] text-muted-foreground/80">
-              Ciencia y recursos para ti.
+              Ciencia y recursos para ti
             </p>
           </div>
         </div>
