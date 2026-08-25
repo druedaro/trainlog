@@ -10,6 +10,7 @@ export interface DiscoverArticle {
   reason: string;   
   imageUrl?: string;
   isRead?: boolean;
+  savedAt?: number;
 }
 
 export interface DiscoverDocument {

@@ -71,7 +71,7 @@ describe('Feature: Article Discovery System', () => {
         { id: '2', title: 'Recovery Tip', category: 'recovery', content: '...', emoji: '💤', reason: '...' },
       ];
       
-      vi.mocked(fetchSavedArticles).mockResolvedValue(mockSaved as any);
+      vi.mocked(fetchSavedArticles).mockResolvedValue({ articles: mockSaved as any, lastDoc: null });
 
       render(
         <BrowserRouter>

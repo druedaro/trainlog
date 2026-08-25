@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation } from 'react-router';
 import { RefreshCw, Sparkles, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
@@ -59,6 +59,12 @@ export function DiscoverPage() {
   const [isLoadingSaved, setIsLoadingSaved] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGeneratingExplore, setIsGeneratingExplore] = useState(false);
+
+  // Pagination state for Saved Articles
+  const [savedLastDoc, setSavedLastDoc] = useState<any>(null);
+  const [hasMoreSaved, setHasMoreSaved] = useState(false);
+  const [isFetchingMoreSaved, setIsFetchingMoreSaved] = useState(false);
+  const observerTarget = useRef<HTMLDivElement | null>(null);
   const [selectedArticle, setSelectedArticle] = useState<DiscoverArticle | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [exploreCategoryFilter, setExploreCategoryFilter] = useState<string | null>(null);
@@ -100,14 +106,53 @@ export function DiscoverPage() {
     if (!user) return;
     setIsLoadingSaved(true);
     try {
-      const saved = await fetchSavedArticles(user.uid);
-      setSavedArticles(saved);
+      const { articles, lastDoc } = await fetchSavedArticles(user.uid);
+      setSavedArticles(articles);
+      setSavedLastDoc(lastDoc);
+      setHasMoreSaved(articles.length === 6);
       } catch (e) {
         toast.error('Error al cargar recomendaciones.');
       } finally {
       setIsLoadingSaved(false);
     }
   }, [user]);
+
+  const loadMoreSavedArticles = useCallback(async () => {
+    if (!user || !hasMoreSaved || isFetchingMoreSaved || !savedLastDoc) return;
+    setIsFetchingMoreSaved(true);
+    try {
+      const { articles, lastDoc } = await fetchSavedArticles(user.uid, savedLastDoc);
+      setSavedArticles((prev) => [...prev, ...articles]);
+      setSavedLastDoc(lastDoc);
+      setHasMoreSaved(articles.length === 6);
+    } catch (e) {
+      toast.error('Error al cargar más artículos guardados.');
+    } finally {
+      setIsFetchingMoreSaved(false);
+    }
+  }, [user, hasMoreSaved, isFetchingMoreSaved, savedLastDoc]);
+
+  // Infinite Scroll Observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMoreSaved && !isFetchingMoreSaved && activeTab === 'saved') {
+          loadMoreSavedArticles();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => {
+      if (observerTarget.current) {
+        observer.unobserve(observerTarget.current);
+      }
+    };
+  }, [hasMoreSaved, isFetchingMoreSaved, loadMoreSavedArticles, activeTab]);
 
   useEffect(() => {
     loadArticles();
@@ -644,6 +689,16 @@ export function DiscoverPage() {
               );
             })}
           </div>
+
+          {activeTab === 'saved' && hasMoreSaved && (
+            <div ref={observerTarget} className="py-8 flex justify-center items-center w-full">
+              {isFetchingMoreSaved ? (
+                <RefreshCw className="h-6 w-6 animate-spin text-primary" />
+              ) : (
+                <span className="text-sm text-muted-foreground animate-pulse">Cargando más...</span>
+              )}
+            </div>
+          )}
         </div>
       )}
       </main>

@@ -71,7 +71,10 @@ export function useSavedArticlesQuery(uid?: string) {
   
   return useQuery({
     queryKey: ['savedArticles', targetUid],
-    queryFn: () => fetchSavedArticles(targetUid!),
+    queryFn: async () => {
+      const res = await fetchSavedArticles(targetUid!);
+      return res.articles;
+    },
     enabled: !!targetUid,
   });
 }

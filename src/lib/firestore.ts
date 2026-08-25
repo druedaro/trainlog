@@ -14,7 +14,9 @@ import {
   deleteDoc,
   getCountFromServer,
   type DocumentData,
+  type QueryDocumentSnapshot,
   arrayUnion,
+  startAfter,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { generateMonthlyReport } from '@/lib/api';
@@ -381,7 +383,7 @@ export async function saveArticle(
   article: DiscoverArticle,
 ): Promise<void> {
   const docRef = doc(db, 'users', userId, 'savedArticles', article.id);
-  await setDoc(docRef, article);
+  await setDoc(docRef, { ...article, savedAt: Date.now() });
 }
 
 export async function removeSavedArticle(
@@ -394,10 +396,31 @@ export async function removeSavedArticle(
 
 export async function fetchSavedArticles(
   userId: string,
-): Promise<DiscoverArticle[]> {
-  const q = query(collection(db, 'users', userId, 'savedArticles'));
+  lastDoc?: QueryDocumentSnapshot<DocumentData> | null,
+  pageSize: number = 6
+): Promise<{ articles: DiscoverArticle[]; lastDoc: QueryDocumentSnapshot<DocumentData> | null }> {
+  let q = query(
+    collection(db, 'users', userId, 'savedArticles'),
+    orderBy('savedAt', 'desc'),
+    limit(pageSize)
+  );
+
+  if (lastDoc) {
+    q = query(
+      collection(db, 'users', userId, 'savedArticles'),
+      orderBy('savedAt', 'desc'),
+      startAfter(lastDoc),
+      limit(pageSize)
+    );
+  }
+
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((docSnap) => docSnap.data() as DiscoverArticle);
+  const articles = snapshot.docs.map((docSnap) => docSnap.data() as DiscoverArticle);
+  
+  return {
+    articles,
+    lastDoc: snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null
+  };
 }
 
 export async function fetchUserProfile(userId: string): Promise<UserProfile | null> {
