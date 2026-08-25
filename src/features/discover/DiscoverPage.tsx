@@ -532,10 +532,10 @@ export function DiscoverPage() {
                     variant="outline"
                     onClick={() => handleGenerateExplore(false, exploreCategoryFilter)}
                     disabled={isGeneratingExplore}
-                    className="group w-full justify-center gap-2 rounded-xl py-6 font-semibold shadow-sm transition-all hover:border-primary/50 hover:shadow-md"
+                    className="group w-full justify-center gap-2 rounded-xl py-6 font-semibold shadow-sm transition-all hover:bg-primary hover:border-primary hover:shadow-md"
                   >
-                    <RefreshCw className={`h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary ${isGeneratingExplore ? 'animate-spin text-primary' : ''}`} />
-                    <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                    <RefreshCw className={`h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary-foreground ${isGeneratingExplore ? 'animate-spin text-primary-foreground' : ''}`} />
+                    <span className="text-foreground transition-colors group-hover:text-primary-foreground">
                       Actualizar artículos de {CATEGORY_CONFIG[exploreCategoryFilter]?.label.toLowerCase() || 'esta categoría'}
                     </span>
                   </Button>
@@ -549,10 +549,10 @@ export function DiscoverPage() {
                   variant="outline"
                   onClick={() => handleGenerate(false)}
                   disabled={isGenerating}
-                  className="group w-full justify-center gap-2 rounded-xl py-6 font-semibold shadow-sm transition-all hover:border-primary/50 hover:shadow-md"
+                  className="group w-full justify-center gap-2 rounded-xl py-6 font-semibold shadow-sm transition-all hover:bg-primary hover:border-primary hover:shadow-md"
                 >
-                  <RefreshCw className={`h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary ${isGenerating ? 'animate-spin text-primary' : ''}`} />
-                  <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                  <RefreshCw className={`h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary-foreground ${isGenerating ? 'animate-spin text-primary-foreground' : ''}`} />
+                  <span className="text-foreground transition-colors group-hover:text-primary-foreground">
                     Actualizar recomendaciones "Para ti"
                   </span>
                 </Button>
