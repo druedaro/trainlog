@@ -41,7 +41,7 @@ describe('InstallPWA', () => {
       window.dispatchEvent(event);
     });
     
-    const closeButton = screen.getAllByRole('button')[1]; // the X button
+    const closeButton = screen.getAllByRole('button')[1];
     act(() => {
       fireEvent.click(closeButton!);
     });

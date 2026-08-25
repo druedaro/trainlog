@@ -55,7 +55,6 @@ export function CoachPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Lock body scroll to prevent keyboard from pushing layout up on mobile
     document.body.style.overflow = 'hidden';
     document.body.style.position = 'fixed';
     document.body.style.width = '100%';

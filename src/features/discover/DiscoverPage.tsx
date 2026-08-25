@@ -60,7 +60,6 @@ export function DiscoverPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGeneratingExplore, setIsGeneratingExplore] = useState(false);
 
-  // Pagination state for Saved Articles
   const [savedLastDoc, setSavedLastDoc] = useState<any>(null);
   const [hasMoreSaved, setHasMoreSaved] = useState(false);
   const [isFetchingMoreSaved, setIsFetchingMoreSaved] = useState(false);
@@ -132,7 +131,6 @@ export function DiscoverPage() {
     }
   }, [user, hasMoreSaved, isFetchingMoreSaved, savedLastDoc]);
 
-  // Infinite Scroll Observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {

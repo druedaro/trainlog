@@ -39,7 +39,7 @@ Quality Standards:
 Content Rules:
 1. Generate exactly 4 articles, one for each category: recovery, training, mindset, nutrition.
 2. The 'reason' field must explain WHY this article is relevant to the user, referencing their exact entries.
-3. If an article recommends specific physical exercises (ONLY FOR 'recovery' or 'training' categories), include them in the 'recommendedExercises' array as objects with 'englishName' (the EXACT STANDARD ENGLISH name for the exercise database search). Leave the array empty otherwise. DO NOT use the exercise API or recommend exercises in the 'nutrition' and 'mindset' categories.
+3. If an article recommends specific physical exercises (ONLY FOR 'recovery' or 'training' categories), include them in the 'recommendedExercises' array as objects with 'englishName' (the EXACT STANDARD ENGLISH name for the exercise database search). Leave the array empty otherwise. DO NOT use the exercise API or recommend exercises in the 'nutrition' and 'mindset' categories. CRITICAL: Any exercise included in the 'recommendedExercises' array MUST be explicitly mentioned and explained within the 'content' of the article so the user understands why it is being recommended. Do not append random exercises that are not discussed in the text.
 4. The 'emoji' field should be a single emoji representing the article topic.
 5. The 'id' field should be a short, unique slug.
 6. Do NOT diagnose injuries or prescribe medical treatments.
