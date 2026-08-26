@@ -142,9 +142,9 @@ export function EntryDetail() {
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-background px-6">
         <p className="text-muted-foreground">{errorMessage ?? 'Entrada no encontrada.'}</p>
         <Button
-          variant="outline"
+          variant="ghost"
           onClick={() => navigate('/')}
-          className="gap-2 rounded-xl border-border/50 text-muted-foreground hover:bg-[#2bd4bd] hover:text-white transition-colors"
+          className="gap-2 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           Volver
@@ -163,7 +163,7 @@ export function EntryDetail() {
         <Button
           variant="ghost"
           onClick={() => navigate('/')}
-          className="relative gap-2 rounded-xl px-3 text-muted-foreground hover:bg-[#2bd4bd] hover:text-white transition-colors"
+          className="relative gap-2 rounded-xl px-3 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
           disabled={isDeleting}
         >
           <ArrowLeft className="h-4 w-4" />

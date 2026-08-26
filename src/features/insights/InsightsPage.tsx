@@ -305,7 +305,7 @@ export function InsightsPage() {
                     size="sm"
                     onClick={handleGenerateSynthesis}
                     disabled={isGenerating}
-                    className="h-8 rounded-lg px-2 text-xs text-muted-foreground hover:text-foreground"
+                    className="h-8 rounded-lg px-3 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
                   >
                     Actualizar
                   </Button>
