@@ -25,8 +25,15 @@ export function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [notificationStatus, setNotificationStatus] = useState<NotificationPermission>('default');
   const [isAchievementsModalOpen, setIsAchievementsModalOpen] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    if (typeof Notification !== 'undefined') {
+      setNotificationStatus(Notification.permission);
+    }
+  }, []);
 
   const stats = useMemo(() => {
     if (recentEntries.length === 0) return null;
@@ -224,20 +231,31 @@ export function ProfilePage() {
           
           <Button 
             variant="outline" 
-            className="w-full justify-start h-12 rounded-xl text-foreground bg-card hover:bg-accent border-border/40"
+            className="w-full justify-between h-12 rounded-xl text-foreground bg-card hover:bg-accent border-border/40"
+            disabled={notificationStatus === 'granted'}
             onClick={async () => {
               if (user) {
                 const granted = await requestPushPermissions(user.uid);
                 if (granted) {
+                  setNotificationStatus('granted');
                   toast.success('Notificaciones activadas. Recibirás recordatorios diarios.');
                 } else {
+                  setNotificationStatus(Notification.permission);
                   toast.error('No se pudieron activar las notificaciones. Comprueba los permisos del navegador.');
                 }
               }
             }}
           >
-            <Bell className="mr-3 h-4 w-4 text-blue-500" />
-            Activar Notificaciones
+            <div className="flex items-center">
+              <Bell className={`mr-3 h-4 w-4 ${notificationStatus === 'granted' ? 'text-primary' : notificationStatus === 'denied' ? 'text-destructive' : 'text-blue-500'}`} />
+              Activar Notificaciones
+            </div>
+            {notificationStatus === 'granted' && (
+              <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-md">Activadas</span>
+            )}
+            {notificationStatus === 'denied' && (
+              <span className="text-xs font-medium text-destructive bg-destructive/10 px-2 py-1 rounded-md">Bloqueadas</span>
+            )}
           </Button>
 
           <Button 
