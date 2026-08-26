@@ -203,7 +203,7 @@ export function JournalPage() {
                     {greeting}, {profile?.name?.split(' ')[0] || 'Atleta'}!
                   </h2>
                   <p className="text-[15px] leading-relaxed text-muted-foreground">
-                    ¿Cómo ha ido tu entrenamiento hoy?<br />
+                    ¿Cómo ha ido tu entrenamiento?<br />
                     Estoy aquí para escucharte
                   </p>
                 </div>
