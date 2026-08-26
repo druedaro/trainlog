@@ -52,6 +52,11 @@ export default async function dailyReminder(req: VercelRequest, res: VercelRespo
               title: '¡No olvides tu entrenamiento!',
               body: '🎙️ Registra cómo ha ido tu día.',
             },
+            webpush: {
+              notification: {
+                icon: '/icon-192.png',
+              },
+            },
             tokens: tokens,
           };
 

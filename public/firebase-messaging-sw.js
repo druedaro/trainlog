@@ -13,13 +13,7 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-  
-  
-  const notificationTitle = payload.notification.title;
-  const notificationOptions = {
-    body: payload.notification.body,
-    icon: '/icon-192.png'
-  };
-
-  self.registration.showNotification(notificationTitle, notificationOptions);
+  // If you need to handle data-only payloads, you would do it here.
+  // We leave this empty because Firebase automatically displays
+  // notifications when the payload includes a 'notification' object.
 });
