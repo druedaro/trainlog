@@ -33,7 +33,7 @@ export function RecordButton({
           <div className="absolute h-24 w-24 rounded-full border border-destructive/10 animate-recording-ring-3" />
 
           <button
-            onPointerDown={() => vibrate([150, 100, 200])}
+            onPointerDown={() => vibrate([30, 60, 30])}
             onClick={() => onStop()}
             className="relative z-10 flex h-24 w-24 items-center justify-center rounded-full bg-destructive glow-destructive transition-transform active:scale-95"
             aria-label="Detener grabación"
@@ -56,7 +56,7 @@ export function RecordButton({
     <div className="flex flex-col items-center gap-5 animate-fade-in">
       <button
         onPointerDown={() => {
-          if (!disabled) vibrate(200);
+          if (!disabled) vibrate(30);
         }}
         onClick={() => onStart()}
         disabled={disabled}
