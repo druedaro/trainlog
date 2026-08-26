@@ -199,7 +199,7 @@ export function JournalPage() {
             <div className="space-y-8 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-10 lg:items-start">
               <div className="flex flex-col items-center pt-2 lg:pt-8 gap-6 lg:sticky lg:top-28">
                 <div className="text-center px-4">
-                  <h2 className="text-2xl font-bold tracking-tight text-foreground mb-1.5">
+                  <h2 className="text-2xl font-semibold tracking-tight text-foreground mb-1.5">
                     {greeting}, {profile?.name?.split(' ')[0] || 'Atleta'}!
                   </h2>
                   <p className="text-[15px] leading-relaxed text-muted-foreground">

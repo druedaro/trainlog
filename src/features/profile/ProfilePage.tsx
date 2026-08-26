@@ -126,7 +126,7 @@ export function ProfilePage() {
           <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 shadow-inner">
             <User className="h-10 w-10 text-primary" />
           </div>
-          <h2 className="text-2xl font-extrabold tracking-tight text-foreground">Hola, {displayName} 👋</h2>
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">Hola, {displayName} 👋</h2>
           <p className="text-sm text-muted-foreground">Un resumen de rendimiento</p>
         </section>
 
