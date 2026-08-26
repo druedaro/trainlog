@@ -26,9 +26,8 @@ export default async function dailyReminder(req: VercelRequest, res: VercelRespo
       const userId = userDoc.id;
 
       const entriesSnapshot = await adminDb
-        .collection('users')
-        .doc(userId)
         .collection('entries')
+        .where('userId', '==', userId)
         .where('createdAt', '>=', startOfDay)
         .where('createdAt', '<=', endOfDay)
         .limit(1)
@@ -55,6 +54,7 @@ export default async function dailyReminder(req: VercelRequest, res: VercelRespo
             webpush: {
               notification: {
                 icon: '/icon-192.png',
+                badge: '/favicon.svg',
               },
             },
             tokens: tokens,
