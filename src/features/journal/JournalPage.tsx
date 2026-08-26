@@ -32,6 +32,13 @@ export function JournalPage() {
   const [analysis, setAnalysis] = useState<EntryAnalysis | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showInstructions, setShowInstructions] = useState(false);
+
+  const greeting = (() => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'A por el día';
+    if (hour < 20) return 'Mantén el enfoque';
+    return 'Buen trabajo hoy';
+  })();
   const [monthlyReport, setMonthlyReport] = useState<MonthlyReport | null>(null);
   const [checkingReport, setCheckingReport] = useState(false);
 
@@ -193,7 +200,7 @@ export function JournalPage() {
               <div className="flex flex-col items-center pt-2 lg:pt-8 gap-6 lg:sticky lg:top-28">
                 <div className="text-center px-4">
                   <h2 className="text-2xl font-bold tracking-tight text-foreground mb-1.5">
-                    Hola, {profile?.name?.split(' ')[0] || 'Atleta'} 👋
+                    {greeting}, {profile?.name?.split(' ')[0] || 'Atleta'}.
                   </h2>
                   <p className="text-[15px] leading-relaxed text-muted-foreground">
                     ¿Cómo ha ido tu entrenamiento hoy?<br />

@@ -443,12 +443,7 @@ export function DiscoverPage() {
           </div>
         )}
 
-        {(isGenerating || isGeneratingExplore) && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8 w-full">
-            <Skeleton className="h-32 w-full rounded-2xl" />
-            <Skeleton className="h-32 w-full rounded-2xl" />
-          </div>
-        )}
+
 
         {activeTab === 'foryou' && !isLoading && !isGenerating && articles.length === 0 && (
           <div className="flex flex-col items-center gap-6 pt-12 animate-fade-in">
@@ -553,8 +548,8 @@ export function DiscoverPage() {
           </div>
         )}
 
-        {((activeTab === 'foryou' && !isLoading && !isGenerating && articles.length > 0) ||
-          (activeTab === 'explore' && !showExploreGrid) ||
+        {((activeTab === 'foryou' && !isLoading && (articles.length > 0 || isGenerating)) ||
+          (activeTab === 'explore' && !showExploreGrid && !isLoadingExplore) ||
           (activeTab === 'saved' && !isLoadingSaved && savedArticles.length > 0)) && (
           <div className="space-y-4 animate-slide-up">
             {activeTab === 'explore' && !showExploreGrid && (
@@ -613,7 +608,15 @@ export function DiscoverPage() {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {(activeTab === 'foryou' ? articles : activeTab === 'explore' && !showExploreGrid ? (exploreCategoryFilter ? exploreArticles.filter(a => a.category === exploreCategoryFilter) : exploreArticles) : savedArticles).map((article) => {
+              {((activeTab === 'foryou' && isGenerating) || (activeTab === 'explore' && isGeneratingExplore)) ? (
+                <>
+                  <Skeleton className="h-40 w-full rounded-2xl" />
+                  <Skeleton className="h-40 w-full rounded-2xl" />
+                  <Skeleton className="h-40 w-full rounded-2xl" />
+                  <Skeleton className="h-40 w-full rounded-2xl" />
+                </>
+              ) : (
+                (activeTab === 'foryou' ? articles : activeTab === 'explore' && !showExploreGrid ? (exploreCategoryFilter ? exploreArticles.filter(a => a.category === exploreCategoryFilter) : exploreArticles) : savedArticles).map((article) => {
               const catConfig = CATEGORY_CONFIG[article.category] ?? {
                 label: article.category,
                 color: 'text-muted-foreground',
