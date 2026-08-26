@@ -13,7 +13,4 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-  // If you need to handle data-only payloads, you would do it here.
-  // We leave this empty because Firebase automatically displays
-  // notifications when the payload includes a 'notification' object.
 });

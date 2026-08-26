@@ -12,12 +12,10 @@ export function AppLayout() {
   const { pathname } = useLocation();
   const { user } = useAuth();
 
-  // Reset scroll and setup messaging
   useEffect(() => {
     window.scrollTo(0, 0);
     setupMessageListener();
 
-    // Auto-sync token if permission is already granted globally
     if (typeof Notification !== 'undefined' && Notification.permission === 'granted' && user) {
       requestPushPermissions(user.uid).catch(console.error);
     }

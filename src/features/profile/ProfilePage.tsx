@@ -33,7 +33,6 @@ export function ProfilePage() {
     if (typeof Notification !== 'undefined') {
       setNotificationStatus(Notification.permission);
       
-      // Auto-sync token if permission is already granted
       if (Notification.permission === 'granted' && user) {
         requestPushPermissions(user.uid).catch(console.error);
       }
