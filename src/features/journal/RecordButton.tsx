@@ -34,7 +34,7 @@ export function RecordButton({
 
           <button
             onClick={() => {
-              vibrate([50, 100, 50]);
+              vibrate([150, 100, 200]);
               onStop();
             }}
             className="relative z-10 flex h-24 w-24 items-center justify-center rounded-full bg-destructive glow-destructive transition-transform active:scale-95"
@@ -58,7 +58,7 @@ export function RecordButton({
     <div className="flex flex-col items-center gap-5 animate-fade-in">
       <button
         onClick={() => {
-          vibrate(50);
+          vibrate(200);
           onStart();
         }}
         disabled={disabled}
