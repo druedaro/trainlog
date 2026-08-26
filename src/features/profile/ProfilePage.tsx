@@ -140,7 +140,7 @@ export function ProfilePage() {
                 <Activity className="h-4 w-4" />
                 <span className="text-xs font-medium">Entradas</span>
               </div>
-              {isLoading ? <Skeleton className="h-7 w-12" /> : <div className="text-2xl font-bold text-foreground">{entryCount || 0}</div>}
+              {isLoading ? <Skeleton className="h-7 w-12" /> : <div className="text-2xl font-semibold text-foreground">{entryCount || 0}</div>}
             </div>
             
             <div className="rounded-3xl shadow-sm border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-primary/5 hover:border-primary/30 hover:shadow-[0_0_15px_hsl(var(--primary)/0.08)]">
@@ -148,7 +148,7 @@ export function ProfilePage() {
                 <Flame className="h-4 w-4 text-orange-500" />
                 <span className="text-xs font-medium">Racha Activa</span>
               </div>
-              {isLoading ? <Skeleton className="h-7 w-12" /> : <div className="text-2xl font-bold text-foreground">{stats?.streak || 0} <span className="text-sm font-normal text-muted-foreground">días</span></div>}
+              {isLoading ? <Skeleton className="h-7 w-12" /> : <div className="text-2xl font-semibold text-foreground">{stats?.streak || 0} <span className="text-sm font-normal text-muted-foreground">días</span></div>}
             </div>
 
             <div className="rounded-3xl shadow-sm border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-primary/5 hover:border-primary/30 hover:shadow-[0_0_15px_hsl(var(--primary)/0.08)]">
@@ -156,7 +156,7 @@ export function ProfilePage() {
                 <Calendar className="h-4 w-4 text-blue-500" />
                 <span className="text-xs font-medium">Última Sesión</span>
               </div>
-              {isLoading ? <Skeleton className="h-7 w-12" /> : <div className="text-2xl font-bold text-foreground">
+              {isLoading ? <Skeleton className="h-7 w-12" /> : <div className="text-2xl font-semibold text-foreground">
                 {stats?.daysAgo === 0 ? 'Hoy' : stats?.daysAgo === 1 ? 'Ayer' : stats?.daysAgo !== undefined && stats.daysAgo > 1 ? `Hace ${stats.daysAgo}d` : '--'}
               </div>}
             </div>
@@ -166,7 +166,7 @@ export function ProfilePage() {
                 <Activity className="h-4 w-4 text-green-500" />
                 <span className="text-xs font-medium">Top Actividad</span>
               </div>
-              {isLoading ? <Skeleton className="h-7 w-12" /> : <div className="text-lg font-bold truncate text-foreground" title={stats?.topActivity}>{stats?.topActivity || '--'}</div>}
+              {isLoading ? <Skeleton className="h-7 w-12" /> : <div className="text-lg font-semibold truncate text-foreground" title={stats?.topActivity}>{stats?.topActivity || '--'}</div>}
             </div>
           </div>
         </section>
