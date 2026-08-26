@@ -22,7 +22,7 @@ async function run() {
         webpush: {
           notification: {
             icon: '/icon-192.png',
-            badge: '/badge.svg',
+            badge: '/badge.png',
           },
         },
         tokens: tokens,
