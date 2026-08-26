@@ -36,7 +36,7 @@ export function ArticleView({ article, isSaved = false, onToggleSave, onBack }: 
         <Button
           variant="ghost"
           onClick={onBack}
-          className="relative gap-2 rounded-xl px-3 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+          className="relative gap-2 rounded-xl px-3 bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground active:scale-95 transition-all"
         >
           <ArrowLeft className="h-4 w-4" />
           Volver
@@ -49,7 +49,7 @@ export function ArticleView({ article, isSaved = false, onToggleSave, onBack }: 
               vibrate(50);
               onToggleSave();
             }}
-            className={`relative rounded-xl ${isSaved ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+            className={`relative rounded-xl active:scale-95 transition-all ${isSaved ? 'bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground' : 'text-muted-foreground hover:bg-primary hover:text-primary-foreground'}`}
             aria-label={isSaved ? "Quitar de guardados" : "Guardar artículo"}
           >
             <Bookmark className={`h-5 w-5 ${isSaved ? 'fill-current' : ''}`} />

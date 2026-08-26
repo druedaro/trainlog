@@ -144,7 +144,7 @@ export function EntryDetail() {
         <Button
           variant="ghost"
           onClick={() => navigate('/')}
-          className="gap-2 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+          className="gap-2 rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground active:scale-95 transition-all"
         >
           <ArrowLeft className="h-4 w-4" />
           Volver
@@ -163,7 +163,7 @@ export function EntryDetail() {
         <Button
           variant="ghost"
           onClick={() => navigate('/')}
-          className="relative gap-2 rounded-xl px-3 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+          className="relative gap-2 rounded-xl px-3 bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground active:scale-95 transition-all"
           disabled={isDeleting}
         >
           <ArrowLeft className="h-4 w-4" />
