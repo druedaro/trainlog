@@ -54,7 +54,7 @@ export default async function dailyReminder(req: VercelRequest, res: VercelRespo
             webpush: {
               notification: {
                 icon: '/icon-192.png',
-                badge: '/favicon.svg',
+                badge: '/badge.svg',
               },
             },
             tokens: tokens,
