@@ -68,13 +68,12 @@ export function RecentEntries() {
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {recentEntries.map((entry) => {
-          // Color coding based on perceivedMood
-          const moodColor = 
+          const dotColor = 
             entry.analysis.perceivedMood === 'very_positive' || entry.analysis.perceivedMood === 'positive' 
-              ? 'text-green-500 bg-green-500/10'
+              ? 'bg-green-500'
               : entry.analysis.perceivedMood === 'very_negative' || entry.analysis.perceivedMood === 'negative'
-              ? 'text-red-500 bg-red-500/10'
-              : 'text-blue-500 bg-blue-500/10';
+              ? 'bg-red-500'
+              : 'bg-blue-500';
 
           return (
             <button
@@ -84,7 +83,7 @@ export function RecentEntries() {
             >
               <div className="flex w-full justify-between items-start">
                 <div className="flex items-center gap-2">
-                  <div className={`h-2 w-2 rounded-full shrink-0 ${moodColor.split(' ')[0]?.replace('text-', 'bg-')}`} />
+                  <div className={`h-2 w-2 rounded-full shrink-0 ${dotColor}`} />
                   <p className="text-xs font-medium text-muted-foreground">
                     {format(entry.createdAt, "d 'de' MMMM, HH:mm", { locale: es })}
                   </p>
