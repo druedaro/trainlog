@@ -688,8 +688,9 @@ export function DiscoverPage() {
                   </div>
                 </button>
               );
-            })}
-          </div>
+                })
+              )}
+            </div>
 
           {activeTab === 'saved' && hasMoreSaved && (
             <div ref={observerTarget} className="py-8 flex justify-center items-center w-full">
