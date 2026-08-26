@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router';
 import { LogOut, Download, Activity, Calendar, Flame, Edit2, User, AlertTriangle, Shield, FileText, Bell, BookOpen } from 'lucide-react';
 import { toast } from 'sonner';
