@@ -18,7 +18,7 @@ export async function requestPushPermissions(userId: string): Promise<boolean> {
     }
     return false;
   } catch (error) {
-    
+    console.error('Error in requestPushPermissions:', error);
     return false;
   }
 }
@@ -32,7 +32,7 @@ async function saveFCMToken(userId: string, token: string) {
       updatedAt: Date.now()
     });
   } catch (err) {
-    
+    console.error('Error saving FCM token:', err);
   }
 }
 
