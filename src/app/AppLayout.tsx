@@ -5,16 +5,23 @@ import { SideNav } from '@/components/SideNav';
 import { Toaster } from 'sonner';
 import { InstallPWA } from '@/components/InstallPWA';
 import { setupMessageListener } from '@/lib/push';
+import { requestPushPermissions } from '@/lib/push';
+import { useAuth } from '@/features/auth/useAuth';
 
 export function AppLayout() {
   const { pathname } = useLocation();
+  const { user } = useAuth();
 
-  
+  // Reset scroll and setup messaging
   useEffect(() => {
     window.scrollTo(0, 0);
-
     setupMessageListener();
-  }, [pathname]);
+
+    // Auto-sync token if permission is already granted globally
+    if (typeof Notification !== 'undefined' && Notification.permission === 'granted' && user) {
+      requestPushPermissions(user.uid).catch(console.error);
+    }
+  }, [pathname, user]);
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row bg-background">
