@@ -32,8 +32,13 @@ export function ProfilePage() {
   useEffect(() => {
     if (typeof Notification !== 'undefined') {
       setNotificationStatus(Notification.permission);
+      
+      // Auto-sync token if permission is already granted
+      if (Notification.permission === 'granted' && user) {
+        requestPushPermissions(user.uid).catch(console.error);
+      }
     }
-  }, []);
+  }, [user]);
 
   const stats = useMemo(() => {
     if (recentEntries.length === 0) return null;
