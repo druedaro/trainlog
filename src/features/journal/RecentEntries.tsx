@@ -67,35 +67,48 @@ export function RecentEntries() {
         Entradas recientes
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {recentEntries.map((entry) => (
-          <button
-            key={entry.id}
-            onClick={() => navigate(`/entry/${entry.id}`)}
-            className="card-interactive flex h-full w-full flex-col gap-3 rounded-3xl shadow-sm border border-border/40 bg-card/50 p-5 text-left backdrop-blur-sm hover:shadow-[0_0.08px_hsl(var(--primary)/0.08)] transition-shadow"
-          >
-            <div className="flex w-full justify-between items-start">
-              <p className="text-xs font-medium text-muted-foreground">
-                {format(entry.createdAt, "d 'de' MMMM, HH:mm", { locale: es })}
-              </p>
-              <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/50" />
-            </div>
-            <div className="min-w-0 flex-1 w-full">
-              <p className="line-clamp-3 text-sm leading-relaxed text-foreground">
-                {entry.analysis.summary}
-              </p>
-              <div className="flex flex-wrap gap-1 mt-3">
-                {(entry.analysis.themes || []).slice(0, 3).map((theme) => (
-                  <span
-                    key={theme}
-                    className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"
-                  >
-                    {theme}
-                  </span>
-                ))}
+        {recentEntries.map((entry) => {
+          // Color coding based on perceivedMood
+          const moodColor = 
+            entry.analysis.perceivedMood === 'very_positive' || entry.analysis.perceivedMood === 'positive' 
+              ? 'text-green-500 bg-green-500/10'
+              : entry.analysis.perceivedMood === 'very_negative' || entry.analysis.perceivedMood === 'negative'
+              ? 'text-red-500 bg-red-500/10'
+              : 'text-blue-500 bg-blue-500/10';
+
+          return (
+            <button
+              key={entry.id}
+              onClick={() => navigate(`/entry/${entry.id}`)}
+              className="card-interactive flex h-full w-full flex-col gap-3 rounded-3xl shadow-sm border border-border/40 bg-card/50 p-5 text-left backdrop-blur-sm hover:shadow-[0_0.08px_hsl(var(--primary)/0.08)] transition-shadow"
+            >
+              <div className="flex w-full justify-between items-start">
+                <div className="flex items-center gap-2">
+                  <div className={`h-2 w-2 rounded-full shrink-0 ${moodColor.split(' ')[0]?.replace('text-', 'bg-')}`} />
+                  <p className="text-xs font-medium text-muted-foreground">
+                    {format(entry.createdAt, "d 'de' MMMM, HH:mm", { locale: es })}
+                  </p>
+                </div>
+                <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/50" />
               </div>
-            </div>
-          </button>
-        ))}
+              <div className="min-w-0 flex-1 w-full">
+                <p className="line-clamp-3 text-sm leading-relaxed text-foreground">
+                  {entry.analysis.summary}
+                </p>
+                <div className="flex flex-wrap gap-1 mt-3">
+                  {(entry.analysis.themes || []).slice(0, 3).map((theme) => (
+                    <span
+                      key={theme}
+                      className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"
+                    >
+                      {theme}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
