@@ -204,7 +204,7 @@ export function JournalPage() {
                   </h2>
                   <p className="text-[15px] leading-relaxed text-muted-foreground">
                     ¿Cómo ha ido tu entrenamiento hoy?<br />
-                    Estoy aquí para escucharte.
+                    Estoy aquí para escucharte
                   </p>
                 </div>
                 <button 
