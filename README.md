@@ -66,7 +66,9 @@ After a workout, users record a voice note describing how the session went — w
 
 * 📱 **Installable PWA**
   Trainlog can be installed as a Progressive Web App (PWA) on iOS, Android, and Desktop, behaving like a native application with an immersive full-screen experience and high-resolution icons.
-
+<div align="center">
+  <img width="250" alt="dark-mode-trainlog" src="https://github.com/user-attachments/assets/532b26b6-d371-4f53-9206-c11c45c30c1f" />
+</div>
 
 
 ## 🧭 Product Principles
