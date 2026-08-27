@@ -5,12 +5,10 @@
 Trainlog is a voice-first sports reflection journal designed to help users better understand their training experiences through natural speech.
 
 After a workout, users record a voice note describing how the session went — what they felt, what they enjoyed, what challenged them. The app transcribes the recording, extracts structured insights using AI, provides contextual reflections, and builds a personal history that can be explored through a calendar, weekly summaries, and a personal AI coach.
-
 <div align="center">
-  <br/>
-  <video src="https://github.com/user-attachments/assets/fe2a0d61-c861-4368-9f4f-a5d0ee58f4b6" width="250" autoPlay loop muted playsInline></video>
-  <br/>
+  <img width="250" alt="2-mobile-trainlog" src="https://github.com/user-attachments/assets/6982d62f-d1ab-4215-81b1-ed5285b524a2" />
 </div>
+
 
 ## 🌐 Live Demo
 
@@ -32,11 +30,8 @@ After a workout, users record a voice note describing how the session went — w
 
 * 🔍 **Weekly insights & pattern detection**
   Explore energy levels, mood trends, recurring themes, and AI-generated weekly summaries across your entries.
-  
 <div align="center">
-  <br/>
-  <video src="https://github.com/user-attachments/assets/676883b9-9b29-4ba5-b41a-8fa57c62985f" width="600" autoPlay loop muted playsInline></video>
-  <br/>
+  <img width="650" alt="1-tablet-trainlog" src="https://github.com/user-attachments/assets/f1caf783-dd72-4035-a17e-34733850bd07" />
 </div>
 
 * 📚 **Personalized learning content (Discover)**
@@ -71,12 +66,10 @@ After a workout, users record a voice note describing how the session went — w
 
 * 📱 **Installable PWA**
   Trainlog can be installed as a Progressive Web App (PWA) on iOS, Android, and Desktop, behaving like a native application with an immersive full-screen experience and high-resolution icons.
-
 <div align="center">
-  <br/>
-  <video src="https://github.com/user-attachments/assets/15e7ad00-5a3b-446e-a2a8-def95e0077aa" width="250" autoPlay loop muted playsInline></video>
-  <br/>
+  <img width="250" alt="dark-mode-trainlog" src="https://github.com/user-attachments/assets/532b26b6-d371-4f53-9206-c11c45c30c1f" />
 </div>
+
 
 ## 🧭 Product Principles
 
