@@ -5,6 +5,9 @@
 Trainlog is a voice-first sports reflection journal designed to help users better understand their training experiences through natural speech.
 
 After a workout, users record a voice note describing how the session went — what they felt, what they enjoyed, what challenged them. The app transcribes the recording, extracts structured insights using AI, provides contextual reflections, and builds a personal history that can be explored through a calendar, weekly summaries, and a personal AI coach.
+[2-mobile-trainlog.webm](https://github.com/user-attachments/assets/fe2a0d61-c861-4368-9f4f-a5d0ee58f4b6)
+
+
 
 ## 🌐 Live Demo
 
@@ -26,6 +29,8 @@ After a workout, users record a voice note describing how the session went — w
 
 * 🔍 **Weekly insights & pattern detection**
   Explore energy levels, mood trends, recurring themes, and AI-generated weekly summaries across your entries.
+  [1-tablet-trainlog.webm](https://github.com/user-attachments/assets/676883b9-9b29-4ba5-b41a-8fa57c62985f)
+
 
 * 📚 **Personalized learning content (Discover)**
   Browse curated articles by category (Training, Nutrition, Mindset, Recovery) or get AI-generated recommendations based on your journal entries.
@@ -59,6 +64,8 @@ After a workout, users record a voice note describing how the session went — w
 
 * 📱 **Installable PWA**
   Trainlog can be installed as a Progressive Web App (PWA) on iOS, Android, and Desktop, behaving like a native application with an immersive full-screen experience and high-resolution icons.
+  [3-mobile-trainlog.webm](https://github.com/user-attachments/assets/15e7ad00-5a3b-446e-a2a8-def95e0077aa)
+
 
 ## 🧭 Product Principles
 
