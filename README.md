@@ -120,7 +120,7 @@ Trainlog does not diagnose injuries, medical conditions, or psychological condit
 
 * MediaRecorder API (browser-native)
 * Groq Whisper — speech-to-text
-* Google Gemini Flash — structured analysis, contextual responses, article generation, AI coaching
+* Groq (Llama 3 8B / 70B) — structured analysis, contextual responses, article generation, AI coaching
 
 ### Backend
 
@@ -161,7 +161,7 @@ The user reviews and edits the transcript
           ↓
 The user confirms the content
           ↓
-Gemini generates structured insights
+Groq generates structured insights
           ↓
 Zod validates the AI response
           ↓
@@ -232,8 +232,8 @@ cp .env.example .env
 ```
 
 Add the required configuration values to `.env`:
-- `GROQ_API_KEY` — Groq API key for Whisper transcription (server-side)
-- `GOOGLE_GENAI_API_KEY` — Google Gemini API key (server-side)
+- `GROQ_API_KEY` — Groq API key for Whisper transcription and Llama 3 LLM (server-side)
+- `UNSPLASH_ACCESS_KEY` — Unsplash API key for dynamic article images (server-side)
 - `FIREBASE_SERVICE_ACCOUNT` — Firebase Admin SDK service account, base64 encoded (server-side)
 - `UPSTASH_REDIS_REST_URL` — Upstash Redis endpoint for Rate Limiting (server-side)
 - `UPSTASH_REDIS_REST_TOKEN` — Upstash Redis token (server-side)
@@ -259,7 +259,7 @@ npm run preview
 * **PII Sanitization:** User inputs (voice transcripts and chat messages) are actively scrubbed in real-time to censor emails, phone numbers, and DNI/NIEs before being sent to third-party LLMs.
 * **Prompt Injection Defense:** Strict delimiters and "ignore" directives shield the system prompts from being hijacked or manipulated by malicious user inputs.
 * API keys are never exposed in the frontend.
-* Groq and Gemini requests are handled through Vercel serverless functions.
+* Groq requests are handled through Vercel serverless functions.
 * Firebase Auth tokens are verified server-side before processing any request.
 * User input is validated at application boundaries.
 * AI responses are validated with Zod before being used or persisted.
