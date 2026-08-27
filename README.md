@@ -115,6 +115,7 @@ Trainlog does not diagnose injuries, medical conditions, or psychological condit
 * TanStack Query (React Query)
 * React Day Picker
 * React Markdown
+* Vite PWA (vite-plugin-pwa)
 
 ### Audio & AI
 
@@ -126,6 +127,7 @@ Trainlog does not diagnose injuries, medical conditions, or psychological condit
 
 * Firebase Authentication (Google OAuth)
 * Cloud Firestore (per-user data isolation)
+* Firebase Cloud Messaging (Web Push Notifications)
 * Vercel Serverless Functions (API layer)
 
 ### Testing
@@ -235,6 +237,7 @@ Add the required configuration values to `.env`:
 - `GROQ_API_KEY` — Groq API key for Whisper transcription and Llama 3 LLM (server-side)
 - `UNSPLASH_ACCESS_KEY` — Unsplash API key for dynamic article images (server-side)
 - `FIREBASE_SERVICE_ACCOUNT` — Firebase Admin SDK service account, base64 encoded (server-side)
+- `VITE_FIREBASE_VAPID_KEY` — Firebase Cloud Messaging Web Push certificate (client-side)
 - `UPSTASH_REDIS_REST_URL` — Upstash Redis endpoint for Rate Limiting (server-side)
 - `UPSTASH_REDIS_REST_TOKEN` — Upstash Redis token (server-side)
 
