@@ -23,16 +23,15 @@ self.addEventListener('notificationclick', (event) => {
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
-      // Find any window/app instance that belongs to our app's origin
+
       for (let i = 0; i < windowClients.length; i++) {
         const client = windowClients[i];
         if (client.url.startsWith(self.location.origin) && 'focus' in client) {
-          // If they were on another page (e.g. /profile), we can choose to navigate them to home
-          // or just focus the app where they left off. Focus is usually best.
+
           return client.focus();
         }
       }
-      // If the app is fully closed, open it
+
       if (clients.openWindow) {
         return clients.openWindow(urlToOpen);
       }
