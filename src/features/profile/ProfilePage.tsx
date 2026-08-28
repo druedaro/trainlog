@@ -121,7 +121,7 @@ export function ProfilePage() {
       )}
 
       <main className="flex-1 px-5 py-6 pb-24 space-y-8 animate-slide-up">
-        {/* Header Section */}
+
         <section className="text-center space-y-2">
           <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 shadow-inner">
             <User className="h-10 w-10 text-primary" />
@@ -130,7 +130,7 @@ export function ProfilePage() {
           <p className="text-sm text-muted-foreground">Un resumen de rendimiento</p>
         </section>
 
-        {/* Stats Grid */}
+
         <section>
           <h3 className="mb-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Métricas Globales</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -170,7 +170,7 @@ export function ProfilePage() {
           </div>
         </section>
 
-        {/* Gamification / Achievements */}
+
         <section className="rounded-3xl shadow-sm border border-border/40 bg-card/50 overflow-hidden hover:shadow-[0_0_15px_hsl(var(--primary)/0.08)] transition-shadow">
           <button 
             onClick={() => setIsAchievementsModalOpen(true)}
@@ -191,7 +191,7 @@ export function ProfilePage() {
           </button>
         </section>
 
-        {/* Legal & App Links */}
+
         <section className="rounded-3xl shadow-sm border border-border/40 bg-card/50 overflow-hidden">
           <Link to="/privacy" className="flex items-center gap-3 p-5 hover:bg-primary/5 transition-colors">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
@@ -229,7 +229,7 @@ export function ProfilePage() {
           </button>
         </section>
 
-        {/* System Options */}
+
         <section className="space-y-3">
           <h3 className="mb-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Sistema</h3>
           
@@ -284,7 +284,7 @@ export function ProfilePage() {
 
       </main>
 
-      {/* Delete Account Modal */}
+
       {isDeleteModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 animate-in fade-in">
           <div className="w-full max-w-sm space-y-6 rounded-3xl bg-card p-6 shadow-2xl border border-destructive/20">
@@ -332,7 +332,7 @@ export function ProfilePage() {
         </div>
       )}
 
-      {/* Achievements Modal */}
+
       {isAchievementsModalOpen && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-background/80 backdrop-blur-sm sm:p-4 animate-in fade-in">
           <div className="w-full sm:max-w-md bg-card sm:rounded-3xl rounded-t-3xl shadow-2xl border border-border/40 max-h-[85vh] flex flex-col slide-in-from-bottom-full sm:slide-in-from-bottom-0">
