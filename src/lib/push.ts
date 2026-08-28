@@ -18,7 +18,6 @@ export async function requestPushPermissions(userId: string): Promise<boolean> {
     }
     return false;
   } catch (error) {
-    console.error('Error in requestPushPermissions:', error);
     return false;
   }
 }

@@ -34,7 +34,7 @@ export function ProfilePage() {
       setNotificationStatus(Notification.permission);
       
       if (Notification.permission === 'granted' && user) {
-        requestPushPermissions(user.uid).catch(console.error);
+        requestPushPermissions(user.uid).catch(() => {});
       }
     }
   }, [user]);

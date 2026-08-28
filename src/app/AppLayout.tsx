@@ -17,7 +17,7 @@ export function AppLayout() {
     setupMessageListener();
 
     if (typeof Notification !== 'undefined' && Notification.permission === 'granted' && user) {
-      requestPushPermissions(user.uid).catch(console.error);
+      requestPushPermissions(user.uid).catch(() => {});
     }
   }, [pathname, user]);
 
