@@ -181,7 +181,16 @@ export function InsightsPage() {
               {insightsDoc.synthesis.highlights.map((highlight, i) => (
                 <li key={i} className="flex items-start gap-3">
                   <div className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                  <span className="text-sm leading-snug text-foreground/80">{highlight}</span>
+                  <span className="text-sm leading-snug text-foreground/80">
+                    <ReactMarkdown
+                      components={{
+                        strong: ({node, ...props}) => <strong className="font-bold text-primary" {...props} />,
+                        p: ({node, ...props}) => <span {...props} />
+                      }}
+                    >
+                      {highlight.replace(/\*\*\s*(.*?)\s*\*\*/g, '**$1**')}
+                    </ReactMarkdown>
+                  </span>
                 </li>
               ))}
             </ul>
@@ -359,7 +368,16 @@ export function InsightsPage() {
                       {insightsDoc.synthesis.highlights.map((highlight, i) => (
                         <li key={i} className="flex items-start gap-3">
                           <div className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                          <span className="text-sm leading-snug text-foreground/80">{highlight}</span>
+                          <span className="text-sm leading-snug text-foreground/80">
+                            <ReactMarkdown
+                              components={{
+                                strong: ({node, ...props}) => <strong className="font-bold text-primary" {...props} />,
+                                p: ({node, ...props}) => <span {...props} />
+                              }}
+                            >
+                              {highlight.replace(/\*\*\s*(.*?)\s*\*\*/g, '**$1**')}
+                            </ReactMarkdown>
+                          </span>
                         </li>
                       ))}
                     </ul>
