@@ -163,7 +163,7 @@ export function ProfilePage() {
             <div className="rounded-3xl shadow-sm border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-primary/5 hover:border-primary/30 hover:shadow-[0_0_15px_hsl(var(--primary)/0.08)]">
               <div className="flex items-center gap-2 text-muted-foreground mb-2">
                 <Activity className="h-4 w-4 text-green-500" />
-                <span className="text-xs font-medium">Top Actividad</span>
+                <span className="text-xs font-medium">Actividad Frecuente</span>
               </div>
               {isLoading ? <Skeleton className="h-7 w-12" /> : <div className="text-lg font-semibold truncate text-foreground" title={stats?.topActivity}>{stats?.topActivity || '--'}</div>}
             </div>
