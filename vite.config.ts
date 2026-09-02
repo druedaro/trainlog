@@ -14,8 +14,8 @@ export default defineConfig({
         name: 'Trainlog',
         short_name: 'Trainlog',
         description: 'Tu diario de entrenamiento inteligente',
-        theme_color: '#09090b',
-        background_color: '#09090b',
+        theme_color: '#ffffff',
+        background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait',
         icons: [
