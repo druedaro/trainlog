@@ -1,6 +1,7 @@
 import { Navigate, Link } from 'react-router';
 import { useAuth } from '@/features/auth/useAuth';
 import { Button } from '@/components/ui/button';
+import { Mic, BrainCircuit, LineChart } from 'lucide-react';
 
 export function LoginPage() {
   const { user, isLoading, signInWithGoogle } = useAuth();
@@ -18,32 +19,64 @@ export function LoginPage() {
   }
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-6">
+    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-6 py-12">
       <div className="pointer-events-none absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2">
-        <div className="h-[300px] w-[300px] rounded-full bg-primary/10 blur-[100px]" />
+        <div className="h-[400px] w-[400px] rounded-full bg-primary/10 blur-[120px]" />
       </div>
 
-      <div className="relative z-10 flex flex-col items-center animate-slide-up">
-        <div className="mb-2 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <div className="relative z-10 flex flex-col items-center animate-slide-up w-full max-w-3xl">
+        <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-3xl bg-primary/10 shadow-inner border border-primary/20">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Z" fill="none" stroke="hsl(172, 66%, 50%)" strokeWidth="1.5"/>
             <path d="M12 8v8M8 12l4-4 4 4" stroke="hsl(172, 66%, 50%)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </div>
 
-        <h1 className="text-4xl font-extrabold tracking-tight text-gradient">
+        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-gradient text-center mb-3">
           Trainlog
         </h1>
-        <p className="mt-2 text-base text-muted-foreground">
-          Tu diario personal de reflexión deportiva
+        <p className="text-lg text-muted-foreground text-center max-w-md mx-auto mb-10">
+          El primer diario de reflexión deportiva impulsado por voz e inteligencia artificial.
         </p>
 
-        <div className="mt-10 w-full max-w-sm rounded-2xl border border-border/50 bg-card/60 p-6 shadow-lg backdrop-blur-xl">
+        <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+          <div className="flex flex-col items-center text-center p-5 rounded-2xl bg-card/40 border border-border/40 backdrop-blur-sm">
+            <div className="h-12 w-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 text-primary">
+              <Mic className="h-6 w-6" />
+            </div>
+            <h3 className="text-base font-bold text-foreground mb-1">1. Graba</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Habla naturalmente sobre tu entreno. Sin menús complicados, solo tu voz.
+            </p>
+          </div>
+          
+          <div className="flex flex-col items-center text-center p-5 rounded-2xl bg-card/40 border border-border/40 backdrop-blur-sm">
+            <div className="h-12 w-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 text-primary">
+              <BrainCircuit className="h-6 w-6" />
+            </div>
+            <h3 className="text-base font-bold text-foreground mb-1">2. Analiza</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Nuestra IA transcribe y extrae métricas de fatiga, actividades y estado de ánimo.
+            </p>
+          </div>
+
+          <div className="flex flex-col items-center text-center p-5 rounded-2xl bg-card/40 border border-border/40 backdrop-blur-sm">
+            <div className="h-12 w-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 text-primary">
+              <LineChart className="h-6 w-6" />
+            </div>
+            <h3 className="text-base font-bold text-foreground mb-1">3. Descubre</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Revisa tu progreso en el calendario y recibe artículos hiper-personalizados.
+            </p>
+          </div>
+        </div>
+
+        <div className="w-full max-w-sm rounded-3xl border border-border/50 bg-card/80 p-6 shadow-2xl backdrop-blur-xl">
           <h2 className="mb-1 text-center text-lg font-semibold text-foreground">
-            Bienvenido
+            Comienza gratis
           </h2>
           <p className="mb-6 text-center text-sm text-muted-foreground">
-            Inicia sesión para empezar a registrar tus reflexiones
+            Inicia sesión y transforma tu manera de entrenar
           </p>
           <Button
             onClick={signInWithGoogle}
