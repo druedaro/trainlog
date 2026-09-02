@@ -250,11 +250,11 @@ export function InsightsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
                   <span className="text-xs font-semibold text-muted-foreground">Energía media</span>
-                  <div className="mt-3 flex h-24 md:h-32 items-end gap-1.5">
+                  <div className="mt-3 flex h-24 md:h-32 items-end justify-center gap-1.5 md:gap-3">
                     {[1, 2, 3, 4, 5].map((val) => (
                       <div
                         key={val}
-                        className={`w-full rounded-t-sm transition-all ${
+                        className={`w-full max-w-[32px] rounded-t-sm transition-all ${
                           val <= Math.round(stats.avgEnergy)
                             ? 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.3)]'
                             : 'bg-muted'
@@ -267,11 +267,11 @@ export function InsightsPage() {
 
                 <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
                   <span className="text-xs font-semibold text-muted-foreground">Ánimo medio</span>
-                  <div className="mt-3 flex h-24 md:h-32 items-end gap-1.5">
+                  <div className="mt-3 flex h-24 md:h-32 items-end justify-center gap-1.5 md:gap-3">
                     {[1, 2, 3, 4, 5].map((val) => (
                       <div
                         key={val}
-                        className={`w-full rounded-t-sm transition-all ${
+                        className={`w-full max-w-[32px] rounded-t-sm transition-all ${
                           val <= Math.round(stats.avgMood)
                             ? 'bg-purple-400 shadow-[0_0_8px_rgba(192,132,252,0.3)]'
                             : 'bg-muted'
