@@ -2,50 +2,94 @@ import { useState } from 'react';
 import { Navigate, Link } from 'react-router';
 import { useAuth } from '@/features/auth/useAuth';
 import { Button } from '@/components/ui/button';
-import { Mic, BrainCircuit, LineChart, Mail, Lock, AlertCircle } from 'lucide-react';
+import { Mic, BrainCircuit, LineChart, Mail, Lock, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export function LoginPage() {
-  const { user, isLoading, signInWithGoogle, signInWithEmail, signUpWithEmail } = useAuth();
+  const { user, isLoading, signInWithGoogle, signInWithEmail, signUpWithEmail, resetPassword } = useAuth();
+  
+  const [mode, setMode] = useState<'login' | 'register' | 'forgot_password'>('login');
+  
   const [email, setEmail] = useState('');
+  const [confirmEmail, setConfirmEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoginMode, setIsLoginMode] = useState(true);
+  const [confirmPassword, setConfirmPassword] = useState('');
+  
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const validatePassword = (pwd: string) => {
+    // Requires: 8+ chars, 1 uppercase, 1 lowercase, 1 number, 1 special char
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()[\]{}|;:'",.<>?/~`_+=-]).{8,}$/;
+    return regex.test(pwd);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!email || !password) {
-      setError('Por favor, rellena todos los campos.');
-      return;
-    }
-    if (password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres.');
+    setSuccessMessage(null);
+
+    if (mode === 'forgot_password') {
+      if (!email) return setError('Por favor, introduce tu correo electrónico.');
+      setIsSubmitting(true);
+      try {
+        await resetPassword(email);
+        setSuccessMessage('Si el correo existe, te hemos enviado un enlace para restablecer tu contraseña.');
+        setEmail('');
+      } catch (err: any) {
+        setError('Error al enviar el correo. Inténtalo de nuevo.');
+      } finally {
+        setIsSubmitting(false);
+      }
       return;
     }
 
-    setIsSubmitting(true);
-    try {
-      if (isLoginMode) {
+    if (mode === 'login') {
+      if (!email || !password) return setError('Por favor, rellena todos los campos.');
+      setIsSubmitting(true);
+      try {
         await signInWithEmail(email, password);
-      } else {
+      } catch (err: any) {
+        if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+          setError('Email o contraseña incorrectos.');
+        } else {
+          setError('Ocurrió un error inesperado. Inténtalo de nuevo.');
+        }
+      } finally {
+        setIsSubmitting(false);
+      }
+      return;
+    }
+
+    if (mode === 'register') {
+      if (!email || !confirmEmail || !password || !confirmPassword) {
+        return setError('Por favor, rellena todos los campos.');
+      }
+      if (email !== confirmEmail) return setError('Los correos electrónicos no coinciden.');
+      if (password !== confirmPassword) return setError('Las contraseñas no coinciden.');
+      if (!validatePassword(password)) {
+        return setError('La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial (!@#...).');
+      }
+
+      setIsSubmitting(true);
+      try {
         await signUpWithEmail(email, password);
+        setSuccessMessage('¡Cuenta creada! Revisa tu bandeja de entrada y haz clic en el enlace para verificar tu correo antes de iniciar sesión.');
+        setMode('login');
+        setPassword('');
+        setConfirmPassword('');
+        setConfirmEmail('');
+      } catch (err: any) {
+        if (err.code === 'auth/email-already-in-use') {
+          setError('Ya existe una cuenta con este email.');
+        } else if (err.code === 'auth/invalid-email') {
+          setError('El formato del email no es válido.');
+        } else {
+          setError('Ocurrió un error al crear la cuenta. Inténtalo de nuevo.');
+        }
+      } finally {
+        setIsSubmitting(false);
       }
-    } catch (err: any) {
-      console.error(err);
-      if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
-        setError('Email o contraseña incorrectos.');
-      } else if (err.code === 'auth/email-already-in-use') {
-        setError('Ya existe una cuenta con este email.');
-      } else if (err.code === 'auth/invalid-email') {
-        setError('El formato del email no es válido.');
-      } else if (err.code === 'auth/operation-not-allowed') {
-        setError('El inicio de sesión por email no está habilitado en Firebase.');
-      } else {
-        setError('Ocurrió un error inesperado. Inténtalo de nuevo.');
-      }
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -61,6 +105,116 @@ export function LoginPage() {
     return <Navigate to="/" replace />;
   }
 
+  const renderFormContent = () => {
+    if (mode === 'forgot_password') {
+      return (
+        <>
+          <h2 className="mb-1 text-center text-xl font-bold text-foreground">Recuperar contraseña</h2>
+          <p className="mb-6 text-center text-sm text-muted-foreground">Te enviaremos un enlace seguro</p>
+          <div className="space-y-4">
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                type="email"
+                placeholder="Tu correo electrónico"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isSubmitting}
+                className="w-full rounded-xl border border-input bg-transparent py-2.5 pl-10 pr-4 text-sm outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary disabled:opacity-50"
+              />
+            </div>
+            <Button type="submit" disabled={isSubmitting} className="w-full rounded-xl py-6 font-semibold transition-all">
+              {isSubmitting ? <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" /> : 'Enviar enlace'}
+            </Button>
+          </div>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <h2 className="mb-1 text-center text-xl font-bold text-foreground">
+          {mode === 'login' ? 'Inicia sesión' : 'Crea tu cuenta'}
+        </h2>
+        <p className="mb-6 text-center text-sm text-muted-foreground">
+          {mode === 'login' ? 'Y sigue transformando tu entreno' : 'Únete y empieza gratis hoy mismo'}
+        </p>
+
+        <div className="space-y-4">
+          <div className="space-y-3">
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                type="email"
+                placeholder="Correo electrónico"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isSubmitting}
+                className="w-full rounded-xl border border-input bg-transparent py-2.5 pl-10 pr-4 text-sm outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary disabled:opacity-50"
+              />
+            </div>
+            {mode === 'register' && (
+              <div className="relative animate-fade-in">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <input
+                  type="email"
+                  placeholder="Confirmar correo electrónico"
+                  value={confirmEmail}
+                  onChange={(e) => setConfirmEmail(e.target.value)}
+                  disabled={isSubmitting}
+                  className="w-full rounded-xl border border-input bg-transparent py-2.5 pl-10 pr-4 text-sm outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary disabled:opacity-50"
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-3">
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                type="password"
+                placeholder="Contraseña"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isSubmitting}
+                className="w-full rounded-xl border border-input bg-transparent py-2.5 pl-10 pr-4 text-sm outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary disabled:opacity-50"
+              />
+            </div>
+            {mode === 'register' && (
+              <div className="relative animate-fade-in">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <input
+                  type="password"
+                  placeholder="Confirmar contraseña"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  disabled={isSubmitting}
+                  className="w-full rounded-xl border border-input bg-transparent py-2.5 pl-10 pr-4 text-sm outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary disabled:opacity-50"
+                />
+              </div>
+            )}
+          </div>
+          
+          {mode === 'login' && (
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => { setMode('forgot_password'); setError(null); setSuccessMessage(null); }}
+                className="text-xs font-medium text-primary hover:underline"
+              >
+                ¿Olvidaste tu contraseña?
+              </button>
+            </div>
+          )}
+
+          <Button type="submit" disabled={isSubmitting} className="w-full rounded-xl py-6 font-semibold transition-all">
+            {isSubmitting ? <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" /> : (mode === 'login' ? 'Entrar' : 'Registrarse')}
+          </Button>
+        </div>
+      </>
+    );
+  };
+
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-6 py-12">
       <div className="pointer-events-none absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2">
@@ -68,12 +222,7 @@ export function LoginPage() {
       </div>
 
       <div className="relative z-10 flex flex-col items-center animate-slide-up w-full max-w-3xl">
-        <img 
-          src="/favicon.svg" 
-          alt="Trainlog Logo" 
-          className="mb-4 h-16 w-16 drop-shadow-sm animate-fade-in"
-        />
-
+        <img src="/favicon.svg" alt="Trainlog Logo" className="mb-4 h-16 w-16 drop-shadow-sm animate-fade-in" />
         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-gradient text-center mb-3">
           Trainlog
         </h1>
@@ -115,72 +264,35 @@ export function LoginPage() {
           </div>
 
           <div className="w-full max-w-sm rounded-3xl border border-border/50 bg-card/80 p-6 shadow-2xl backdrop-blur-xl">
-            <h2 className="mb-1 text-center text-xl font-bold text-foreground">
-              {isLoginMode ? 'Inicia sesión' : 'Crea tu cuenta'}
-            </h2>
-            <p className="mb-6 text-center text-sm text-muted-foreground">
-              {isLoginMode ? 'Y sigue transformando tu entreno' : 'Únete y empieza gratis hoy mismo'}
-            </p>
-
             {error && (
-              <div className="mb-4 flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+              <div className="mb-4 flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive animate-fade-in">
                 <AlertCircle className="h-4 w-4 shrink-0" />
-                <p>{error}</p>
+                <p className="leading-snug">{error}</p>
+              </div>
+            )}
+            
+            {successMessage && (
+              <div className="mb-4 flex items-center gap-2 rounded-lg bg-emerald-500/10 p-3 text-sm text-emerald-500 animate-fade-in">
+                <CheckCircle2 className="h-5 w-5 shrink-0" />
+                <p className="leading-snug font-medium">{successMessage}</p>
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="mb-4 space-y-4">
-              <div className="space-y-2">
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <input
-                    type="email"
-                    placeholder="Tu correo electrónico"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={isSubmitting}
-                    className="w-full rounded-xl border border-input bg-transparent py-2.5 pl-10 pr-4 text-sm outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary disabled:opacity-50"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <input
-                    type="password"
-                    placeholder="Contraseña"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={isSubmitting}
-                    className="w-full rounded-xl border border-input bg-transparent py-2.5 pl-10 pr-4 text-sm outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary disabled:opacity-50"
-                  />
-                </div>
-              </div>
-
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full rounded-xl py-6 font-semibold transition-all active:scale-[0.98]"
-              >
-                {isSubmitting ? (
-                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
-                ) : (
-                  isLoginMode ? 'Entrar' : 'Registrarse'
-                )}
-              </Button>
+            <form onSubmit={handleSubmit} className="mb-4">
+              {renderFormContent()}
             </form>
 
             <div className="mb-4 text-center">
               <button
                 type="button"
                 onClick={() => {
-                  setIsLoginMode(!isLoginMode);
+                  setMode(mode === 'login' ? 'register' : 'login');
                   setError(null);
+                  setSuccessMessage(null);
                 }}
-                className="text-sm text-primary hover:underline"
+                className="text-sm text-foreground/80 hover:text-foreground transition-colors"
               >
-                {isLoginMode ? '¿No tienes cuenta? Regístrate gratis' : '¿Ya tienes cuenta? Inicia sesión'}
+                {mode === 'login' ? '¿No tienes cuenta? Regístrate gratis' : 'Volver a iniciar sesión'}
               </button>
             </div>
 
@@ -223,30 +335,11 @@ export function LoginPage() {
 
 function GoogleIcon() {
   return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <path
-        d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z"
-        fill="#4285F4"
-      />
-      <path
-        d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18Z"
-        fill="#34A853"
-      />
-      <path
-        d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.997 8.997 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332Z"
-        fill="#FBBC05"
-      />
-      <path
-        d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58Z"
-        fill="#EA4335"
-      />
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z" fill="#4285F4" />
+      <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18Z" fill="#34A853" />
+      <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.997 8.997 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332Z" fill="#FBBC05" />
+      <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58Z" fill="#EA4335" />
     </svg>
   );
 }
