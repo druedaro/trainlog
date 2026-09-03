@@ -282,7 +282,10 @@ export function LoginPage() {
               {renderFormContent()}
             </form>
 
-            <div className="mb-4 text-center">
+            <div className="mb-4 text-center text-sm">
+              <span className="text-muted-foreground mr-1">
+                {mode === 'login' ? '¿No tienes cuenta?' : '¿Ya tienes cuenta?'}
+              </span>
               <button
                 type="button"
                 onClick={() => {
@@ -290,9 +293,9 @@ export function LoginPage() {
                   setError(null);
                   setSuccessMessage(null);
                 }}
-                className="text-sm text-foreground/80 hover:text-foreground transition-colors"
+                className="font-semibold text-primary underline underline-offset-4 hover:text-primary/80 transition-colors"
               >
-                {mode === 'login' ? '¿No tienes cuenta? Regístrate gratis' : 'Volver a iniciar sesión'}
+                {mode === 'login' ? 'Regístrate gratis' : 'Volver a iniciar sesión'}
               </button>
             </div>
 
