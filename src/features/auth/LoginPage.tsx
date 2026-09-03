@@ -1,10 +1,53 @@
+import { useState } from 'react';
 import { Navigate, Link } from 'react-router';
 import { useAuth } from '@/features/auth/useAuth';
 import { Button } from '@/components/ui/button';
-import { Mic, BrainCircuit, LineChart } from 'lucide-react';
+import { Mic, BrainCircuit, LineChart, Mail, Lock, AlertCircle } from 'lucide-react';
 
 export function LoginPage() {
-  const { user, isLoading, signInWithGoogle } = useAuth();
+  const { user, isLoading, signInWithGoogle, signInWithEmail, signUpWithEmail } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoginMode, setIsLoginMode] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    if (!email || !password) {
+      setError('Por favor, rellena todos los campos.');
+      return;
+    }
+    if (password.length < 6) {
+      setError('La contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      if (isLoginMode) {
+        await signInWithEmail(email, password);
+      } else {
+        await signUpWithEmail(email, password);
+      }
+    } catch (err: any) {
+      console.error(err);
+      if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+        setError('Email o contraseña incorrectos.');
+      } else if (err.code === 'auth/email-already-in-use') {
+        setError('Ya existe una cuenta con este email.');
+      } else if (err.code === 'auth/invalid-email') {
+        setError('El formato del email no es válido.');
+      } else if (err.code === 'auth/operation-not-allowed') {
+        setError('El inicio de sesión por email no está habilitado en Firebase.');
+      } else {
+        setError('Ocurrió un error inesperado. Inténtalo de nuevo.');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -72,19 +115,93 @@ export function LoginPage() {
           </div>
 
           <div className="w-full max-w-sm rounded-3xl border border-border/50 bg-card/80 p-6 shadow-2xl backdrop-blur-xl">
-            <h2 className="mb-1 text-center text-lg font-semibold text-foreground">
-              Comienza gratis
+            <h2 className="mb-1 text-center text-xl font-bold text-foreground">
+              {isLoginMode ? 'Inicia sesión' : 'Crea tu cuenta'}
             </h2>
             <p className="mb-6 text-center text-sm text-muted-foreground">
-              Inicia sesión y transforma tu manera de entrenar
+              {isLoginMode ? 'Y sigue transformando tu entreno' : 'Únete y empieza gratis hoy mismo'}
             </p>
+
+            {error && (
+              <div className="mb-4 flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+                <AlertCircle className="h-4 w-4 shrink-0" />
+                <p>{error}</p>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="mb-4 space-y-4">
+              <div className="space-y-2">
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <input
+                    type="email"
+                    placeholder="Tu correo electrónico"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={isSubmitting}
+                    className="w-full rounded-xl border border-input bg-transparent py-2.5 pl-10 pr-4 text-sm outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary disabled:opacity-50"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <input
+                    type="password"
+                    placeholder="Contraseña"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={isSubmitting}
+                    className="w-full rounded-xl border border-input bg-transparent py-2.5 pl-10 pr-4 text-sm outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary disabled:opacity-50"
+                  />
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full rounded-xl py-6 font-semibold transition-all active:scale-[0.98]"
+              >
+                {isSubmitting ? (
+                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
+                ) : (
+                  isLoginMode ? 'Entrar' : 'Registrarse'
+                )}
+              </Button>
+            </form>
+
+            <div className="mb-4 text-center">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsLoginMode(!isLoginMode);
+                  setError(null);
+                }}
+                className="text-sm text-primary hover:underline"
+              >
+                {isLoginMode ? '¿No tienes cuenta? Regístrate gratis' : '¿Ya tienes cuenta? Inicia sesión'}
+              </button>
+            </div>
+
+            <div className="relative mb-4">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-border/60" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-card px-2 text-muted-foreground">O continuar con</span>
+              </div>
+            </div>
+
             <Button
+              type="button"
               onClick={signInWithGoogle}
-              className="w-full gap-3 rounded-xl bg-foreground py-6 text-sm font-semibold text-background transition-all hover:bg-foreground/90 active:scale-[0.98]"
-              size="lg"
+              variant="outline"
+              disabled={isSubmitting}
+              className="w-full gap-3 rounded-xl py-6 text-sm font-semibold transition-all hover:bg-muted active:scale-[0.98]"
             >
               <GoogleIcon />
-              Continuar con Google
+              Google
             </Button>
           </div>
         </div>

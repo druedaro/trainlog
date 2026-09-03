@@ -12,6 +12,8 @@ import {
   signOut as firebaseSignOut,
   deleteUser,
   GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   type User,
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
@@ -20,6 +22,8 @@ interface AuthState {
   user: User | null;
   isLoading: boolean;
   signInWithGoogle: () => Promise<void>;
+  signInWithEmail: (email: string, pass: string) => Promise<void>;
+  signUpWithEmail: (email: string, pass: string) => Promise<void>;
   signOut: () => Promise<void>;
   deleteAccount: () => Promise<void>;
 }
@@ -45,6 +49,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signInWithPopup(auth, googleProvider);
   }, []);
 
+  const signInWithEmail = useCallback(async (email: string, pass: string) => {
+    await signInWithEmailAndPassword(auth, email, pass);
+  }, []);
+
+  const signUpWithEmail = useCallback(async (email: string, pass: string) => {
+    await createUserWithEmailAndPassword(auth, email, pass);
+  }, []);
+
   const signOut = useCallback(async () => {
     await firebaseSignOut(auth);
   }, []);
@@ -57,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, signInWithGoogle, signOut, deleteAccount }}>
+    <AuthContext.Provider value={{ user, isLoading, signInWithGoogle, signInWithEmail, signUpWithEmail, signOut, deleteAccount }}>
       {children}
     </AuthContext.Provider>
   );
