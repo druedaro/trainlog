@@ -31,9 +31,10 @@ describe('Feature: Article Discovery System', () => {
     vi.clearAllMocks();
     vi.mocked(useAuth).mockReturnValue({
       user: mockUser as any,
-      
       isLoading: false,
       signInWithGoogle: vi.fn(),
+      signInWithEmail: vi.fn(),
+      signUpWithEmail: vi.fn(),
       signOut: vi.fn(),
       deleteAccount: vi.fn(),
     });
