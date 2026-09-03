@@ -243,44 +243,53 @@ export function InsightsPage() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             <section className="space-y-5">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-                Los números (últimos 7 días)
+              <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 text-center mb-6">
+                Tu Centro
               </h2>
               
-              <div className="grid grid-cols-2 gap-4">
-                <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
-                  <span className="text-xs font-semibold text-muted-foreground">Energía media</span>
-                  <div className="mt-3 flex h-24 md:h-48 items-end justify-center gap-1.5 md:gap-3">
-                    {[1, 2, 3, 4, 5].map((val) => (
-                      <div
-                        key={val}
-                        className={`w-full max-w-[32px] rounded-t-sm transition-all ${
-                          val <= Math.round(stats.avgEnergy)
-                            ? 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.3)]'
-                            : 'bg-muted'
-                        }`}
-                        style={{ height: `${(val / 5) * 100}%` }}
-                      />
-                    ))}
-                  </div>
-                </div>
+              <div className="rounded-3xl border border-border/10 bg-card/5 p-8 flex flex-col items-center justify-center min-h-[320px] relative overflow-hidden">
+                {(() => {
+                  if (stats.avgEnergy === 0 || stats.avgMood === 0) {
+                    return <p className="text-sm text-muted-foreground/60 tracking-[0.3em] font-light">SIN DATOS</p>;
+                  }
 
-                <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
-                  <span className="text-xs font-semibold text-muted-foreground">Ánimo medio</span>
-                  <div className="mt-3 flex h-24 md:h-48 items-end justify-center gap-1.5 md:gap-3">
-                    {[1, 2, 3, 4, 5].map((val) => (
-                      <div
-                        key={val}
-                        className={`w-full max-w-[32px] rounded-t-sm transition-all ${
-                          val <= Math.round(stats.avgMood)
-                            ? 'bg-purple-400 shadow-[0_0_8px_rgba(192,132,252,0.3)]'
-                            : 'bg-muted'
-                        }`}
-                        style={{ height: `${(val / 5) * 100}%` }}
+                  // Energy determines breathing speed (1 = slow 8s, 5 = fast 3s)
+                  const breathingSeconds = 10 - stats.avgEnergy;
+                  const animationDuration = `${breathingSeconds}s`;
+
+                  // Mood determines color palette
+                  let ringColor = 'bg-stone-400 dark:bg-stone-500'; // Neutral
+                  if (stats.avgMood >= 3.5) ringColor = 'bg-orange-300 dark:bg-orange-200/80'; // Positive (Sand/Peach)
+                  else if (stats.avgMood <= 2.5) ringColor = 'bg-slate-400 dark:bg-slate-500/80'; // Negative (Ash/Slate)
+
+                  // Keywords
+                  let keyword = 'SERENO';
+                  if (stats.avgEnergy >= 3.5 && stats.avgMood >= 3.5) keyword = 'VITAL';
+                  else if (stats.avgEnergy >= 3.5 && stats.avgMood <= 2.5) keyword = 'INQUIETO';
+                  else if (stats.avgEnergy <= 2.5 && stats.avgMood >= 3.5) keyword = 'PLÁCIDO';
+                  else if (stats.avgEnergy <= 2.5 && stats.avgMood <= 2.5) keyword = 'AGOTADO';
+                  else if (stats.avgEnergy >= 3.5) keyword = 'ACTIVO';
+                  else if (stats.avgEnergy <= 2.5) keyword = 'CALMADO';
+
+                  return (
+                    <div className="relative flex items-center justify-center w-full h-full">
+                      {/* Abstract Breathing Rings */}
+                      <div 
+                        className={`absolute w-48 h-48 rounded-full filter blur-[24px] animate-zen-breathe ${ringColor} mix-blend-multiply dark:mix-blend-lighten`} 
+                        style={{ animationDuration }}
                       />
-                    ))}
-                  </div>
-                </div>
+                      <div 
+                        className={`absolute w-32 h-32 rounded-full filter blur-[32px] animate-zen-breathe ${ringColor} mix-blend-multiply dark:mix-blend-lighten`}
+                        style={{ animationDuration: `${breathingSeconds * 1.2}s` }}
+                      />
+
+                      {/* Foreground Text */}
+                      <span className="relative z-10 text-sm font-medium tracking-[0.4em] text-foreground/80 drop-shadow-sm">
+                        {keyword}
+                      </span>
+                    </div>
+                  );
+                })()}
               </div>
 
               {stats.topThemes.length > 0 && (

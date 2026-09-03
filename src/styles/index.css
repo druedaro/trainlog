@@ -129,6 +129,23 @@
   animation: scale-in 0.3s ease-out;
 }
 
+@keyframes zen-breathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.2;
+  }
+}
+
+.animate-zen-breathe {
+  animation-name: zen-breathe;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
 /* ─── Glass effect ─── */
 .glass {
   background: hsla(var(--card), 0.7);
