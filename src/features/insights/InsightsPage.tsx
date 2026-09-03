@@ -244,43 +244,63 @@ export function InsightsPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             <section className="space-y-5">
               <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-                Los números (últimos 7 días)
+                Métricas (últimos 7 días)
               </h2>
               
               <div className="grid grid-cols-2 gap-4">
-                <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
-                  <span className="text-xs font-semibold text-muted-foreground">Energía media</span>
-                  <div className="mt-3 flex h-24 md:h-48 items-end justify-center gap-1.5 md:gap-3">
-                    {[1, 2, 3, 4, 5].map((val) => (
-                      <div
-                        key={val}
-                        className={`w-full max-w-[32px] rounded-t-sm transition-all ${
-                          val <= Math.round(stats.avgEnergy)
-                            ? 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.3)]'
-                            : 'bg-muted'
-                        }`}
-                        style={{ height: `${(val / 5) * 100}%` }}
-                      />
-                    ))}
-                  </div>
-                </div>
+                {(() => {
+                  const radius = 38;
+                  const circumference = 2 * Math.PI * radius;
+                  
+                  const renderRing = (value: number, label: string, colorClass: string, shadowColor: string) => {
+                    const strokeDashoffset = circumference - (value / 5) * circumference;
+                    return (
+                      <div className="rounded-3xl border border-border/20 bg-card/10 backdrop-blur-sm p-6 flex flex-col items-center justify-center shadow-sm">
+                        <div className="relative flex items-center justify-center mb-4">
+                          <svg className="w-28 h-28 transform -rotate-90" viewBox="0 0 100 100">
+                            {/* Background Track */}
+                            <circle
+                              className="text-muted stroke-current opacity-30"
+                              strokeWidth="7"
+                              cx="50"
+                              cy="50"
+                              r={radius}
+                              fill="transparent"
+                            />
+                            {/* Progress Track */}
+                            <circle
+                              className={`${colorClass} stroke-current transition-all duration-1000 ease-out`}
+                              strokeWidth="7"
+                              strokeLinecap="round"
+                              cx="50"
+                              cy="50"
+                              r={radius}
+                              fill="transparent"
+                              strokeDasharray={circumference}
+                              strokeDashoffset={isNaN(strokeDashoffset) ? circumference : strokeDashoffset}
+                              style={{ filter: `drop-shadow(0 0 8px ${shadowColor})` }}
+                            />
+                          </svg>
+                          <div className="absolute inset-0 flex flex-col items-center justify-center">
+                            <span className="text-2xl font-bold tracking-tighter text-foreground">
+                              {value > 0 ? value.toFixed(1) : '-'}
+                            </span>
+                          </div>
+                        </div>
+                        <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/80">
+                          {label}
+                        </span>
+                      </div>
+                    );
+                  };
 
-                <div className="rounded-2xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm">
-                  <span className="text-xs font-semibold text-muted-foreground">Ánimo medio</span>
-                  <div className="mt-3 flex h-24 md:h-48 items-end justify-center gap-1.5 md:gap-3">
-                    {[1, 2, 3, 4, 5].map((val) => (
-                      <div
-                        key={val}
-                        className={`w-full max-w-[32px] rounded-t-sm transition-all ${
-                          val <= Math.round(stats.avgMood)
-                            ? 'bg-purple-400 shadow-[0_0_8px_rgba(192,132,252,0.3)]'
-                            : 'bg-muted'
-                        }`}
-                        style={{ height: `${(val / 5) * 100}%` }}
-                      />
-                    ))}
-                  </div>
-                </div>
+                  return (
+                    <>
+                      {renderRing(stats.avgEnergy, 'Energía', 'text-amber-400 dark:text-amber-500', 'rgba(251,191,36,0.3)')}
+                      {renderRing(stats.avgMood, 'Ánimo', 'text-emerald-400 dark:text-emerald-500', 'rgba(52,211,153,0.3)')}
+                    </>
+                  );
+                })()}
               </div>
 
               {stats.topThemes.length > 0 && (
