@@ -10,13 +10,8 @@ firebase.initializeApp({
   appId: '1:695738818600:web:f6938dc3143dfc0b66151d',
 });
 
-const messaging = firebase.messaging();
-
-messaging.onBackgroundMessage((payload) => {
-  console.log('[firebase-messaging-sw.js] Received background message ', payload);
-});
-
 self.addEventListener('notificationclick', (event) => {
+  event.stopImmediatePropagation();
   event.notification.close();
   
   const urlToOpen = self.location.origin + '/';
@@ -27,7 +22,6 @@ self.addEventListener('notificationclick', (event) => {
       for (let i = 0; i < windowClients.length; i++) {
         const client = windowClients[i];
         if (client.url.startsWith(self.location.origin) && 'focus' in client) {
-
           return client.focus();
         }
       }
@@ -37,4 +31,10 @@ self.addEventListener('notificationclick', (event) => {
       }
     })
   );
+});
+
+const messaging = firebase.messaging();
+
+messaging.onBackgroundMessage((payload) => {
+  console.log('[firebase-messaging-sw.js] Received background message ', payload);
 });
