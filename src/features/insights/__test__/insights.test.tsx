@@ -41,6 +41,7 @@ describe('Feature: Weekly Insights Synthesis', () => {
       signInWithGoogle: vi.fn(),
       signInWithEmail: vi.fn(),
       signUpWithEmail: vi.fn(),
+      resetPassword: vi.fn(),
       signOut: vi.fn(),
       deleteAccount: vi.fn(),
     });
