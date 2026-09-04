@@ -136,7 +136,7 @@ export function JournalPage() {
       });
 
       if (profile) {
-        const currentStreak = await fetchUserStreak(user.uid);
+        const currentStreak = await fetchUserStreak(user.uid, profile?.trainingDays);
         const newUnlocks = checkAchievements(profile.achievements || [], {
           entryCount: 1,
           streak: currentStreak,
