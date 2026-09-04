@@ -17,6 +17,7 @@ export const userProfileSchema = z.object({
     .max(400, 'El contexto vital no puede exceder los 400 caracteres')
     .transform(val => val.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m] || m))
     .optional(),
+  trainingDays: z.array(z.number().min(0).max(6)).optional(),
 });
 
 export type UserProfile = z.infer<typeof userProfileSchema>;

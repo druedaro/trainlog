@@ -177,11 +177,11 @@ export async function fetchRecentEntries(
   );
 }
 
-export async function fetchUserStreak(userId: string): Promise<number> {
+export async function fetchUserStreak(userId: string, trainingDays?: number[]): Promise<number> {
   const { calculateStreak } = await import('@/lib/gamification');
   const entries = await fetchRecentEntries(userId, 100);
   const dates = entries.map(e => e.createdAt.getTime());
-  return calculateStreak(dates);
+  return calculateStreak(dates, trainingDays);
 }
 
 export async function checkAndGenerateMonthlyReport(userId: string, userProfile: UserProfile): Promise<MonthlyReport | null> {
@@ -225,7 +225,7 @@ export async function checkAndGenerateMonthlyReport(userId: string, userProfile:
   
   const entries = snap.docs.map(docSnap => mapDocumentToEntry(docSnap.id, docSnap.data()));
   const { calculateStreak } = await import('@/lib/gamification');
-  const maxStreak = calculateStreak(entries.map(e => e.createdAt.getTime()));
+  const maxStreak = calculateStreak(entries.map(e => e.createdAt.getTime()), userProfile.trainingDays);
   
   const activityCounts: Record<string, number> = {};
   entries.forEach(entry => {

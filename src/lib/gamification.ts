@@ -1,4 +1,4 @@
-export function calculateStreak(entryDates: number[]): number {
+export function calculateStreak(entryDates: number[], trainingDays?: number[]): number {
   if (!entryDates || entryDates.length === 0) return 0;
   
   const today = new Date();
@@ -11,33 +11,40 @@ export function calculateStreak(entryDates: number[]): number {
   });
   
   const uniqueDates = [...new Set(dates)].sort((a, b) => b - a);
-  let currentDate = today.getTime();
+  let currentDate = today;
   let streak = 0;
+  
+  // Default to all 7 days if undefined to not break existing user streaks
+  const expectedDays = trainingDays && trainingDays.length > 0 ? trainingDays : [0, 1, 2, 3, 4, 5, 6];
 
-  if (uniqueDates[0] === currentDate) {
-    streak = 1;
-    currentDate -= 86400000;
-    for (let i = 1; i < uniqueDates.length; i++) {
-      if (uniqueDates[i] === currentDate) {
-        streak++;
-        currentDate -= 86400000;
+  let i = 0;
+  let isFirstDayChecked = false;
+
+  while (i < uniqueDates.length) {
+    const currentDayOfWeek = currentDate.getDay();
+    const currentTimestamp = currentDate.getTime();
+    const entryTimestamp = uniqueDates[i];
+    
+    if (entryTimestamp === currentTimestamp) {
+      streak++;
+      i++;
+      isFirstDayChecked = true;
+    } else if (entryTimestamp > currentTimestamp) {
+      i++;
+      continue;
+    } else {
+      if (!isFirstDayChecked && currentTimestamp === today.getTime()) {
+        isFirstDayChecked = true;
       } else {
-        break;
+        if (expectedDays.includes(currentDayOfWeek)) {
+          break;
+        }
       }
     }
-  } else if (uniqueDates[0] === currentDate - 86400000) {
-    streak = 1;
-    currentDate -= 172800000;
-    for (let i = 1; i < uniqueDates.length; i++) {
-      if (uniqueDates[i] === currentDate) {
-        streak++;
-        currentDate -= 86400000;
-      } else {
-        break;
-      }
-    }
+    
+    currentDate = new Date(currentDate.getTime() - 86400000);
   }
-
+  
   return streak;
 }
 

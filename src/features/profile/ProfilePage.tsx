@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router';
-import { LogOut, Download, Activity, Calendar, Flame, Edit2, User, AlertTriangle, Shield, FileText, Bell, BookOpen } from 'lucide-react';
+import { LogOut, Download, Activity, Calendar, Flame, Edit2, User, AlertTriangle, Shield, FileText, Bell, BookOpen, Settings2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
@@ -11,6 +11,8 @@ import { OnboardingModal } from '@/features/auth/OnboardingModal';
 import { ProfileForm } from './ProfileForm';
 import { useProfileQuery, useRecentEntriesQuery, useEntriesCountQuery } from '@/hooks/useQueries';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useQueryClient } from '@tanstack/react-query';
+import { saveUserProfile } from '@/lib/firestore';
 
 export function ProfilePage() {
   const { user, signOut, deleteAccount } = useAuth();
@@ -27,7 +29,19 @@ export function ProfilePage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [notificationStatus, setNotificationStatus] = useState<NotificationPermission>('default');
   const [isAchievementsModalOpen, setIsAchievementsModalOpen] = useState(false);
+  const [isStreakModalOpen, setIsStreakModalOpen] = useState(false);
+  const [streakDays, setStreakDays] = useState<number[]>([]);
+  const [isSavingStreak, setIsSavingStreak] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (profile?.trainingDays) {
+      setStreakDays(profile.trainingDays);
+    } else {
+      setStreakDays([1, 2, 3, 4, 5]);
+    }
+  }, [profile?.trainingDays]);
 
   useEffect(() => {
     if (typeof Notification !== 'undefined') {
@@ -44,7 +58,7 @@ export function ProfilePage() {
 
     const today = new Date();
     const dates = recentEntries.map(e => e.createdAt.getTime());
-    const streak = calculateStreak(dates);
+    const streak = calculateStreak(dates, profile?.trainingDays);
 
     const activityCounts: Record<string, number> = {};
     recentEntries.forEach(entry => {
@@ -142,13 +156,19 @@ export function ProfilePage() {
               {isLoading ? <Skeleton className="h-7 w-12" /> : <div className="text-2xl font-semibold text-foreground">{entryCount || 0}</div>}
             </div>
             
-            <div className="rounded-3xl shadow-sm border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-primary/5 hover:border-primary/30 hover:shadow-[0_0_15px_hsl(var(--primary)/0.08)]">
-              <div className="flex items-center gap-2 text-muted-foreground mb-2">
-                <Flame className="h-4 w-4 text-orange-500" />
-                <span className="text-xs font-medium">Racha Activa</span>
+            <button 
+              onClick={() => setIsStreakModalOpen(true)}
+              className="text-left rounded-3xl shadow-sm border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-primary/5 hover:border-primary/30 hover:shadow-[0_0_15px_hsl(var(--primary)/0.08)] cursor-pointer"
+            >
+              <div className="flex items-center justify-between text-muted-foreground mb-2">
+                <div className="flex items-center gap-2">
+                  <Flame className="h-4 w-4 text-orange-500" />
+                  <span className="text-xs font-medium">Racha Activa</span>
+                </div>
+                <Settings2 className="h-3.5 w-3.5 opacity-50" />
               </div>
               {isLoading ? <Skeleton className="h-7 w-12" /> : <div className="text-2xl font-semibold text-foreground">{stats?.streak || 0} <span className="text-sm font-normal text-muted-foreground">días</span></div>}
-            </div>
+            </button>
 
             <div className="rounded-3xl shadow-sm border border-border/40 bg-card/50 p-4 backdrop-blur-sm transition-all hover:bg-primary/5 hover:border-primary/30 hover:shadow-[0_0_15px_hsl(var(--primary)/0.08)]">
               <div className="flex items-center gap-2 text-muted-foreground mb-2">
@@ -369,6 +389,86 @@ export function ProfilePage() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isStreakModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-background/80 backdrop-blur-sm sm:p-4 animate-in fade-in">
+          <div className="w-full sm:max-w-md bg-card sm:rounded-3xl rounded-t-3xl shadow-2xl border border-border/40 flex flex-col slide-in-from-bottom-full sm:slide-in-from-bottom-0">
+            <div className="p-5 border-b border-border/40 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-500">
+                  <Settings2 className="h-5 w-5" />
+                </div>
+                <h3 className="font-bold text-lg text-foreground">Configurar Racha</h3>
+              </div>
+              <Button variant="ghost" size="sm" onClick={() => {
+                setIsStreakModalOpen(false);
+                setStreakDays(profile?.trainingDays || [1, 2, 3, 4, 5]);
+              }} className="rounded-full h-8 w-8 p-0">
+                ✕
+              </Button>
+            </div>
+            
+            <div className="p-5 space-y-6">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">¿Qué días sueles entrenar?</label>
+                <p className="text-[11px] text-muted-foreground/80 mb-3">
+                  Si descansas un día que no está marcado aquí, mantendrás tu racha sin penalizaciones.
+                </p>
+                <div className="flex justify-between gap-1">
+                  {[
+                    { id: 1, label: 'L' },
+                    { id: 2, label: 'M' },
+                    { id: 3, label: 'X' },
+                    { id: 4, label: 'J' },
+                    { id: 5, label: 'V' },
+                    { id: 6, label: 'S' },
+                    { id: 0, label: 'D' },
+                  ].map((day) => (
+                    <button
+                      key={day.id}
+                      onClick={() => {
+                        setStreakDays(prev => 
+                          prev.includes(day.id) 
+                            ? prev.filter(d => d !== day.id) 
+                            : [...prev, day.id]
+                        );
+                      }}
+                      className={`w-10 h-10 rounded-full text-xs font-semibold flex items-center justify-center transition-all ${
+                        streakDays.includes(day.id)
+                          ? 'bg-primary text-primary-foreground shadow-md'
+                          : 'bg-accent text-muted-foreground hover:bg-accent/80'
+                      }`}
+                    >
+                      {day.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <Button
+                className="w-full rounded-xl p-6 font-semibold"
+                disabled={isSavingStreak}
+                onClick={async () => {
+                  if (!user) return;
+                  setIsSavingStreak(true);
+                  try {
+                    await saveUserProfile(user.uid, { trainingDays: streakDays });
+                    await queryClient.invalidateQueries({ queryKey: ['profile', user.uid] });
+                    toast.success('Racha configurada correctamente');
+                    setIsStreakModalOpen(false);
+                  } catch (e) {
+                    toast.error('Error al guardar');
+                  } finally {
+                    setIsSavingStreak(false);
+                  }
+                }}
+              >
+                {isSavingStreak ? 'Guardando...' : 'Guardar Cambios'}
+              </Button>
             </div>
           </div>
         </div>

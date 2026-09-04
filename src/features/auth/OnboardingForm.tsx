@@ -22,6 +22,7 @@ export function OnboardingForm({ user, profile, forceShow, onClose }: Onboarding
   const [age, setAge] = useState<string>(profile?.age?.toString() || '');
   const [gender, setGender] = useState<Gender | ''>(profile?.gender || '');
   const [personalContext, setPersonalContext] = useState(profile?.personalContext || '');
+  const [trainingDays, setTrainingDays] = useState<number[]>(profile?.trainingDays || [1, 2, 3, 4, 5]);
   
   const [isRecording, setIsRecording] = useState(false);
   const recognitionRef = useRef<any>(null);
@@ -112,6 +113,7 @@ export function OnboardingForm({ user, profile, forceShow, onClose }: Onboarding
       age: parseInt(age, 10),
       gender: gender as Gender,
       personalContext: personalContext.trim(),
+      trainingDays,
       onboardingCompleted: true,
     };
 
@@ -257,6 +259,42 @@ export function OnboardingForm({ user, profile, forceShow, onClose }: Onboarding
                     {personalContext.length}/400
                   </div>
                 </div>
+              </div>
+            </div>
+
+            <div className="space-y-2 mt-4">
+              <label className="text-sm font-medium text-foreground">Días de entrenamiento habituales</label>
+              <p className="text-[11px] text-muted-foreground/80 mb-2">
+                Si descansas un día que no marcas aquí, no perderás tu racha activa.
+              </p>
+              <div className="flex justify-between gap-1">
+                {[
+                  { id: 1, label: 'L' },
+                  { id: 2, label: 'M' },
+                  { id: 3, label: 'X' },
+                  { id: 4, label: 'J' },
+                  { id: 5, label: 'V' },
+                  { id: 6, label: 'S' },
+                  { id: 0, label: 'D' },
+                ].map((day) => (
+                  <button
+                    key={day.id}
+                    onClick={() => {
+                      setTrainingDays(prev => 
+                        prev.includes(day.id) 
+                          ? prev.filter(d => d !== day.id) 
+                          : [...prev, day.id]
+                      );
+                    }}
+                    className={`w-10 h-10 rounded-full text-xs font-semibold flex items-center justify-center transition-all ${
+                      trainingDays.includes(day.id)
+                        ? 'bg-primary text-primary-foreground shadow-md'
+                        : 'bg-accent text-muted-foreground hover:bg-accent/80'
+                    }`}
+                  >
+                    {day.label}
+                  </button>
+                ))}
               </div>
             </div>
 
