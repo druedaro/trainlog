@@ -518,10 +518,10 @@ export function DiscoverPage() {
                 }
               }}
               disabled={isGeneratingExplore}
-              className="group w-full justify-center gap-2 rounded-xl py-6 font-semibold whitespace-normal h-auto break-words leading-tight"
+              className="group w-full justify-center gap-2 rounded-xl py-6 font-semibold whitespace-normal h-auto break-words leading-tight hover:text-white dark:hover:text-white"
             >
               <Sparkles className="h-5 w-5 text-primary transition-colors group-hover:text-white dark:group-hover:text-white shrink-0" />
-              <span>Sorpréndeme con curiosidades y ciencia</span>
+              <span>Descubre más artículos interesantes</span>
             </Button>
           </div>
         )}
