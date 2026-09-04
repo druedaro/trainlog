@@ -24,6 +24,7 @@ export function calculateStreak(entryDates: number[], trainingDays?: number[]): 
     const currentDayOfWeek = currentDate.getDay();
     const currentTimestamp = currentDate.getTime();
     const entryTimestamp = uniqueDates[i];
+    if (entryTimestamp === undefined) break;
     
     if (entryTimestamp === currentTimestamp) {
       streak++;
