@@ -29,9 +29,9 @@ export function MonthlyReportModal({ report, onClose }: MonthlyReportModalProps)
         <div className="relative p-6 sm:p-8 flex flex-col items-center text-center">
           <button 
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-full transition-colors"
+            className="absolute top-4 right-4 p-2 text-muted-foreground hover:bg-muted hover:text-white rounded-full transition-colors group"
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5 group-hover:text-white transition-colors" />
           </button>
 
           <div className="h-20 w-20 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg shadow-primary/20 mb-6">
