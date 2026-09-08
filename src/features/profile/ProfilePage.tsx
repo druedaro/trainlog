@@ -284,11 +284,11 @@ export function ProfilePage() {
 
           <Button 
             variant="outline" 
-            className="w-full justify-start h-12 rounded-xl text-foreground bg-card hover:bg-accent border-border/40"
+            className="w-full justify-start h-12 rounded-xl text-foreground bg-card hover:bg-accent hover:text-white border-border/40 transition-colors group"
             onClick={handleExport}
             disabled={!recentEntries.length}
           >
-            <Download className="mr-3 h-4 w-4 text-green-500" />
+            <Download className="mr-3 h-4 w-4 text-green-500 group-hover:text-white transition-colors" />
             Exportar mis datos (JSON)
           </Button>
 
@@ -363,7 +363,7 @@ export function ProfilePage() {
                 </div>
                 <h3 className="font-bold text-lg text-foreground">Tus Logros</h3>
               </div>
-              <Button variant="ghost" size="sm" onClick={() => setIsAchievementsModalOpen(false)} className="rounded-full h-8 w-8 p-0">
+              <Button variant="ghost" size="sm" onClick={() => setIsAchievementsModalOpen(false)} className="rounded-full h-8 w-8 p-0 hover:text-white transition-colors">
                 ✕
               </Button>
             </div>
@@ -407,7 +407,7 @@ export function ProfilePage() {
               <Button variant="ghost" size="sm" onClick={() => {
                 setIsStreakModalOpen(false);
                 setStreakDays(profile?.trainingDays || [1, 2, 3, 4, 5]);
-              }} className="rounded-full h-8 w-8 p-0">
+              }} className="rounded-full h-8 w-8 p-0 hover:text-white transition-colors">
                 ✕
               </Button>
             </div>
@@ -440,7 +440,7 @@ export function ProfilePage() {
                       className={`w-10 h-10 rounded-full text-xs font-semibold flex items-center justify-center transition-all ${
                         streakDays.includes(day.id)
                           ? 'bg-primary text-primary-foreground shadow-md'
-                          : 'bg-accent text-muted-foreground hover:bg-accent/80'
+                          : 'bg-accent text-muted-foreground hover:bg-accent/80 hover:text-white'
                       }`}
                     >
                       {day.label}
