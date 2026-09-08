@@ -40,9 +40,9 @@ export function JournalInstructionsModal({ isOpen, onClose }: JournalInstruction
           variant="ghost" 
           size="icon" 
           onClick={onClose}
-          className="absolute right-4 top-4 rounded-full bg-background/50 backdrop-blur z-10"
+          className="absolute right-4 top-4 rounded-full bg-background/50 backdrop-blur z-10 group hover:text-white"
         >
-          <X className="h-5 w-5 text-muted-foreground" />
+          <X className="h-5 w-5 text-muted-foreground group-hover:text-white transition-colors" />
         </Button>
 
         <div className="flex items-center gap-3 mb-6 pr-8">

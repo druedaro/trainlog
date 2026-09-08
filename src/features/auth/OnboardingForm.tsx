@@ -140,9 +140,9 @@ export function OnboardingForm({ user, profile, forceShow, onClose }: Onboarding
       {forceShow && onClose && (
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 rounded-full p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          className="absolute right-4 top-4 rounded-full p-2 text-muted-foreground hover:bg-muted hover:text-white transition-colors group"
         >
-          <X className="h-5 w-5" />
+          <X className="h-5 w-5 group-hover:text-white transition-colors" />
         </button>
       )}
       <div className="mb-8 flex flex-col items-center text-center">
