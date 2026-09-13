@@ -17,9 +17,15 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-export let messaging: any = null;
-isSupported().then((supported) => {
-  if (supported) {
-    messaging = getMessaging(app);
+let messagingPromise: Promise<any> | null = null;
+export const getMessagingInstance = async () => {
+  if (!messagingPromise) {
+    messagingPromise = isSupported().then((supported) => {
+      if (supported) {
+        return getMessaging(app);
+      }
+      return null;
+    });
   }
-});
+  return messagingPromise;
+};
