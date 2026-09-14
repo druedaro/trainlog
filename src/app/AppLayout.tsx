@@ -24,9 +24,9 @@ export function AppLayout() {
   return (
     <div className="flex min-h-screen flex-col md:flex-row bg-background">
       <SideNav />
-      <div className="flex-1 pb-16 md:pb-0 md:pl-24 lg:pl-64 w-full">
+      <main id="main-content" className="flex-1 pb-16 md:pb-0 md:pl-24 lg:pl-64 w-full">
         <Outlet />
-      </div>
+      </main>
       <div className="md:hidden">
         <BottomNav />
       </div>
