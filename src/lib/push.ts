@@ -18,8 +18,12 @@ export async function requestPushPermissions(userId: string): Promise<boolean> {
       }
     }
     return false;
-  } catch (error) {
-    console.error('Error requesting push permission:', error);
+  } catch (error: any) {
+    if (error?.name === 'AbortError' || error?.message?.includes('push service error')) {
+      console.warn('Notificaciones push no soportadas o bloqueadas en este navegador.');
+    } else {
+      console.error('Error requesting push permission:', error);
+    }
     return false;
   }
 }

@@ -41,30 +41,22 @@
       }
     }
     </script>
+    <style>
+      body {
+        margin: 0;
+        background-color: #09090b;
+        color: #ffffff;
+      }
+      @media (prefers-color-scheme: light) {
+        body {
+          background-color: #ffffff;
+          color: #09090b;
+        }
+      }
+    </style>
   </head>
   <body>
-    <a href="#main-content" class="sr-only focus:not-sr-only" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;">Saltar al contenido</a>
-    <div id="root">
-      <main id="main-content" style="padding: 2rem; font-family: sans-serif;">
-        <header>
-          <h1>Trainlog - Diario de entrenamiento</h1>
-        </header>
-        <article>
-          <h2>El primer diario de reflexión deportiva impulsado por voz e inteligencia artificial.</h2>
-          <p>Graba naturalmente sobre tu entreno. Sin menús complicados, solo tu voz. Nuestra IA transcribe y extrae métricas de fatiga, actividades y estado de ánimo.</p>
-        </article>
-        <nav>
-          <ul>
-            <li><a href="/login">Inicia sesión</a></li>
-            <li><a href="/terms">Términos de Uso</a></li>
-            <li><a href="/privacy">Política de Privacidad</a></li>
-          </ul>
-        </nav>
-        <footer>
-          <p>&copy; 2024 Trainlog</p>
-        </footer>
-      </main>
-    </div>
+    <div id="root"></div>
 
     <script type="module" src="/src/main.tsx"></script>
   </body>
