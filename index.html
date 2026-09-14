@@ -5,28 +5,66 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover, interactive-widget=resizes-content" />
-    <meta name="description" content="Trainlog — Personal sports reflection journal powered by voice notes" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
+    <meta name="description" content="Trainlog es tu diario personal de reflexión deportiva inteligente por voz. Graba un audio tras entrenar y deja que la IA extraiga tus métricas y estado de ánimo." />
+    <link rel="canonical" href="https://trainlog-journal.vercel.app/" />
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#09090b" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://trainlog-journal.vercel.app/" />
-    <meta property="og:title" content="Trainlog | Voice-first Sports Journal" />
+    <meta property="og:title" content="Trainlog | Diario personal deportivo inteligente" />
     <meta property="og:description" content="Tu diario personal de reflexión deportiva. Graba un audio tras entrenar y deja que la IA extraiga tus métricas y estado de ánimo." />
     <meta property="og:image" content="https://trainlog-journal.vercel.app/icon-512.png" />
+    
     <meta property="twitter:card" content="summary" />
     <meta property="twitter:url" content="https://trainlog-journal.vercel.app/" />
-    <meta property="twitter:title" content="Trainlog | Voice-first Sports Journal" />
+    <meta property="twitter:title" content="Trainlog | Diario personal deportivo inteligente" />
     <meta property="twitter:description" content="Tu diario personal de reflexión deportiva. Graba un audio tras entrenar y deja que la IA extraiga tus métricas y estado de ánimo." />
     <meta property="twitter:image" content="https://trainlog-journal.vercel.app/icon-512.png" />
 
-    <title>Trainlog</title>
+    <title>Trainlog | Diario personal deportivo inteligente</title>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Trainlog",
+      "url": "https://trainlog-journal.vercel.app/",
+      "description": "Tu diario personal de reflexión deportiva inteligente por voz.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Trainlog"
+      }
+    }
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <a href="#main-content" class="sr-only focus:not-sr-only" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;">Saltar al contenido</a>
+    <div id="root">
+      <main id="main-content" style="padding: 2rem; font-family: sans-serif;">
+        <header>
+          <h1>Trainlog - Diario de entrenamiento</h1>
+        </header>
+        <article>
+          <h2>El primer diario de reflexión deportiva impulsado por voz e inteligencia artificial.</h2>
+          <p>Graba naturalmente sobre tu entreno. Sin menús complicados, solo tu voz. Nuestra IA transcribe y extrae métricas de fatiga, actividades y estado de ánimo.</p>
+        </article>
+        <nav>
+          <ul>
+            <li><a href="/login">Inicia sesión</a></li>
+            <li><a href="/terms">Términos de Uso</a></li>
+            <li><a href="/privacy">Política de Privacidad</a></li>
+          </ul>
+        </nav>
+        <footer>
+          <p>&copy; 2024 Trainlog</p>
+        </footer>
+      </main>
+    </div>
 
     <script type="module" src="/src/main.tsx"></script>
   </body>

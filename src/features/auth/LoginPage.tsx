@@ -216,19 +216,21 @@ export function LoginPage() {
   };
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-6 py-12">
+    <main id="main-content" className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-6 py-12">
       <div className="pointer-events-none absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2">
         <div className="h-[400px] w-[400px] rounded-full bg-primary/10 blur-[120px]" />
       </div>
 
       <div className="relative z-10 flex flex-col items-center animate-slide-up w-full max-w-3xl">
-        <img src="/favicon.svg" alt="Trainlog Logo" className="mb-4 h-16 w-16 drop-shadow-sm animate-fade-in" />
-        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-gradient text-center mb-3">
-          Trainlog
-        </h1>
-        <p className="text-lg text-muted-foreground text-center max-w-md mx-auto mb-10">
-          El primer diario de reflexión deportiva impulsado por voz e inteligencia artificial.
-        </p>
+        <header className="flex flex-col items-center w-full max-w-3xl mb-10">
+          <img src="/favicon.svg" alt="Trainlog Logo" className="mb-4 h-16 w-16 drop-shadow-sm animate-fade-in" />
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-gradient text-center mb-3">
+            Trainlog
+          </h1>
+          <p className="text-lg text-muted-foreground text-center max-w-md mx-auto">
+            El primer diario de reflexión deportiva impulsado por voz e inteligencia artificial.
+          </p>
+        </header>
 
         <div className="flex flex-col-reverse md:flex-col w-full items-center gap-10 w-full">
           <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -321,16 +323,26 @@ export function LoginPage() {
           </div>
         </div>
 
-        <p className="mt-8 text-center text-xs text-muted-foreground">
-          Al continuar, aceptas nuestros{' '}
-          <Link to="/terms" className="underline hover:text-foreground transition-colors">
-            Términos de Uso
-          </Link>{' '}
-          y nuestra{' '}
-          <Link to="/privacy" className="underline hover:text-foreground transition-colors">
-            Política de Privacidad
-          </Link>
-        </p>
+        <footer className="mt-8 flex flex-col items-center gap-2">
+          <p className="text-center text-xs text-muted-foreground">
+            Al continuar, aceptas nuestros{' '}
+            <Link to="/terms" className="underline hover:text-foreground transition-colors">
+              Términos de Uso
+            </Link>{' '}
+            y nuestra{' '}
+            <Link to="/privacy" className="underline hover:text-foreground transition-colors">
+              Política de Privacidad
+            </Link>
+          </p>
+          <div className="flex gap-4 text-xs text-muted-foreground mt-2">
+            <a href="mailto:contacto@trainlog.app" className="hover:text-foreground transition-colors">
+              Contacto
+            </a>
+            <Link to="/about" className="hover:text-foreground transition-colors">
+              Sobre nosotros
+            </Link>
+          </div>
+        </footer>
       </div>
     </main>
   );
