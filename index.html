@@ -41,6 +41,24 @@
       }
     }
     </script>
+    <style>
+      body {
+        margin: 0;
+        background-color: #09090b;
+        color: #ffffff;
+      }
+      @media (prefers-color-scheme: light) {
+        body {
+          background-color: #ffffff;
+          color: #09090b;
+        }
+      }
+      /* Ocultar contenido estático si JS está habilitado (para evitar el FOUC) */
+      .js-enabled #main-content {
+        display: none;
+      }
+    </style>
+    <script>document.documentElement.classList.add('js-enabled');</script>
   </head>
   <body>
     <a href="#main-content" class="sr-only focus:not-sr-only" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;">Saltar al contenido</a>
