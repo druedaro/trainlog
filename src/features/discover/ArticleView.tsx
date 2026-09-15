@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { ArrowLeft, Bookmark } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { vibrate } from '@/lib/vibrate';
 import type { DiscoverArticle } from '@/types/discover';
 
@@ -89,8 +90,9 @@ export function ArticleView({ article, isSaved = false, onToggleSave, onBack }: 
             </p>
           </div>
 
-          <div className="prose-trainlog rounded-2xl border border-border/40 bg-card/50 p-5 backdrop-blur-sm">
+          <div className="prose-trainlog rounded-2xl border border-border/40 bg-card/50 p-5 backdrop-blur-sm overflow-x-auto">
             <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
               components={{
                 h2: ({ node, ...props }) => (
                   <h2 className="mb-3 mt-5 text-sm font-bold uppercase tracking-wider text-foreground first:mt-0" {...props} />
@@ -118,6 +120,17 @@ export function ArticleView({ article, isSaved = false, onToggleSave, onBack }: 
                 ),
                 img: ({ node, ...props }) => (
                   <img className="mt-3 w-full max-w-sm rounded-xl border border-primary/20 shadow-sm" loading="lazy" {...props} />
+                ),
+                table: ({ node, ...props }) => (
+                  <div className="w-full overflow-x-auto my-4">
+                    <table className="w-full text-sm text-left border-collapse" {...props} />
+                  </div>
+                ),
+                th: ({ node, ...props }) => (
+                  <th className="p-3 border-b border-border/40 bg-muted/20 font-bold" {...props} />
+                ),
+                td: ({ node, ...props }) => (
+                  <td className="p-3 border-b border-border/20" {...props} />
                 ),
               }}
             >
