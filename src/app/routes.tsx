@@ -10,6 +10,7 @@ import { ProfilePage } from '@/features/profile/ProfilePage';
 import { CoachPage } from '@/features/coach/CoachPage';
 import { PrivacyPage } from '@/features/legal/PrivacyPage';
 import { TermsPage } from '@/features/legal/TermsPage';
+import { NotFoundPage } from '@/features/errors/NotFoundPage';
 import { AppLayout } from '@/app/AppLayout';
 import { queryClient } from '@/lib/queryClient';
 import { requireAuth } from '@/lib/authPromise';
@@ -129,5 +130,9 @@ export const router = createBrowserRouter([
         ],
       },
     ],
+  },
+  {
+    path: '*',
+    Component: NotFoundPage,
   },
 ]);
