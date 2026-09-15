@@ -62,27 +62,58 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
   ]
 }`;
 
+async function fetchWithTimeout(url: string, options: RequestInit, timeout: number): Promise<Response> {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+  const response = await fetch(url, { ...options, signal: controller.signal });
+  clearTimeout(id);
+  return response;
+}
+
 async function fetchExerciseGif(exercise: { englishName: string }): Promise<string | null> {
+  const standardName = exercise.englishName.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   const UNSPLASH_ACCESS_KEY = process.env.UNSPLASH_ACCESS_KEY || 'JM_DldTer7pAVMlERjx5H-bbTP_EgBemd9XhfZl7-2s';
+
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000);
-    const res = await fetch(
-      `https://api.unsplash.com/search/photos?query=${encodeURIComponent(exercise.englishName + ' exercise')}&per_page=1&orientation=landscape&client_id=${UNSPLASH_ACCESS_KEY}`,
-      { signal: controller.signal }
+    const dbRes = await fetchWithTimeout(
+      `https://oss.exercisedb.dev/api/v1/exercises/search?search=${encodeURIComponent(exercise.englishName)}&threshold=0.5`,
+      {},
+      1500
     );
-    clearTimeout(timeoutId);
-    if (res.ok) {
-      const data = await res.json() as any;
+
+    if (dbRes.ok) {
+      const json = (await dbRes.json()) as any;
+      if (json.success && json.data && json.data.length > 0) {
+        const gifUrl = json.data[0].gifUrl;
+        
+        const pingRes = await fetchWithTimeout(gifUrl, { method: 'HEAD' }, 600);
+        if (pingRes.ok) {
+          return `\n**${standardName}**\n![${standardName}](${gifUrl})\n`;
+        }
+      }
+    }
+  } catch (e) {
+    console.warn(`ExerciseDB or Ping failed for ${exercise.englishName}, falling back to Unsplash.`);
+  }
+
+  try {
+    const unsplashRes = await fetchWithTimeout(
+      `https://api.unsplash.com/search/photos?query=${encodeURIComponent(exercise.englishName + ' exercise')}&per_page=1&orientation=landscape&client_id=${UNSPLASH_ACCESS_KEY}`,
+      {},
+      1500
+    );
+
+    if (unsplashRes.ok) {
+      const data = await unsplashRes.json() as any;
       if (data.results && data.results.length > 0) {
         const imageUrl = data.results[0].urls.regular;
-        const standardName = exercise.englishName.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         return `\n**${standardName}**\n![${standardName}](${imageUrl})\n`;
       }
     }
   } catch (e) {
-    console.warn(`Failed to fetch image for ${exercise.englishName}:`, e);
+    console.warn(`Unsplash fallback failed for ${exercise.englishName}:`, e);
   }
+
   return null;
 }
 
