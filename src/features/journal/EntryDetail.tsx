@@ -221,7 +221,7 @@ export function EntryDetail() {
                       <strong className="font-bold text-primary" {...props} />
                     ),
                     img: ({ node, ...props }) => (
-                      <img className="mt-3 w-full max-w-sm rounded-xl border border-primary/20 shadow-sm" loading="lazy" {...props} />
+                      <img className="mt-3 w-full max-w-sm aspect-video object-cover rounded-xl border border-primary/20 shadow-sm bg-muted" loading="lazy" {...props} />
                     ),
                   }}
                 >
