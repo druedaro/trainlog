@@ -118,6 +118,7 @@ export function LoginPage() {
                 id="forgot-email"
                 name="email"
                 type="email"
+                autoComplete="email"
                 placeholder="Tu correo electrónico"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -150,6 +151,7 @@ export function LoginPage() {
                 id="email"
                 name="email"
                 type="email"
+                autoComplete="username"
                 placeholder="Correo electrónico"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -164,6 +166,7 @@ export function LoginPage() {
                   id="confirm-email"
                   name="confirmEmail"
                   type="email"
+                  autoComplete="email"
                   placeholder="Confirmar correo electrónico"
                   value={confirmEmail}
                   onChange={(e) => setConfirmEmail(e.target.value)}
@@ -181,6 +184,7 @@ export function LoginPage() {
                 id="password"
                 name="password"
                 type="password"
+                autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
                 placeholder="Contraseña"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -195,6 +199,7 @@ export function LoginPage() {
                   id="confirm-password"
                   name="confirmPassword"
                   type="password"
+                  autoComplete="new-password"
                   placeholder="Confirmar contraseña"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
