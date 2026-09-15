@@ -186,6 +186,9 @@ export default async function handler(
       validated.data.articles.map(async (article) => {
         let enrichedContent = article.content;
 
+        // Sanitize: Strip any hallucinated markdown images like ![alt](url) from the text first
+        let safeContent = article.content.replace(/!\[.*?\]\(.*?\)/g, '');
+
         if (article.recommendedExercises.length > 0) {
           const gifResults = await Promise.all(
             article.recommendedExercises.map((ex: any) => fetchExerciseGif(ex)),
@@ -193,20 +196,16 @@ export default async function handler(
           const validGifs = gifResults.filter(Boolean);
 
           if (validGifs.length > 0) {
-            enrichedContent += '\n\n---\n\n**📹 Demostración de ejercicios:**\n' + validGifs.join('');
+            safeContent += '\n\n---\n\n**📹 Demostración de ejercicios:**\n' + validGifs.join('');
           }
         }
-
-        // Sanitize: Strip any hallucinated markdown images like ![alt](url) from the text
-        // to completely eliminate ERR_CONNECTION_TIMED_OUT from broken URLs
-        const sanitizedContent = enrichedContent.replace(/!\[.*?\]\(.*?\)/g, '');
 
         return {
           id: article.id,
           title: article.title,
           emoji: article.emoji,
           category: article.category,
-          content: sanitizedContent,
+          content: safeContent,
           reason: article.reason,
         };
       }),
