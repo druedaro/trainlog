@@ -63,24 +63,25 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
 }`;
 
 async function fetchExerciseGif(exercise: { englishName: string }): Promise<string | null> {
+  const UNSPLASH_ACCESS_KEY = process.env.UNSPLASH_ACCESS_KEY || 'JM_DldTer7pAVMlERjx5H-bbTP_EgBemd9XhfZl7-2s';
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
     const res = await fetch(
-      `https://oss.exercisedb.dev/api/v1/exercises/search?search=${encodeURIComponent(exercise.englishName)}&threshold=0.5`,
+      `https://api.unsplash.com/search/photos?query=${encodeURIComponent(exercise.englishName + ' exercise')}&per_page=1&orientation=landscape&client_id=${UNSPLASH_ACCESS_KEY}`,
       { signal: controller.signal }
     );
     clearTimeout(timeoutId);
     if (res.ok) {
-      const json = (await res.json()) as any;
-      if (json.success && json.data && json.data.length > 0) {
-        const exerciseData = json.data[0];
-        const standardName = exerciseData.name.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-        return `\n**${standardName}**\n![${standardName}](${exerciseData.gifUrl})\n`;
+      const data = await res.json() as any;
+      if (data.results && data.results.length > 0) {
+        const imageUrl = data.results[0].urls.regular;
+        const standardName = exercise.englishName.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        return `\n**${standardName}**\n![${standardName}](${imageUrl})\n`;
       }
     }
   } catch (e) {
-    console.warn(`Failed to fetch GIF for ${exercise.englishName}:`, e);
+    console.warn(`Failed to fetch image for ${exercise.englishName}:`, e);
   }
   return null;
 }
