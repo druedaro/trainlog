@@ -75,6 +75,29 @@ async function fetchExerciseGif(exercise: { englishName: string }): Promise<stri
   const UNSPLASH_ACCESS_KEY = process.env.UNSPLASH_ACCESS_KEY || 'JM_DldTer7pAVMlERjx5H-bbTP_EgBemd9XhfZl7-2s';
 
   try {
+    const dbRes = await fetchWithTimeout(
+      `https://oss.exercisedb.dev/api/v1/exercises/search?search=${encodeURIComponent(exercise.englishName)}&threshold=0.5`,
+      {},
+      1500
+    );
+
+    if (dbRes.ok) {
+      const json = (await dbRes.json()) as any;
+      if (json.success && json.data && json.data.length > 0) {
+        const gifUrl = json.data[0].gifUrl;
+        
+        const pingRes = await fetchWithTimeout(gifUrl, { method: 'HEAD' }, 600);
+        if (pingRes.ok) {
+          const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(gifUrl)}`;
+          return `\n**${standardName}**\n![${standardName}](${proxyUrl})\n`;
+        }
+      }
+    }
+  } catch (e) {
+    console.warn(`ExerciseDB or Ping failed for ${exercise.englishName}, falling back to Unsplash.`);
+  }
+
+  try {
     const unsplashRes = await fetchWithTimeout(
       `https://api.unsplash.com/search/photos?query=${encodeURIComponent(exercise.englishName + ' exercise')}&per_page=1&orientation=landscape&client_id=${UNSPLASH_ACCESS_KEY}`,
       {},
