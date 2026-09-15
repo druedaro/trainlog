@@ -115,6 +115,8 @@ export function LoginPage() {
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
+                id="forgot-email"
+                name="email"
                 type="email"
                 placeholder="Tu correo electrónico"
                 value={email}
@@ -145,6 +147,8 @@ export function LoginPage() {
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
+                id="email"
+                name="email"
                 type="email"
                 placeholder="Correo electrónico"
                 value={email}
@@ -157,6 +161,8 @@ export function LoginPage() {
               <div className="relative animate-fade-in">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <input
+                  id="confirm-email"
+                  name="confirmEmail"
                   type="email"
                   placeholder="Confirmar correo electrónico"
                   value={confirmEmail}
@@ -172,6 +178,8 @@ export function LoginPage() {
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
+                id="password"
+                name="password"
                 type="password"
                 placeholder="Contraseña"
                 value={password}
@@ -184,6 +192,8 @@ export function LoginPage() {
               <div className="relative animate-fade-in">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <input
+                  id="confirm-password"
+                  name="confirmPassword"
                   type="password"
                   placeholder="Confirmar contraseña"
                   value={confirmPassword}
