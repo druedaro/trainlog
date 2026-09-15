@@ -45,6 +45,7 @@ Content Rules:
 6. Do NOT diagnose injuries or prescribe medical treatments.
 7. You MUST write ALL generated content strictly in Spanish.
 8. Do NOT use markdown formatting (like **bold**) inside the 'title' field. It must be plain text.
+9. CRITICAL: DO NOT include any images, GIFs, or image markdown syntax (like ![alt](url)) inside the 'content' text. The system will handle adding exercise media automatically based on the 'recommendedExercises' array.
 
 Respond ONLY with a valid raw JSON object matching this exact structure:
 {
@@ -63,9 +64,13 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
 
 async function fetchExerciseGif(exercise: { englishName: string }): Promise<string | null> {
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
     const res = await fetch(
-      `https://oss.exercisedb.dev/api/v1/exercises/search?search=${encodeURIComponent(exercise.englishName)}&threshold=0.5`
+      `https://oss.exercisedb.dev/api/v1/exercises/search?search=${encodeURIComponent(exercise.englishName)}&threshold=0.5`,
+      { signal: controller.signal }
     );
+    clearTimeout(timeoutId);
     if (res.ok) {
       const json = (await res.json()) as any;
       if (json.success && json.data && json.data.length > 0) {
@@ -75,7 +80,7 @@ async function fetchExerciseGif(exercise: { englishName: string }): Promise<stri
       }
     }
   } catch (e) {
-
+    console.warn(`Failed to fetch GIF for ${exercise.englishName}:`, e);
   }
   return null;
 }
