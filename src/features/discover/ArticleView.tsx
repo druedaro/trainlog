@@ -119,7 +119,7 @@ export function ArticleView({ article, isSaved = false, onToggleSave, onBack }: 
                   <hr className="my-5 border-border/30" />
                 ),
                 img: ({ node, ...props }) => (
-                  <img className="mt-3 w-full max-w-sm rounded-xl border border-primary/20 shadow-sm" loading="lazy" {...props} />
+                  <img className="mt-3 w-full max-w-sm aspect-video object-cover rounded-xl border border-primary/20 shadow-sm bg-muted" loading="lazy" {...props} />
                 ),
                 table: ({ node, ...props }) => (
                   <div className="w-full overflow-x-auto my-4">
