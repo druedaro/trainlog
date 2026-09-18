@@ -93,9 +93,15 @@ async function fetchExerciseGif(exercise: { englishName: string }): Promise<stri
           bestMatch = json.data.find((item: any) => item.name.toLowerCase().startsWith(searchName + ' '));
         }
 
-        // Fallback al primer resultado
+        // Si tampoco hay, buscar si contiene las palabras principales
         if (!bestMatch) {
-          bestMatch = json.data[0];
+          bestMatch = json.data.find((item: any) => item.name.toLowerCase().includes(searchName));
+        }
+
+        // Si sigue sin haber coincidencia, lanzamos error para usar el fallback de Unsplash
+        // En lugar de seleccionar el primer resultado aleatorio (ej. Jump Squat en lugar de Tempo Squat)
+        if (!bestMatch) {
+          throw new Error(`No exact or close match found in ExerciseDB for ${exercise.englishName}`);
         }
 
         const gifUrl = bestMatch.gifUrl;
