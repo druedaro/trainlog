@@ -32,6 +32,7 @@ async function fetchExerciseGif(exercise: { englishName: string }): Promise<stri
           const standardName = bestMatch.name.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
           return `\n**${standardName}**\n![${standardName}](${bestMatch.gifUrl})\n`;
         }
+      }
     }
   } catch (e) {
 
