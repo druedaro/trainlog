@@ -134,8 +134,10 @@ export default async function handler(
   try {
     const groq = new Groq({ apiKey: GROQ_API_KEY });
     
+    // Truncate to the last 14 entries to avoid exceeding Groq's 8000 TPM limit
+    const recentEntries = (entries || []).slice(0, 14);
     const journalContext = JSON.stringify(
-      (entries || []).map((e: any) => ({
+      recentEntries.map((e: any) => ({
         date: new Date(e.createdAt).toISOString().split('T')[0],
         transcript: sanitizePII(e.transcript),
         analysis: e.analysis,
@@ -171,8 +173,16 @@ export default async function handler(
     try {
       parsed = JSON.parse(rawContent);
     } catch (e) {
-      const cleanContent = rawContent.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '');
-      parsed = JSON.parse(cleanContent);
+      try {
+        const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          parsed = JSON.parse(jsonMatch[0]);
+        } else {
+          throw new Error('No JSON found');
+        }
+      } catch (innerE) {
+        return response.status(502).json({ error: 'The generated content was not valid JSON.', rawOutput: rawContent });
+      }
     }
     const validated = chatResponseSchema.safeParse(parsed);
 
@@ -198,7 +208,7 @@ export default async function handler(
       response: finalResponse,
     });
   } catch (error) {
-
-    return response.status(500).json({ error: 'Chat completion failed.' });
+    const errMessage = error instanceof Error ? error.message : String(error);
+    return response.status(500).json({ error: `Chat completion failed: ${errMessage}` });
   }
 }
