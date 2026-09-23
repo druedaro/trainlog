@@ -37,4 +37,13 @@ const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
+  if (payload.notification) {
+    const notificationTitle = payload.notification.title || 'Trainlog';
+    const notificationOptions = {
+      body: payload.notification.body,
+      icon: '/icon-192.png',
+      data: payload.data,
+    };
+    self.registration.showNotification(notificationTitle, notificationOptions);
+  }
 });

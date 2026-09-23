@@ -19,9 +19,19 @@ async function fetchExerciseGif(exercise: { englishName: string }): Promise<stri
     if (res.ok) {
       const json = (await res.json()) as any;
       if (json.success && json.data && json.data.length > 0) {
-        const exerciseData = json.data[0];
-        const standardName = exerciseData.name.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-        return `\n**${standardName}**\n![${standardName}](${exerciseData.gifUrl})\n`;
+        const searchName = exercise.englishName.toLowerCase().replace(/-/g, ' ');
+        let bestMatch = json.data.find((item: any) => item.name.toLowerCase() === searchName);
+        if (!bestMatch) {
+          bestMatch = json.data.find((item: any) => item.name.toLowerCase().startsWith(searchName + ' '));
+        }
+        if (!bestMatch) {
+          bestMatch = json.data.find((item: any) => item.name.toLowerCase().includes(searchName));
+        }
+
+        if (bestMatch) {
+          const standardName = bestMatch.name.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+          return `\n**${standardName}**\n![${standardName}](${bestMatch.gifUrl})\n`;
+        }
       }
     }
   } catch (e) {

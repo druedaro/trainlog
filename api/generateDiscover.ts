@@ -84,18 +84,19 @@ async function fetchExerciseGif(exercise: { englishName: string }): Promise<stri
     if (dbRes.ok) {
       const json = (await dbRes.json()) as any;
       if (json.success && json.data && json.data.length > 0) {
-        // Intentar encontrar coincidencia exacta primero
         const searchName = exercise.englishName.toLowerCase().replace(/-/g, ' ');
         let bestMatch = json.data.find((item: any) => item.name.toLowerCase() === searchName);
         
-        // Si no hay exacta, buscar una que empiece por la palabra
         if (!bestMatch) {
           bestMatch = json.data.find((item: any) => item.name.toLowerCase().startsWith(searchName + ' '));
         }
 
-        // Fallback al primer resultado
         if (!bestMatch) {
-          bestMatch = json.data[0];
+          bestMatch = json.data.find((item: any) => item.name.toLowerCase().includes(searchName));
+        }
+
+        if (!bestMatch) {
+          throw new Error(`No exact or close match found in ExerciseDB for ${exercise.englishName}`);
         }
 
         const gifUrl = bestMatch.gifUrl;
@@ -103,7 +104,6 @@ async function fetchExerciseGif(exercise: { englishName: string }): Promise<stri
         const pingRes = await fetchWithTimeout(gifUrl, { method: 'HEAD' }, 600);
         if (pingRes.ok) {
           const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(gifUrl)}`;
-          // Usar el nombre REAL de la base de datos para que el título siempre coincida con el GIF
           const displayTitle = bestMatch.name.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
           return `\n**${displayTitle}**\n![${displayTitle}](${proxyUrl})\n`;
         }
