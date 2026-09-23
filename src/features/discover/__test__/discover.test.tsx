@@ -29,6 +29,14 @@ describe('Feature: Article Discovery System', () => {
   
   beforeEach(() => {
     vi.clearAllMocks();
+    
+    // Mock IntersectionObserver
+    window.IntersectionObserver = vi.fn().mockImplementation(() => ({
+      observe: vi.fn(),
+      unobserve: vi.fn(),
+      disconnect: vi.fn(),
+    }));
+
     vi.mocked(useAuth).mockReturnValue({
       user: mockUser as any,
       isLoading: false,
