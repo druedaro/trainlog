@@ -56,7 +56,15 @@ export async function setupMessageListener() {
       };
 
       if (Notification.permission === 'granted') {
-         new Notification(title || 'Trainlog', options);
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.ready.then((registration) => {
+            registration.showNotification(title || 'Trainlog', options);
+          }).catch(() => {
+            new Notification(title || 'Trainlog', options);
+          });
+        } else {
+          new Notification(title || 'Trainlog', options);
+        }
       }
     }
   });
