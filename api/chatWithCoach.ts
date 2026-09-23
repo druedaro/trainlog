@@ -156,7 +156,7 @@ export default async function handler(
 
     const chatCompletion = await groq.chat.completions.create({
       messages: groqMessages,
-      model: 'openai/gpt-oss-120b',
+      model: 'llama-3.3-70b-versatile',
       temperature: 0.1,
       response_format: { type: 'json_object' }
     });
