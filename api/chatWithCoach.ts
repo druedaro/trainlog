@@ -167,7 +167,13 @@ export default async function handler(
       return response.status(502).json({ error: 'The analysis service returned an empty response.' });
     }
 
-    const parsed = JSON.parse(rawContent);
+    let parsed;
+    try {
+      parsed = JSON.parse(rawContent);
+    } catch (e) {
+      const cleanContent = rawContent.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '');
+      parsed = JSON.parse(cleanContent);
+    }
     const validated = chatResponseSchema.safeParse(parsed);
 
     if (!validated.success) {
