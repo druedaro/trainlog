@@ -7,6 +7,10 @@ vi.mock('@/components/BottomNav', () => ({
   BottomNav: () => <nav data-testid="bottom-nav">Bottom Nav</nav>,
 }));
 
+vi.mock('@/features/auth/useAuth', () => ({
+  useAuth: () => ({ user: { uid: '123' }, isLoading: false }),
+}));
+
 describe('Feature: App Layout', () => {
   it('Given the app is rendering, When layout wraps a route, Then it shows Outlet content and BottomNav', () => {
     render(
