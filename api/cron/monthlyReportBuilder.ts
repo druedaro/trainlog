@@ -93,7 +93,7 @@ Escribe UN SOLO PÁRRAFO de máximo 40-50 palabras felicitándole, destacando su
 
         try {
           const response = await groq.chat.completions.create({
-            model: "openai/gpt-oss-120b",
+            model: "llama-3.3-70b-versatile",
             messages: [
               { role: 'system', content: systemPrompt },
               { role: 'user', content: 'Genera el párrafo motivacional.' }

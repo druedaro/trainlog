@@ -130,7 +130,7 @@ export default async function handler(
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: `===DIARY_ENTRY===\n${sanitizedTranscript}\n===DIARY_ENTRY===` },
       ],
-      model: 'openai/gpt-oss-120b',
+      model: 'llama-3.3-70b-versatile',
       temperature: 0.5,
       response_format: { type: 'json_object' }
     });

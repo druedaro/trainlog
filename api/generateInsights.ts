@@ -84,7 +84,7 @@ export default async function handler(
         { role: 'system', content: dynamicSystemPrompt },
         { role: 'user', content: payload },
       ],
-      model: 'openai/gpt-oss-120b',
+      model: 'llama-3.3-70b-versatile',
       temperature: 0.5,
       response_format: { type: 'json_object' }
     });
