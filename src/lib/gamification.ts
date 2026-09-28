@@ -43,7 +43,7 @@ export function calculateStreak(entryDates: number[], trainingDays?: number[]): 
       }
     }
     
-    currentDate = new Date(currentDate.getTime() - 86400000);
+    currentDate.setDate(currentDate.getDate() - 1);
   }
   
   return streak;

@@ -24,6 +24,13 @@ export default async function dailyReminder(req: VercelRequest, res: VercelRespo
 
     for (const userDoc of usersSnapshot.docs) {
       const userId = userDoc.id;
+      const userData = userDoc.data();
+      const trainingDays = userData.trainingDays || [0, 1, 2, 3, 4, 5, 6];
+      const todayDayOfWeek = now.getDay();
+      
+      if (!trainingDays.includes(todayDayOfWeek)) {
+        continue;
+      }
 
       const entriesSnapshot = await adminDb
         .collection('entries')
