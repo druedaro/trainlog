@@ -34,6 +34,12 @@ export default async function reengagement(req: VercelRequest, res: VercelRespon
       const gender = userData.gender || 'masculino';
       const age = userData.age || 30;
       const personalContext = userData.personalContext;
+      const trainingDays = userData.trainingDays || [0, 1, 2, 3, 4, 5, 6];
+      const todayDayOfWeek = today.getDay();
+      
+      if (!trainingDays.includes(todayDayOfWeek)) {
+        continue;
+      }
 
       const entriesSnapshot = await adminDb
         .collection('users')
