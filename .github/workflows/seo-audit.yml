@@ -1,0 +1,30 @@
+name: SEO Audit
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  seo-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install & Build
+        run: |
+          npm ci
+          npm run build
+
+      - name: Run SEO Lint
+        uses: druedaro/seo-lint@main
+        with:
+          dir: 'dist'
+          ignore: 'assets/*'
