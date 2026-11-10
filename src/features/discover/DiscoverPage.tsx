@@ -69,7 +69,7 @@ export function DiscoverPage() {
   const [exploreCategoryFilter, setExploreCategoryFilter] = useState<string | null>(null);
 
   // Ref to always hold the latest handleGenerate without stale closures
-  const handleGenerateRef = useRef<(silent?: boolean) => Promise<void>>();
+  const handleGenerateRef = useRef<((silent?: boolean) => Promise<void>) | null>(null);
 
   
   useEffect(() => {
