@@ -68,6 +68,9 @@ export function DiscoverPage() {
   const [error, setError] = useState<string | null>(null);
   const [exploreCategoryFilter, setExploreCategoryFilter] = useState<string | null>(null);
 
+  // Ref to always hold the latest handleGenerate without stale closures
+  const handleGenerateRef = useRef<(silent?: boolean) => Promise<void>>();
+
   
   useEffect(() => {
     if (location.state?.navReset) {
@@ -90,7 +93,7 @@ export function DiscoverPage() {
         
         const age = Date.now() - cached.updatedAt;
         if (age > THREE_DAYS_MS) {
-          handleGenerate(true); 
+          handleGenerateRef.current?.(true); 
         }
       }
     } catch (e) {
@@ -176,7 +179,9 @@ export function DiscoverPage() {
         const recentEntries = await fetchRecentEntries(user.uid, 3);
 
         if (recentEntries.length === 0) {
-          setError('Necesitas al menos una entrada para generar recomendaciones.');
+          if (!silent) {
+            setError('Necesitas al menos una entrada para generar recomendaciones.');
+          }
           setIsGenerating(false);
           return;
         }
@@ -202,6 +207,10 @@ export function DiscoverPage() {
 
         setArticles(sortArticles(discoverDoc.articles));
         setUpdatedAt(discoverDoc.updatedAt);
+
+        if (!silent) {
+          toast.success('Recomendaciones actualizadas.');
+        }
       } catch (e) {
         if (!silent) {
           setError('Error al generar recomendaciones. Inténtalo de nuevo.');
@@ -213,6 +222,11 @@ export function DiscoverPage() {
     },
     [user, profile],
   );
+
+  // Keep ref in sync so loadArticles always calls the latest version
+  useEffect(() => {
+    handleGenerateRef.current = handleGenerate;
+  }, [handleGenerate]);
 
   const handleAutoUpdateExplore = useCallback(async () => {
     if (!user) return;
@@ -245,33 +259,37 @@ export function DiscoverPage() {
         const result = await generateExplore(category);
         const newArticles = result.articles as DiscoverArticle[];
         
-        let mergedArticles = [...exploreArticles];
-        
-        if (category) {
-          mergedArticles = mergedArticles.filter(a => a.category !== category);
-          mergedArticles = [...newArticles, ...mergedArticles];
-        } else {
-          mergedArticles = [...newArticles, ...mergedArticles];
+        setExploreArticles(prevExplore => {
+          let mergedArticles = [...prevExplore];
           
-          const grouped: Record<string, DiscoverArticle[]> = {};
-          for (const article of mergedArticles) {
-            const catArr = grouped[article.category] || [];
-            if (catArr.length < 4) {
-              catArr.push(article);
+          if (category) {
+            mergedArticles = mergedArticles.filter(a => a.category !== category);
+            mergedArticles = [...newArticles, ...mergedArticles];
+          } else {
+            mergedArticles = [...newArticles, ...mergedArticles];
+            
+            const grouped: Record<string, DiscoverArticle[]> = {};
+            for (const article of mergedArticles) {
+              const catArr = grouped[article.category] || [];
+              if (catArr.length < 4) {
+                catArr.push(article);
+              }
+              grouped[article.category] = catArr;
             }
-            grouped[article.category] = catArr;
+            mergedArticles = Object.values(grouped).flat();
           }
-          mergedArticles = Object.values(grouped).flat();
-        }
 
-        const docToSave: DiscoverDocument = {
-          articles: mergedArticles,
-          updatedAt: result.updatedAt,
-        };
-        await saveExploreArticles(user.uid, docToSave);
-        setExploreArticles(sortArticles(docToSave.articles));
-        setExploreUpdatedAt(docToSave.updatedAt);
-        setShowExploreGrid(false);
+          const docToSave: DiscoverDocument = {
+            articles: mergedArticles,
+            updatedAt: result.updatedAt,
+          };
+          // Fire-and-forget save to Firestore
+          saveExploreArticles(user.uid, docToSave).catch(() => {});
+
+          setExploreUpdatedAt(docToSave.updatedAt);
+          setShowExploreGrid(false);
+          return sortArticles(docToSave.articles);
+        });
       } catch (e) {
         if (!silent) {
           toast.error('Error al generar exploración.');
@@ -281,7 +299,7 @@ export function DiscoverPage() {
         setIsGeneratingExplore(false);
       }
     },
-    [user, exploreArticles],
+    [user],
   );
 
   const loadExploreArticles = useCallback(async () => {
