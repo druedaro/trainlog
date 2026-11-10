@@ -5,13 +5,19 @@ import { z } from 'zod';
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
 const articleSchema = z.object({
-  id: z.string(),
+  id: z.string().default(() => Math.random().toString(36).substring(2, 9)),
   title: z.string(),
-  emoji: z.string(),
-  category: z.enum(['recovery', 'training', 'mindset', 'nutrition']),
+  emoji: z.string().default('💡'),
+  category: z.preprocess(
+    (val) => (typeof val === 'string' ? val.toLowerCase().trim() : val),
+    z.enum(['recovery', 'training', 'mindset', 'nutrition', 'general'])
+  ).catch('general'),
   content: z.string(),
-  reason: z.string(),
-  imageKeyword: z.string(),
+  reason: z.string().default(''),
+  imageKeyword: z.preprocess(
+    (val) => (typeof val === 'string' && val.trim().length > 0 ? val.trim() : 'fitness'),
+    z.string()
+  ).default('fitness'),
 });
 
 const exploreResponseSchema = z.object({
@@ -139,7 +145,7 @@ export default async function handler(
     const validated = exploreResponseSchema.safeParse(parsed);
 
     if (!validated.success) {
-
+      console.error('Explore validation failed:', JSON.stringify(validated.error.format()));
       return response.status(502).json({ error: 'The generated content did not meet validation standards.' });
     }
 

@@ -4,16 +4,28 @@ import { z } from 'zod';
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
+const recommendedExerciseSchema = z.union([
+  z.string().transform((name) => ({ englishName: name })),
+  z.object({
+    englishName: z.string().optional(),
+    name: z.string().optional(),
+  }).transform((obj) => ({ englishName: obj.englishName || obj.name || '' })),
+]);
+
 const articleSchema = z.object({
-  id: z.string(),
+  id: z.string().default(() => Math.random().toString(36).substring(2, 9)),
   title: z.string(),
-  emoji: z.string(),
-  category: z.enum(['recovery', 'training', 'mindset', 'nutrition']),
+  emoji: z.string().default('💡'),
+  category: z.preprocess(
+    (val) => (typeof val === 'string' ? val.toLowerCase().trim() : val),
+    z.enum(['recovery', 'training', 'mindset', 'nutrition'])
+  ).catch('training'),
   content: z.string(),
-  reason: z.string(),
-  recommendedExercises: z.array(z.object({
-    englishName: z.string(),
-  })).default([]),
+  reason: z.string().default(''),
+  recommendedExercises: z.preprocess(
+    (val) => (Array.isArray(val) ? val : []),
+    z.array(recommendedExerciseSchema)
+  ).default([]),
 });
 
 const discoverResponseSchema = z.object({
@@ -217,7 +229,7 @@ export default async function handler(
     const validated = discoverResponseSchema.safeParse(parsed);
 
     if (!validated.success) {
-
+      console.error('Discover validation failed:', JSON.stringify(validated.error.format()));
       return response.status(502).json({ error: 'The generated content did not meet validation standards.' });
     }
 

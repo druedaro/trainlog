@@ -187,13 +187,13 @@ export function DiscoverPage() {
         }
 
         const simplifiedEntries = recentEntries.map((e) => ({
-          transcript: e.transcript,
-          summary: e.analysis.summary,
-          themes: e.analysis.themes || [],
-          activities: e.analysis.activities,
-          energy: e.analysis.perceivedEnergy,
-          mood: e.analysis.perceivedMood,
-          date: e.createdAt.toISOString(),
+          transcript: e.transcript || '',
+          summary: e.analysis?.summary || '',
+          themes: e.analysis?.themes || [],
+          activities: e.analysis?.activities || [],
+          energy: e.analysis?.perceivedEnergy,
+          mood: e.analysis?.perceivedMood,
+          date: e.createdAt?.toISOString ? e.createdAt.toISOString() : new Date(e.createdAt || Date.now()).toISOString(),
         }));
 
         const result = await generateDiscover(simplifiedEntries, profile);

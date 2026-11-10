@@ -132,14 +132,21 @@ function mapDocumentToEntry(
   id: string,
   data: DocumentData,
 ): JournalEntry {
+  const parseDate = (d: any): Date => {
+    if (!d) return new Date();
+    if (typeof d.toDate === 'function') return d.toDate();
+    if (d instanceof Date) return d;
+    return new Date(d);
+  };
+
   return {
     id,
     userId: data.userId as string,
     transcript: data.transcript as string,
     analysis: data.analysis as EntryAnalysis,
     contextualResponse: data.contextualResponse as string | null | undefined,
-    createdAt: (data.createdAt as Timestamp).toDate(),
-    updatedAt: (data.updatedAt as Timestamp).toDate(),
+    createdAt: parseDate(data.createdAt),
+    updatedAt: parseDate(data.updatedAt),
   };
 }
 
